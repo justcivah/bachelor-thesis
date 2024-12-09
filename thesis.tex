@@ -1,0 +1,190 @@
+\documentclass[12pt]{report}
+
+\usepackage[italian]{babel}
+\usepackage{thesis}
+\usepackage{parskip}
+
+% Informazioni copertina
+\university{Università degli Studi di Milano}
+\unilogo{images/logos/unimi}
+\faculty{Facoltà di Scienze e Tecnologie}
+\department{Dipartimento di Informatica\\Giovanni Degli Antoni}
+\cdl{Corso di Laurea Triennale in\\Informatica}
+
+\title{Quantificazione e riduzione del sim-to-real gap in reti neurali addestrate per il riconoscimento di oggetti}
+
+\author{Giovanni Novati}
+\matricola{02108A}
+\typeofthesis{Elaborato Finale}
+
+\relatore{Prof. Nicola Basilico}
+\correlatore{Prof. Michele Antonazzi}
+\correlatore{Prof. Matteo Luperto}
+
+\academicyear{\the\year} 
+
+% Indice nell'indice
+\tocintoctrue
+
+\begin{document}
+
+\makefrontpage
+
+% Pagina di citazioni
+{\raggedleft \large \sl
+	
+	\vspace{2cm}
+	
+	``Aut inveniam viam aut faciam''
+	
+	\bigskip
+	
+	\--- Annibale\\}
+
+\clearpage
+\beforepreface
+
+% Creazione automatica dell'indice
+\afterpreface
+
+% CAPITOLO 1: Introduzione
+\chapter{Introduzione}
+\label{cap:introduzione}
+
+\section{Robot di servizio}
+\label{sec:robot_servizio}
+
+I robot di servizio sono una tipologia di robot creata per assistere l'essere umano in ambienti antropocentrici, come abitazioni, uffici e ospedali, il tutto in maniera autonoma o semi-autonoma. L'obiettivo è semplificare la vita quotidiana delle persone, aumentando la sicurezza e la produttività.
+
+Negli ultimi decenni questi robot sono stati adoperati in una varietà di scenari reali, come in ambienti domestici e industriali. Recentemente, queste tecnologie si sono sviluppate anche in settori come la sanità, andando ad assistere pazienti e caregiver~\cite{robotics10010047}; la logistica, dove svolgono compiti ripetitivi come la consegna di oggetti o il monitoraggio ambientale~\cite{fragapane2021405}; assistenza domiciliare, dove aiutano in attività quotidiane come la pulizia e assistenza alla persona.
+
+Nonostante la diffusione di questi robot di servizio sia aumentata, il loro impiego in ambienti come case, scuole e uffici ha ancora diverse limitazioni. In un contesto industriale si ha un maggior grado di controllo e prevedibilità, caratteristiche non presenti in ambienti domestici che sono tipicamente non strutturati e dinamici. In ogni abitazione, aspetti come la planimetria e l'arredamento possono cambiare totalmente, oltre agli ostacoli presenti, siano essi mobili o fissi. A tutto questo si aggiungono anche i comportamenti imprevedibili di persone e animali, che possono interferire con le attività del robot~\cite{6301139}.
+
+Un robot di servizio deve quindi riuscire a percepire e comprendere l'ambiente che lo circonda, così da poter svolgere compiti essenziali come la localizzazione, la pianificazione e la navigazione. Questo è possibile grazie a telecamere e sensori di profondità, che consentono di acquisire immagini e mappare lo spazio circostante, e a reti neurali che permettono di riconoscere e classificare oggetti. L'insieme di queste tecniche è comunemente chiamata \textit{robotic vision}.
+
+\section{Problema della raccolta dati}
+\label{sec:raccolta_dati}
+
+L'addestramento di reti neurali è uno dei processi più importanti nella creazione di un sistema di robotic vision, e il suo corretto funzionamento dipende da vari fattori come la scelta del modello e dal processo di raccolta dei dati.
+
+Per quanto riguarda la selezione del modello, a seconda delle attività che il robot deve svolgere si preferiscono determinate tipologie di modelli ad altre. Ad esempio, se si vogliono riconoscere oggetti in tempo reale si preferiscono reti neurali di tipo convoluzionale (CNN, Convolutional Neural Network)~\cite{oshea2015introductionconvolutionalneuralnetworks}, mentre se l'obiettivo è comprendere sequenze di azioni complesse, come nel caso dell'interazione con gli esseri umani, si opta in genere per reti neurali ricorrenti (RNN, Recurrent Neural Network)~\cite{ZHANG20209}. La sfida più grande non è però la scelta del modello, quanto la raccolta dei dati utilizzata per l'addestramento.
+
+Raccogliere dati è da sempre un processo complesso in qualsiasi ambito, ma trova maggiori difficoltà in progetti di robotic vision. In questi casi, infatti, i dati vengono generalmente acquisiti facendo interagire robot con ambienti del mondo reale. Questo approccio ha però diverse limitazioni, dovute a fattori come il tempo e i costi che la raccolta comporta, oltre che per motivi inerenti la sicurezza di persone, animali e oggetti presenti nell'ambiente. A questi elementi si aggiunge anche il fattore riproducibilità, che viene meno quando si hanno variazioni nell'hardware utilizzato o negli ambienti considerati, e che può condurre a risultati differenti.
+
+\section{Addestramento con dati simulati}
+\label{sec:addestramento_dati_simulati}
+
+Una possibile soluzione a questi problemi è l'utilizzo di ambienti simulati per la raccolta di dati. Questo permette infatti di ottenere dati a basso costo, in quanto non è necessario impegnare veri ambienti e robot, in tempi più brevi, grazie al fatto che le simulazioni possono essere velocizzate o parallelizzate, e senza i possibili rischi che una reale interazione con l'ambiente comporta.
+
+Un simulatore consente inoltre di conoscere in anticipo e progettare gli scenari in cui un robot andrà ad interagire, andando a regolare vari parametri così da controllarne ogni singolo aspetto. Questo garantisce che l'ambiente non vari ed evolva nel tempo, a meno che non sia stato appositamente programmato per farlo.
+
+Questo approccio permette di risolvere molti problemi, ma ne introduce di nuovi. La simulazione è infatti solo un'approssimazione della realtà, e non è possibile replicare fedelmente tutti i fenomeni e le caratteristiche del mondo reale. I motivi per i quale queste tipologie di ambienti differiscono sono principalmente due: il fotorealismo e l'interazione fisica.
+
+Per fotorealismo si intende la capacità del simulatore di riprodurre in maniera visivamente accurata ambienti reali, in modo dettagliato e credibile. Tuttavia, risulta difficile replicare fenomeni come l'illuminazione, le riflessioni e texture di superfici. Questa mancanza di dettaglii ha un grande impatto sulla qualità dei dati raccolti per l'addestramento, con una conseguente mancanza di generalizzazione nel mondo reale da parte del modello.
+
+L'interazione fisica si riferisce invece all'abilità del simulatore di riuscire a replicare le leggi della fisica in maniera realistica; questo comprende ad esempio il movimento e l'interazione tra oggetti.
+
+In questi ultimi anni sono stati sviluppati diversi nuovi simulatori~\cite{kolve2022ai2thorinteractive3denvironment}~\cite{NEURIPS2021_021bbc7e}~\cite{urakami2022doorgymscalabledooropening}~\cite{1389727}, ognuno specializzato per specifici casi d'uso, e tutti si concentrano pervalentemente su uno dei due aspetti sopra citati.
+
+Reti neurali addestrate con dati provenienti da simulatori e testati negli stessi ambienti simulati, otterranno risultati eccellenti. Sapranno infatti individuare e riconoscere correttamente gli oggetti presenti, in quanto il dominio dei dati utilizzato per l'addestramento e quello usato per il testing è lo stesso. Invece, l'adozione di reti naurali addestrare con dati sintetici in ambienti reali, avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come sim to real gap, letteralmente 'divario tra simulazione e realtà', e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
+
+Una soluzione che permette di mitigare questo problema è l'adozione di una tecnica chiamata domain randomization , che permette di variare caratteristiche ed oggetti presenti nell'ambiente simulato (posizione e tipi di oggetti, illuminazione, texture). Questo permette di rendere il modello più robusto, permettendogli di operare meglio in contesti reali.
+
+% CAPITOLO 2: Stato dell'Arte
+\chapter{Stato dell'arte}
+\label{chap:stato_arte}
+
+Il sim to real gap è uno dei principali problemi nel campo della robitic vision, in quanto la complessità degli ambienti reali va oltre quello che è possibile rappresentare attraverso una simulazione. In questi ultimi anni la comunità scientifica si è interessata a questo problema, e ha provato a proporre delle soluzioni.
+
+\section{Domain adaptation}
+\label{sec:adaptation}
+
+Quella del domain adaptation è una delle strategie più utilizzate per cercare di ridurre il sim to real gap, in quanto si cercano di ridurre le differenze tra l'ambiente simulato e quello reale. Questa tecnica si basa sul trasformare i dati provenienti dal simulatore, in modo da farli assomigliare il più possibile a quelli raccolti nel mondo reale. Il processo di trasformazione dei dati comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati simulati. Una rete crea nuove immagini, il più simili possibili a quelle reali, mentre l'altra valuta la bontà delle immagini generate, che devono essere il più realistiche possibili. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
+
+Ad esempio, un'immagine presa da un ambiente simulato, con texture uniformi e un'illuminazione predefinita, può essere trasformata in una più fotorealistica variando la luce, aggiungendo riflessioni e creando imperfezioni sulla superficie di oggetti. In pratica si cerca di aggiungere caratteristiche presenti nel mondo reale a dati campionati da simulatori, in modo da ridurre la differenza tra quello che è il dominio della simulazione e quello della realtà.
+
+\section{Data augmentation}
+\label{sec:augmentation}
+
+Un ulteriore approccio per ridurre il sim to real gap è quello di augmentare i dati reali disponibili durante il training. La data augmentation è una tecnica molto diffusa nel campo della robotic vision, e consiste nell'applicare trasformazioni a dataset reali con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
+
+Un'altro esempio nel quale questa tecnica può tornare utile, è nel caso si vengano a creare dipendenze da caretteristiche non rilevanti (bias). Ad esempio, se un modello tende ad associare la presenza di uno specifico sfondo a quella di un particolare oggetto, può essere conveniente effettuare trasformazioni andando a modificare o rimuovere lo sfondo, in modo da rendere indipendente la presenza di un oggetto da quella di un'altro.
+
+Un esempio di bias è ben descritto nell'articolo~\cite{diagnostics12010040}, relativo ad un modello addestrato a riconoscere melanomi da tessuti sani. La rete neurale è stata addestrata a partire da un dataset contenente foto raffiguranti tumori maligni e tessuti epiteliali sani. Sebbene i risultati di validazione fossero inizialmente promettenti, si è scoperto che il modello non aveva realmente imparato a riconoscere la presenza di melanomi. Piuttosto, basava le sue previsioni su correlazioni spurie presenti nei dati. Nelle immagini raffiguranti tessuti sani erano sempre presenti artefatti come righelli e altri strumenti di calibrazione, che erano invece assenti in quelle rappresentanti tumori maligni. Come conseguenza, questi dati hanno portato il modello a trovare delle \textit{scorciatoie} (shortcut learning), utilizzando la presenza di questi artefatti come principale regola per classificare le immagini.
+
+\section{Domain randomization}
+\label{sec:randomization}
+
+Invece che addestrare un modello su una singola scena simulata creata manualmente, la domain randomization permette di randomizzare gli elementi come oggetti, luce, texture ed eventuale rumore in maniera automatica all'interno di uno stesso ambiente. Questo consente al modello di imparare molteplici dispozizioni di oggetti e caratteristiche, migliorandone così le capacità di generalizzazione. Con questo approccio si cercano quindi di ricreare le condizioni che caratterizzano un normale ambiente domestico; a distanza di pochi giorni è raro che vengano introdotti o rimossi degli oggetti, mentre è molto più probabile che oggetti già presenti vengano spostati. Questo comporta una diversa disposizione degli oggetti, con una conseguente differenza nell'illuminazione della stanza, nei riflessi, e possibilmente anche nei colori. Se il modello non è abbastanza robusto a questo tipo di cambiamenti, potrebbe non riuscire a generalizzare correttamente.
+
+Questa tecnica~\cite{8202133} è particolarmente efficace nell'addestrare reti neurali profonde (DNN, Deep Neural Netework) per compiti come l'identificazione e la manipolazione di oggetti. Ha infatti permesso di addestrare un modello utilizzando solo immagini simulate, riuscendo poi a localizzare in maniera accurata oggetti in ambienti reali, senza necessitare di ulteriori dati provenienti dal mondo reale.
+
+La domain randomization permette quindi di generare grandi dataset di addestramento col minimo sforzo da parte di un operatore umano, e di ottenere modelli robusti senza la necessità di effettuare fine tuning con dati reali.
+
+% CAPITOLO 3: Soluzione proposta
+\chapter{Soluzione proposta}
+\label{chap:soluzione}
+
+\section{Idea}
+\label{chap:idea}
+
+\section{Strumenti}
+\label{chap:strumenti}
+
+\section{Aspettative}
+\label{chap:aspettative}
+
+% CAPITOLO 4: Metodo
+\chapter{Metodo}
+\label{chap:metodo}
+
+\section{Raccolta dati su iGibson}
+\label{chap:raccolta_dati_igibson}
+
+\section{Trasformazione dataset iGibson in formato YOLO}
+\label{chap:dataset_igibson_yolo}
+
+\section{Addestramento del modello YOLO11}
+\label{chap:addestramento_yolo}
+
+\section{Trasformazione dataset ScanNet in formato UNet}
+\label{chap:dataset_scannet_unet}
+
+\section{Addestramento del modello UNet}
+\label{chap:addestramento_unet}
+
+% CAPITOLO 5: Analisi risultati
+\chapter{Analisi risultati}
+\label{chap:analisi}
+
+\section{Setup sperimentale}
+\label{chap:setup}
+
+\section{Procedure}
+\label{procedure}
+
+\section{Risultati}
+\label{risultati}
+
+% CAPITOLO 6: Conclusioni
+\chapter{Conclusioni}
+\label{chap:conclusioni}
+
+\section{Discussione dei risultati}
+\label{chap:discussione_risultati}
+
+\section{Limiti della soluzione proposta}
+\label{chap:limiti}
+
+\section{Prospettive e sviluppi futuri}
+\label{chap:prospettive}
+
+% Bibliografia
+\beforebibliography
+\bibliographystyle{unsrt}
+\bibliography{bibliography}
+
+% Pagina di chiusura
+\closingpage
+
+\end{document}
