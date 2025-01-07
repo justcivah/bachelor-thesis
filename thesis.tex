@@ -3,6 +3,9 @@
 \usepackage[italian]{babel}
 \usepackage{thesis}
 \usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{subfig}
+\usepackage{graphicx}
 
 % Informazioni copertina
 \university{Università degli Studi di Milano}
@@ -21,7 +24,7 @@
 \correlatore{Prof. Michele Antonazzi}
 \correlatore{Prof. Matteo Luperto}
 
-\academicyear{\the\year} 
+\academicyear{2024} 
 
 % Indice nell'indice
 \tocintoctrue
@@ -85,7 +88,7 @@ L'interazione fisica si riferisce invece all'abilità del simulatore di riuscire
 
 In questi ultimi anni sono stati sviluppati diversi nuovi simulatori~\cite{kolve2022ai2thorinteractive3denvironment}~\cite{NEURIPS2021_021bbc7e}~\cite{urakami2022doorgymscalabledooropening}~\cite{1389727}, ognuno specializzato per specifici casi d'uso, e tutti si concentrano pervalentemente su uno dei due aspetti sopra citati.
 
-Reti neurali addestrate con dati provenienti da simulatori e testati negli stessi ambienti simulati, otterranno risultati eccellenti. Sapranno infatti individuare e riconoscere correttamente gli oggetti presenti, in quanto il dominio dei dati utilizzato per l'addestramento e quello usato per il testing è lo stesso. Invece, l'adozione di reti naurali addestrare con dati sintetici in ambienti reali, avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come sim to real gap, letteralmente 'divario tra simulazione e realtà', e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
+Reti neurali addestrate con dati provenienti da simulatori e testati negli stessi ambienti simulati, otterranno risultati eccellenti. Sapranno infatti individuare e riconoscere correttamente gli oggetti presenti, in quanto il dominio dei dati utilizzato per l'addestramento e quello usato per il testing è lo stesso. Invece, l'adozione di reti naurali addestrare con dati sintetici in ambienti reali, avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come \textit{sim-to-real gap}, letteralmente 'divario tra simulazione e realtà', e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
 
 Una soluzione che permette di mitigare questo problema è l'adozione di una tecnica chiamata domain randomization , che permette di variare caratteristiche ed oggetti presenti nell'ambiente simulato (posizione e tipi di oggetti, illuminazione, texture). Questo permette di rendere il modello più robusto, permettendogli di operare meglio in contesti reali.
 
@@ -93,19 +96,19 @@ Una soluzione che permette di mitigare questo problema è l'adozione di una tecn
 \chapter{Stato dell'arte}
 \label{chap:stato_arte}
 
-Il sim to real gap è uno dei principali problemi nel campo della robitic vision, in quanto la complessità degli ambienti reali va oltre quello che è possibile rappresentare attraverso una simulazione. In questi ultimi anni la comunità scientifica si è interessata a questo problema, e ha provato a proporre delle soluzioni.
+Il sim-to-real gap è uno dei principali problemi nel campo della robitic vision, in quanto la complessità degli ambienti reali va oltre quello che è possibile rappresentare attraverso una simulazione. In questi ultimi anni la comunità scientifica si è interessata a questo problema, e ha provato a proporre delle soluzioni.
 
 \section{Domain adaptation}
 \label{sec:adaptation}
 
-Quella del domain adaptation è una delle strategie più utilizzate per cercare di ridurre il sim to real gap, in quanto si cercano di ridurre le differenze tra l'ambiente simulato e quello reale. Questa tecnica si basa sul trasformare i dati provenienti dal simulatore, in modo da farli assomigliare il più possibile a quelli raccolti nel mondo reale. Il processo di trasformazione dei dati comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati simulati. Una rete crea nuove immagini, il più simili possibili a quelle reali, mentre l'altra valuta la bontà delle immagini generate, che devono essere il più realistiche possibili. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
+Quella del domain adaptation è una delle strategie più utilizzate per cercare di ridurre il sim-to-real gap, in quanto si cercano di ridurre le differenze tra l'ambiente simulato e quello reale. Questa tecnica si basa sul trasformare i dati provenienti dal simulatore, in modo da farli assomigliare il più possibile a quelli raccolti nel mondo reale. Il processo di trasformazione dei dati comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati simulati. Una rete crea nuove immagini, il più simili possibili a quelle reali, mentre l'altra valuta la bontà delle immagini generate, che devono essere il più realistiche possibili. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
 
 Ad esempio, un'immagine presa da un ambiente simulato, con texture uniformi e un'illuminazione predefinita, può essere trasformata in una più fotorealistica variando la luce, aggiungendo riflessioni e creando imperfezioni sulla superficie di oggetti. In pratica si cerca di aggiungere caratteristiche presenti nel mondo reale a dati campionati da simulatori, in modo da ridurre la differenza tra quello che è il dominio della simulazione e quello della realtà.
 
 \section{Data augmentation}
 \label{sec:augmentation}
 
-Un ulteriore approccio per ridurre il sim to real gap è quello di augmentare i dati reali disponibili durante il training. La data augmentation è una tecnica molto diffusa nel campo della robotic vision, e consiste nell'applicare trasformazioni a dataset reali con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
+Un ulteriore approccio per ridurre il sim-to-real gap è quello di augmentare i dati reali disponibili durante il training. La data augmentation è una tecnica molto diffusa nel campo della robotic vision, e consiste nell'applicare trasformazioni a dataset reali con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
 
 Un'altro esempio nel quale questa tecnica può tornare utile, è nel caso si vengano a creare dipendenze da caretteristiche non rilevanti (bias). Ad esempio, se un modello tende ad associare la presenza di uno specifico sfondo a quella di un particolare oggetto, può essere conveniente effettuare trasformazioni andando a modificare o rimuovere lo sfondo, in modo da rendere indipendente la presenza di un oggetto da quella di un'altro.
 
@@ -124,8 +127,49 @@ La domain randomization permette quindi di generare grandi dataset di addestrame
 \chapter{Soluzione proposta}
 \label{chap:soluzione}
 
+Abbiamo visto che per addestrare un modello di deep learning è necessario un gran numero di dati, e che la campionatura di quest'ultimi nel mondo reale comporta spesso tempi e costi troppo elevati; si è quindi deciso di utilizzare un simulatore per la raccolta dei dati. Il risvolto negativo è però il divario tra simulazione e realtà, in quanto il modello dovrà essere utilizzato in ambienti reali. Bisogna quindi cercare di mitigare il problema del sim-to-real gap.
+
 \section{Idea}
 \label{chap:idea}
+
+Come discusso nel \hyperref[chap:stato_arte]{Capitolo \ref{chap:stato_arte}}, gli approcci più utilizzati in letteratura per affrontare questo problema consistono nel modificare i dati simulati così da renderli il più possibile simili a quelli reali. Nel presente lavoro, tuttavia, abbiamo scelto di risolvere il problema inverso, ovvero trasformare i dati reali per renderli il più simili possibile a quelli generati dall'ambiente simulato. In questo contesto, non ci concentriamo più sul sim-to-real gap, ma sull'opposto, ovvero sul problema del \textit{real-to-sim gap} ~\cite{8620258} ~\cite{Prakash_2021_ICCV}.
+
+Per fare ciò dobbiamo innanzitutto stabilire il nostro obiettivo finale, ovvero capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione. La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. La prima consiste nell'assegnare a ciascun pixel di un'immagine un valore che indica a quale classe appartiene l'oggetto rappresentato da quel pixel. La seconda invece, non solo associa un valore di classe a ciascun pixel, ma identifica in maniera univoca ogni oggetto, consentendo di distinguere tra oggetti appartenenti alla stessa classe. Un esempio di segmentazione semantica e segmentazione d'istanza è illustrato nella \hyperref[fig:segmentazione]{Figura \ref{fig:segmentazione}}.
+
+\begin{figure}[t]
+	\centering
+	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/original-segmentation.png}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/semantic-segmentation.png}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/instance-segmentation.png}}
+	\caption{Data un'immagine \textit{(a)}, esempio di segmentazione semantica \textit{(b)} e segmentazione d'istanza \textit{(c)}.}
+	\label{fig:segmentazione}
+\end{figure}
+
+Il task di segmentazione semantica sarà effettuato da un modello (\textit{segmentatore}) addestrato con dati simulati, che performa in modo ottimale solo con dati provenienti dal simulatore stesso. Per rendere questo modello applicabile ai dati reali, proponiamo di trasformarli in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. In questo modo, il segmentatore potrà elaborare efficacemente le immagini provenienti dai sensori.
+
+La strategia scelta per la trasformazione dei dati consiste nell'adottare una seconda rete neutale profonda, che funge da encoder-decoder. Questo secondo modello non deve fare altro che rielaborare i dati reali che riceve in ingresso, modificandoli come se li aspetterebbe il simulatore. Successivamente l'output dell'encoder-decoder viene passato come input al segmentatore, che a questo punto può segmentare l'immagine.
+
+
+
+\begin{itemize}
+	\item Scegliere un simulatore e realizzare un programma che permetta di campionare dati al suo interno. I dati dovranno poi essere salvati in strutture dati apposite, in modo da poter manipolare e accedere al contenuto.
+	\item Scegliere un modello che sia adatto al task richiesto, e che non richieda troppe risorse computazionali per fare inferenza. Idealmente questo
+\end{itemize}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width = \textwidth, clip]{images/unet-yolo-architecture}
+	\caption{Schema dell'architettura UNet - YOLO}
+	\label{fig:unet-yolo-architecture}
+\end{figure}
+
+Per questo progetto, è stata scelta la segmentazione come task principale. 
+
+
+
+In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto ci consente di semplificare il lavoro del modello, e di conseguenza ridurne la complessità. Questo è l'ideale nel campo della robotica mobile, in quanto porta a un minor carico computazionale e di conseguenza ad una maggiore autonomia.
 
 \section{Strumenti}
 \label{chap:strumenti}
