@@ -134,7 +134,11 @@ Abbiamo visto che per addestrare un modello di deep learning è necessario un gr
 
 Come discusso nel \hyperref[chap:stato_arte]{Capitolo \ref{chap:stato_arte}}, gli approcci più utilizzati in letteratura per affrontare questo problema consistono nel modificare i dati simulati così da renderli il più possibile simili a quelli reali. Nel presente lavoro, tuttavia, abbiamo scelto di risolvere il problema inverso, ovvero trasformare i dati reali per renderli il più simili possibile a quelli generati dall'ambiente simulato. In questo contesto, non ci concentriamo più sul sim-to-real gap, ma sull'opposto, ovvero sul problema del \textit{real-to-sim gap} ~\cite{8620258} ~\cite{Prakash_2021_ICCV}.
 
-Per fare ciò dobbiamo innanzitutto stabilire il nostro obiettivo finale, ovvero capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione. La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. La prima consiste nell'assegnare a ciascun pixel di un'immagine un valore che indica a quale classe appartiene l'oggetto rappresentato da quel pixel. La seconda invece, non solo associa un valore di classe a ciascun pixel, ma identifica in maniera univoca ogni oggetto, consentendo di distinguere tra oggetti appartenenti alla stessa classe. Un esempio di segmentazione semantica e segmentazione d'istanza è illustrato nella \hyperref[fig:segmentazione]{Figura \ref{fig:segmentazione}}.
+Per fare ciò dobbiamo innanzitutto stabilire il nostro obiettivo finale, ovvero capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
+
+La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. La prima consiste nell'assegnare a ciascun pixel di un'immagine un valore che indica a quale classe appartiene l'oggetto rappresentato da quel pixel. La seconda invece, non solo associa un valore di classe a ciascun pixel, ma identifica in maniera univoca ogni oggetto, consentendo di distinguere tra oggetti appartenenti alla stessa classe. Un esempio di segmentazione semantica e segmentazione d'istanza è illustrato nella \hyperref[fig:segmentazione]{Figura \ref{fig:segmentazione}}.
+
+In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto ci consente di semplificare il lavoro del modello, e di conseguenza ridurne la complessità. Questo è l'ideale nel campo della robotica mobile, in quanto porta a un minor carico computazionale e di conseguenza ad una maggiore autonomia.
 
 \begin{figure}[t]
 	\centering
@@ -143,33 +147,26 @@ Per fare ciò dobbiamo innanzitutto stabilire il nostro obiettivo finale, ovvero
 	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/semantic-segmentation.png}}
 	\hspace{0.01\textwidth}
 	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/instance-segmentation.png}}
-	\caption{Data un'immagine \textit{(a)}, esempio di segmentazione semantica \textit{(b)} e segmentazione d'istanza \textit{(c)}.}
+	\caption{Data un'immagine (a), esempio di segmentazione semantica (b) e segmentazione d'istanza (c).}
 	\label{fig:segmentazione}
 \end{figure}
 
-Il task di segmentazione semantica sarà effettuato da un modello (\textit{segmentatore}) addestrato con dati simulati, che performa in modo ottimale solo con dati provenienti dal simulatore stesso. Per rendere questo modello applicabile ai dati reali, proponiamo di trasformarli in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. In questo modo, il segmentatore potrà elaborare efficacemente le immagini provenienti dai sensori.
+Il nostro approccio si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) addestrato con dati simulati, che opera in modo ottimale solo con dati provenienti dal simulatore stesso, e un sistema di trasformazione dei dati reali.
 
-La strategia scelta per la trasformazione dei dati consiste nell'adottare una seconda rete neutale profonda, che funge da encoder-decoder. Questo secondo modello non deve fare altro che rielaborare i dati reali che riceve in ingresso, modificandoli come se li aspetterebbe il simulatore. Successivamente l'output dell'encoder-decoder viene passato come input al segmentatore, che a questo punto può segmentare l'immagine.
+Bisogna quindi trasformare i dati reali in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. Questa trasformazione viene effettuata tramite una seconda rete neurale profonda con architettura encoder-decoder. Il compito di questo secondo modello è quello di rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli corrispondere alle caratteristiche attese dal segmentatore. L'output dell'encoder-decoder viene quindi utilizzato come input del segmentatore, che a questo punto riuscirà a fare correttamente inferenza sul dato ricevuto.
 
+Il modo più semplice e intuitivo per addestrare l'encoder-decoder consiste nel prendere il segmentatore pre-addestrato sui dati simulati e congelare i suoi pesi. A questo punto l'encoder-decoder viene co-addestrato utilizzando la funzione di loss calcolata dal segmentatore. Durante il processo di addestramento i dati attraversano prima l'encoder-decoder, il suo output diventa l'input del segmentatore che a sua volta calcola la loss. A questo punto si effettua la backpropagation, che aggiorna solo i pesi dell'encoder-decoder e che lascia invariati quelli del segmentatore.
 
+Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati reali segmentati per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto a realizzare grandi dataset annotati richiesti da altre tecniche.
 
-\begin{itemize}
-	\item Scegliere un simulatore e realizzare un programma che permetta di campionare dati al suo interno. I dati dovranno poi essere salvati in strutture dati apposite, in modo da poter manipolare e accedere al contenuto.
-	\item Scegliere un modello che sia adatto al task richiesto, e che non richieda troppe risorse computazionali per fare inferenza. Idealmente questo
-\end{itemize}
+Per il segmentatore si è scelto un modello YOLO, mentre per l'encoder-decoder abbiamo optato per una semplice UNet. Il motivo della scelta di questi particolari modelli è descritta nelle prossime sezioni. Uno schema riassuntivo dell'architettura UNet - YOLO è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \textwidth, clip]{images/unet-yolo-architecture}
 	\caption{Schema dell'architettura UNet - YOLO}
-	\label{fig:unet-yolo-architecture}
+	\label{fig:architettura-unet-yolo}
 \end{figure}
-
-Per questo progetto, è stata scelta la segmentazione come task principale. 
-
-
-
-In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto ci consente di semplificare il lavoro del modello, e di conseguenza ridurne la complessità. Questo è l'ideale nel campo della robotica mobile, in quanto porta a un minor carico computazionale e di conseguenza ad una maggiore autonomia.
 
 \section{Strumenti}
 \label{chap:strumenti}
