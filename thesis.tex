@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{subfig}
 \usepackage{graphicx}
+\usepackage{siunitx}
 
 % Informazioni copertina
 \university{Università degli Studi di Milano}
@@ -132,7 +133,7 @@ Abbiamo visto che per addestrare un modello di deep learning è necessario un gr
 \section{Idea}
 \label{chap:idea}
 
-Come discusso nel \hyperref[chap:stato_arte]{Capitolo \ref{chap:stato_arte}}, gli approcci più utilizzati in letteratura per affrontare questo problema consistono nel modificare i dati simulati così da renderli il più possibile simili a quelli reali. Nel presente lavoro, tuttavia, abbiamo scelto di risolvere il problema inverso, ovvero trasformare i dati reali per renderli il più simili possibile a quelli generati dall'ambiente simulato. In questo contesto, non ci concentriamo più sul sim-to-real gap, ma sull'opposto, ovvero sul problema del \textit{real-to-sim gap} ~\cite{8620258} ~\cite{Prakash_2021_ICCV}.
+Come discusso nel \hyperref[chap:stato_arte]{Capitolo \ref{chap:stato_arte}}, gli approcci più utilizzati in letteratura per affrontare questo problema consistono nel modificare i dati simulati così da renderli il più possibile simili a quelli reali. Nel presente lavoro, tuttavia, abbiamo scelto di risolvere il problema inverso, ovvero trasformare i dati reali per renderli il più simili possibile a quelli generati dall'ambiente simulato. In questo contesto, non ci concentriamo più sul sim-to-real gap, ma sull'opposto, ovvero sul problema del \textit{real-to-sim gap}~\cite{8620258}~\cite{Prakash_2021_ICCV}.
 
 Per fare ciò dobbiamo innanzitutto stabilire il nostro obiettivo finale, ovvero capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
 
@@ -157,19 +158,40 @@ Bisogna quindi trasformare i dati reali in dati simili a quelli simulati, proiet
 
 Il modo più semplice e intuitivo per addestrare l'encoder-decoder consiste nel prendere il segmentatore pre-addestrato sui dati simulati e congelare i suoi pesi. A questo punto l'encoder-decoder viene co-addestrato utilizzando la funzione di loss calcolata dal segmentatore. Durante il processo di addestramento i dati attraversano prima l'encoder-decoder, il suo output diventa l'input del segmentatore che a sua volta calcola la loss. A questo punto si effettua la backpropagation, che aggiorna solo i pesi dell'encoder-decoder e che lascia invariati quelli del segmentatore.
 
-Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati reali segmentati per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto a realizzare grandi dataset annotati richiesti da altre tecniche.
-
-Per il segmentatore si è scelto un modello YOLO, mentre per l'encoder-decoder abbiamo optato per una semplice UNet. Il motivo della scelta di questi particolari modelli è descritta nelle prossime sezioni. Uno schema riassuntivo dell'architettura UNet - YOLO è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
+Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati reali segmentati per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto a realizzare grandi dataset annotati richiesti da altre tecniche. Uno schema riassuntivo dell'architettura proposta è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width = \textwidth, clip]{images/unet-yolo-architecture}
-	\caption{Schema dell'architettura UNet - YOLO}
+	\caption{Schema dell'architettura real-to-sim}
 	\label{fig:architettura-unet-yolo}
 \end{figure}
 
 \section{Strumenti}
 \label{chap:strumenti}
+
+In questa sezione verranno descritti i diversi strumenti utilizzati in questo elaborato per implementare l'architettura proposta. La scelta di ciascuno strumento è stata guidata da considerazioni relative alle esigenze del progetto e alle caratteristiche tecniche necessarie.
+
+\subsection{Simulatore}
+\label{chap:simulatore}
+
+Questo elaborato si basa in parte sul lavoro pregresso realizzato da Riccardo Raffini, che nell'A.A. 2022/2023 ha posto le fondamenta per questa tesi. Raffini ha realizzato un'architettura capace di campionare automaticamente dati da un ambiente simulato, fornendo risultati che hanno guidato la scelta degli strumenti utilizzati in questo progetto. Si può quindi dire che la seguente tesi è un continuo della sua ricerca.
+
+Il simulatore scelto da Raffini è stato iGibson 2.0~\cite{li2021igibson}. A differenza di altre soluzioni, iGibson consente di eseguire un insieme generico di attività domestiche. Questo elemento è fondamentale se l'obiettivo finale è generare e raccogliere campioni di dati relativi ad attività robotiche, non solo inerenti alla navigazione o esplorazione dell'ambiente. In questo simulatore, gli oggetti sono caratterizzati da uno stato (temperatura, umidità, pulizia) che non è definito da semplici valori booleani (caldo/freddo, asciutto/bagnato, pulito/sporco), ma da uno stato fisico esteso. Si cerca quindi di riprodurre in maniera fedele i fenomeni fisici che stanno alla base dei cambiamenti di stato, aumentando così il livello di dettaglio raggiungibile dalle varie attività. Altra peculiarità importante del simulatore, è l'integrazione di un sistema generativo basato su predicati logici. Questo permette di creare scene densamente popolate di oggetti provenienti dai vari dataset~\cite{doi:10.1177/0278364919844314}~\cite{pmlr-v164-srivastava22a}. Questo simulatore si differenzia dagli altri anche per l'integrazione di un'interfaccia di realtà virtuale, funzione che può risultare utile per alcune finalità di ricerca.
+
+Di base iGibson include 15 diverse scene. Ogni scena è semanticamente annotata e contiene diverse categorie di oggetti interattivi, così da garantire un'ottima diversificazione per la campionatura dei dati. Inoltre, il simulatore consente di rendere casuale texture e mesh di ogni singolo oggetto, e in aggiunta permette di caricare scansioni di ambienti reali.
+
+\subsection{Dataset iGibson}
+\label{chap:dataset_igibson}
+
+Per il suo elaborato, Raffini ha sviluppato un pacchetto ROS~\cite{quigley2009ros} (Robot Operating System) che, integrato al simulatore, permette di controllare un robot di servizio all'interno di un ambiente simulato. Grazie all'architettura progettata, questo robot è in grado di muoversi autonomamente nell'ambiente e raccogliere dati, successivamente elaborati e salvati in un dataset tramite un apposito modulo. Complessivamente sono stati raccolti 60 dataset, campionati da 15 diverse scene.
+
+Questi dataset sono stati concepiti principalmente per addestrare modelli capaci di rilevare oggetti, in particolare per individuare porte e classificare il loro stato (aperte/chiuse). Tuttavia, le immagini raccolte si prestano anche per scopi più generici, come nel nostro caso. I dati sono stati campionati con una frequenza pari a \SI{1}{\hertz}, e ogni campionatura comprende quattro tipologie di immagini: un'immagine RGB dell'ambiente, una mappa di profondità, un'immagine per la segmentazione semantica e una per la segmentazione d'istanza. Sono inoltre presenti dati relativi alle bounding box delle porte, la posa del robot nell'istante della rilevazione, e la posa finale di goal.
+
+\subsection{Segmentatore Semantico}
+\label{chap:segmentatore_semantico}
+
+La scelta del segmentatore semantico è stata una delle decisioni più importanti di questo progetto, in quanto tutto il lavoro successivo si sarebbe basato su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto il lavoro da capo.
 
 \section{Aspettative}
 \label{chap:aspettative}
