@@ -191,16 +191,19 @@ Questi dataset sono stati concepiti principalmente per addestrare modelli capaci
 \subsection{Segmentatore Semantico}
 \label{chap:segmentatore_semantico}
 
-La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto il lavoro da capo.
+La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto il lavoro da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
 
-Diversi modelli hanno architetture differenti, e sono progettati per scopi diversi. Quelli inizialmente considerati sono stati YOLO, DETR e Detectron2.
+\subsubsection{YOLO11}
 
-\textbf{YOLO}
-YOLO~\cite{JIANG20221066}, acronimo di You Only Look Once, è un modello 
+YOLO~\cite{JIANG20221066}, acronimo di \textit{You Only Look Once}, è un algotritmo ampiamente utilizzato~\cite{sultana2020review} per la rilevazione e classificazione di oggetti. I suoi principali punti di forza risiedono nelle piccole dimensioni del modello e nel breve tempo necessario per l'inferenza. La sua struttura è semplice e diretta; è infatti in grado di predire posizioni e categorie di oggetti tramite reti neurali, e il tutto in una singola scansione dell'immagine. Questo lo rende molto veloce e adatto ad analizzare flussi video in tempo reale. YOLO possiede inoltre una forte capacità di generalizzazione, consentendogli di apprendere caratteristiche da trasferire ad altri ambienti.
 
-\textbf{DETR}
+L'architettura YOLO si basa su tre componenti fondamentali. La \textit{backbone}, estrae caratteristiche utilizzando reti neurali convoluzionali, trasformando i dati grezzi delle immagini in mappe di caratteristiche multi-scala. Il \textit{neck} agisce come uno stadio intermedio di elaborazione, e permette di aggregare e migliorare le rappresentazioni delle caratteristiche attraverso diverse scale. Infine, la \textit{head}, genera gli output finali localizzando e classificando gli oggetti secondo le mappe precedentemente elaborate.
 
-\textbf{Detectron2}
+Sulla base di quest'architettura, YOLO11 estende e migliora quanto realizzato dai suoi predecessori, introducendo nuove migliorie architetturali e ottimizzando al contempo i parametri. Rispetto a YOLOv8, YOLO11 ha una mAP (\textit{mean Average Precision}) più elevata sul dataset COCO, riducendo allo stesso tempo il numero di parametri del 22\%~\cite{khanam2024yolov11overviewkeyarchitectural}. Sono state inoltre raggiunte velocità di elaborazione più elevate, ed è stato migliorato il processo di estrazione delle caratteristiche della backbone e del neck. YOLO11 è stato progettato per essere utilizzato efficacemente sia su piattaforme cloud, che tu dispositivi edge, aumentando così il numero di casi d'uso.
+
+\subsubsection{DETR}
+
+\subsubsection{Detectron2}
 
 \section{Aspettative}
 \label{chap:aspettative}
