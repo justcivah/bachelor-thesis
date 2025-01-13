@@ -7,6 +7,9 @@
 \usepackage{subfig}
 \usepackage{graphicx}
 \usepackage{siunitx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
 
 % Informazioni copertina
 \university{Università degli Studi di Milano}
@@ -181,8 +184,8 @@ Il simulatore scelto da Raffini è stato iGibson 2.0~\cite{li2021igibson}. A dif
 
 Di base iGibson include 15 diverse scene. Ogni scena è semanticamente annotata e contiene diverse categorie di oggetti interattivi, così da garantire un'ottima diversificazione per la campionatura dei dati. Inoltre, il simulatore consente di rendere casuale texture e mesh di ogni singolo oggetto, e in aggiunta permette di caricare scansioni di ambienti reali.
 
-\subsection{Dataset iGibson}
-\label{chap:dataset_igibson}
+\subsection{Dataset simulato}
+\label{chap:dataset_simulato}
 
 Per il suo elaborato, Raffini ha sviluppato un pacchetto ROS~\cite{quigley2009ros} (Robot Operating System) che, integrato al simulatore, permette di controllare un robot di servizio all'interno di un ambiente simulato. Grazie all'architettura progettata, questo robot è in grado di muoversi autonomamente nell'ambiente e raccogliere dati, successivamente elaborati e salvati in un dataset tramite un apposito modulo. Complessivamente sono stati raccolti 60 dataset, campionati da 15 diverse scene.
 
@@ -191,7 +194,7 @@ Questi dataset sono stati concepiti principalmente per addestrare modelli capaci
 \subsection{Segmentatore Semantico}
 \label{chap:segmentatore_semantico}
 
-La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto il lavoro da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
+La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
 
 \subsubsection{YOLO11}
 
@@ -203,10 +206,51 @@ Sulla base di quest'architettura, YOLO11 estende e migliora quanto realizzato da
 
 \subsubsection{DETR}
 
+Il modello \textit{DEtection TRansformers}, abbreviato DETR~\cite{carion2020end}, è stato un notevole passo in avanti nell'ambito della rilevazione di oggetti. Questo approccio, ideato dai ricercatori di Facebook, unisce infatti i benefici delle reti neurali profonde a quelli dei transformer~\cite{10.1145/3505244}, portando ad un'architettura più semplice e con predizioni più accurate anche in caso di sovrapposizione di oggetti. Inoltre, l'utilizzo dei transformer consente di catturare in modo ottimale le relazioni tra gli oggetti e il contesto globale dell'immagine.
+
+L'architettura si compone di una rete neurale convoluzionale e di un transformer, seguito da una serie di reti neurali dirette~\cite{article_890416} (FNN, Forward Neural Network). I transformer sono stati inizialmente ideati nell'ambito dell'elaborazione del linguaggio naturale (NLP, Natural Language Processing), e DETR è innovativo in quanto primo modello di computer vision ad integrare questo componente.
+
+Questo modello risulta innovativo sotto molti punti di vista, presenta anche diverse sfide e limitazioni. Addestrare DETR può risultare infatti costoso in termini di risorse hardware e tempo richiesto, in particolare a causa della presenza dei transformer. In aggiunta, l'addestramento richiede dataset di grandi dimensioni, il che ne limita l'uso in contesti in cui i dati disponibili sono limitati.
+
 \subsubsection{Detectron2}
 
-\section{Aspettative}
-\label{chap:aspettative}
+Detectron2 è un altro modello sviluppato dal gruppo di ricerca di Facebook. Questo modello offre performance eccellenti per compiti di segmentazione semantica su immagini singole, ma richiede hardware costoso sia per l'addestramento che per l'inferenza. Queste limitazioni rendono difficile poter lavorare su flussi di dati in tempo reale, e le sue numerose dipendenze risultano un problema per rilasciarlo in produzione.
+
+La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11.
+
+\begin{table}[t]
+	\centering
+	\begin{tabular}{
+			@{}l
+			>{\centering\arraybackslash}p{2cm}
+			>{\centering\arraybackslash}p{2cm}
+			>{\centering\arraybackslash}p{2cm}
+			>{\centering\arraybackslash}p{2cm}
+			>{\centering\arraybackslash}p{2cm}@{}}
+		\toprule
+		\textbf{Modello} & 
+		\begin{tabular}[c]{@{}c@{}}\textbf{Immagine}\\ \footnotesize{(pixel)}\end{tabular} & 
+		$\textbf{mAP}^{\text{box}}_{50-95}$ & 
+		$\textbf{mAP}^{\text{mask}}_{50-95}$ & 
+		\begin{tabular}[c]{@{}c@{}}\textbf{Velocità} \\ NVIDIA T4 \\ \footnotesize{(ms)}\end{tabular} & 
+		\begin{tabular}[c]{@{}c@{}}\textbf{Parametri} \\ \footnotesize{(M)}\end{tabular} \\
+		\midrule
+		YOLO11n-seg & 640 & 38.9 & 32.0 & $1.8 \pm 0.0$ & 2.9 \\
+		\rowcolor[HTML]{F4F4F4} YOLO11s-seg & 640 & 46.6 & 37.8 & $2.9 \pm 0.0$ & 10.1 \\
+		YOLO11m-seg & 640 & 51.5 & 41.5 & $6.3 \pm 0.1$ & 22.4 \\
+		\rowcolor[HTML]{F4F4F4} YOLO11l-seg & 640 & 53.4 & 42.9 & $7.8 \pm 0.2$ & 27.6 \\
+		YOLO11x-seg & 640 & 54.7 & 43.8 & $15.8 \pm 0.7$ & 62.1 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Performance dei vari modelli YOLO11 per la segmentazione semantica.}
+	\label{tab:yolo-prestazioni-segmentazione}
+\end{table}
+
+\subsection{Dataset reale}
+\label{chap:dataset_reale}
+
+\subsection{Encoder-Decoder}
+\label{chap:encoder_decoder}
 
 % CAPITOLO 4: Metodo
 \chapter{Metodo}
