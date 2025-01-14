@@ -216,7 +216,9 @@ Questo modello risulta innovativo sotto molti punti di vista, presenta anche div
 
 Detectron2 è un altro modello sviluppato dal gruppo di ricerca di Facebook. Questo modello offre performance eccellenti per compiti di segmentazione semantica su immagini singole, ma richiede hardware costoso sia per l'addestramento che per l'inferenza. Queste limitazioni rendono difficile poter lavorare su flussi di dati in tempo reale, e le sue numerose dipendenze risultano un problema per rilasciarlo in produzione.
 
-La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11.
+\vspace{10pt}
+
+La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto alle proprie esigenze.
 
 \begin{table}[t]
 	\centering
@@ -248,6 +250,10 @@ La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi 
 
 \subsection{Dataset reale}
 \label{chap:dataset_reale}
+
+Per i dati reali con i quali co-addestrare l'encoder-decoder e YOLO, è stato scelto il dataset ScanNet~\cite{dai2017scannet}. ScanNet è un dataset video RGB-D contenente 2,5 milioni di immagini raccolte in più di 1500 ambienti differenti. Ogni scansione contiene informazioni come la posa della fotocamera, ricostruzione della superficie, segmentazione semantica e d'istanza. Per questo progetto è stata utilizzato ScanNet v2, che include le stesse scene della prima versione ma con annotazioni di maggiore qualità. Altre alternative ugualmente valide a questo dataset possono essere il THUD Robotic Dataset~\cite{10611489} e ScanNet++~\cite{yeshwanth2023scannethighfidelitydataset3d}.
+
+In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gran numero di ambienti disponibili e la loro varietà. Questi vanno dalle camere da letto, ai soggiorni, agli uffici, alle aule scolastiche, alle palestre e alle biblioteche, offrendo così una rappresentazione completa e realistica di contesti quotidiani. Di contro, nonostante ScanNet v2 offra annotazioni robuste, ScanNet++ si distingue per una qualità superiore, includendo più dettagli semantici e informazioni sulla geometria più precise. In conclusione, Scannet v2 si è rivelato un ottimo compromesso tra la varietà di ambienti disponibili e la qualità delle annotazioni.
 
 \subsection{Encoder-Decoder}
 \label{chap:encoder_decoder}
