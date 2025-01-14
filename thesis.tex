@@ -218,7 +218,7 @@ Detectron2 è un altro modello sviluppato dal gruppo di ricerca di Facebook. Que
 
 \vspace{10pt}
 
-La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto alle proprie esigenze.
+La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto in base alle proprie esigenze.
 
 \begin{table}[t]
 	\centering
@@ -257,6 +257,24 @@ In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gr
 
 \subsection{Encoder-Decoder}
 \label{chap:encoder_decoder}
+
+Come encoder-decoder si è scelto di utilizzare una UNet. Quest'architettura, introdotta per la prima volta nell'articolo \textit{U-Net: Convolutional Networks for Biomedical Image Segmentation}~\cite{ronneberger2015u}, è stata realizzata come soluzione alla scarsa disponibilità di dati in ambito medico. Si è quindi cercato di creare un'architettura in grado di imparare da una piccola quantità di dati, mantenendo al contempo accuratezza e velocità di inferenza. E questo è esattamente quello che ci serve: vogliamo infatti un modello capace di imparare da una piccola quantità di dati reali, e riuscire a generalizzare e performare in maniera rapida e ottimale. 
+
+La UNet è formata da due componenti principali, un encoder e un decoder. Il primo serve a ridurre le dimensioni delle immagini, mantenendo e trasmettendo ai layer successivi caratteristiche importanti dell'immagine. Il decoder effettua invece il lavoro inverso, interpolando la mappa delle caratteristiche e producendo una mappa di segmentazione utilizzando i pattern appresi durante la fase di encoding. Grazie ai suoi 23 layer, la UNet è capace di estrarre e catturare caratteristiche complesse, andando poi a ricostruire le informazioni spaziali.
+
+A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet, l'architettura originale è stata rivista e nuove varianti sono state create. Quelle più rilevanti sono:
+
+\begin{itemize}
+	\item \textbf{Dense UNet}: A differenza della classica UNet, quest'architettura consente una segmentazione più precisa grazie all'utilizzo di DenseNet~\cite{8296389} (Densely Connected Convolutional Networks), introducendo connessioni dense tra i vari layer convoluzionali. Questo migliora la propagazione di caratteristiche e riduce il problema della scomparsa del gradiente.
+	\item \textbf{Attention UNet}: L'Attention UNet~\cite{oktay2018attentionunetlearninglook} permette di focalizzare l'attenzione solo su determinate parti della mappa delle caratteristiche, andando quindi a ridurre la quantità di risorse computazionali necessarie per produrre il risultato finale. Inoltre, le connessioni tra encoder e decoder non sono concatenate direttamente, ma vengono pesate in maniera adattiva.
+	\item \textbf{3D UNet}: Quest'architettura~\cite{çiçek20163dunetlearningdense} può tornare utile nell'analiti di dati volumetrici, molto frequenti ad esempio nel campo della biomedicina. Creare manualmente annotazioni per tutte le sezioni di un singolo dato può risultare un lavoro tedioso e inutile, in quanto sezioni vicine risulteranno simili. Sarebbe quindi difficile realizzare manualmente grandi dataset da utilizzare per l'addestramento di una rete neurale. Le 3D UNet, tuttavia, sono capaci di apprendere avendo a disposizione un esiguo numero di sezioni 2D per ogni dato, riuscendo a fornire segmentazioni precise~\cite{çiçek20163dunetlearningdense}.
+\end{itemize}
+
+Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
+
+
+
+
 
 % CAPITOLO 4: Metodo
 \chapter{Metodo}
