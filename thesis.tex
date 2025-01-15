@@ -202,7 +202,7 @@ YOLO~\cite{JIANG20221066}, acronimo di \textit{You Only Look Once}, è un algotr
 
 L'architettura YOLO si basa su tre componenti fondamentali. La \textit{backbone}, estrae caratteristiche utilizzando reti neurali convoluzionali, trasformando i dati grezzi delle immagini in mappe di caratteristiche multi-scala. Il \textit{neck} agisce come uno stadio intermedio di elaborazione, e permette di aggregare e migliorare le rappresentazioni delle caratteristiche attraverso diverse scale. Infine, la \textit{head}, genera gli output finali localizzando e classificando gli oggetti secondo le mappe precedentemente elaborate.
 
-Sulla base di quest'architettura, YOLO11 estende e migliora quanto realizzato dai suoi predecessori, introducendo nuove migliorie architetturali e ottimizzando al contempo i parametri. Rispetto a YOLOv8, YOLO11 ha una mAP (\textit{mean Average Precision}) più elevata sul dataset COCO, riducendo allo stesso tempo il numero di parametri del 22\%~\cite{khanam2024yolov11overviewkeyarchitectural}. Sono state inoltre raggiunte velocità di elaborazione più elevate, ed è stato migliorato il processo di estrazione delle caratteristiche della backbone e del neck. YOLO11 è stato progettato per essere utilizzato efficacemente sia su piattaforme cloud, che tu dispositivi edge, aumentando così il numero di casi d'uso.
+Sulla base di quest'architettura, YOLO11~\cite{yolo11_ultralytics} estende e migliora quanto realizzato dai suoi predecessori, introducendo nuove migliorie architetturali e ottimizzando al contempo i parametri. Rispetto a YOLOv8, YOLO11 ha una mAP (\textit{mean Average Precision}) più elevata sul dataset COCO, riducendo allo stesso tempo il numero di parametri del 22\%~\cite{khanam2024yolov11overviewkeyarchitectural}. Sono state inoltre raggiunte velocità di elaborazione più elevate, ed è stato migliorato il processo di estrazione delle caratteristiche della backbone e del neck. YOLO11 è stato progettato per essere utilizzato efficacemente sia su piattaforme cloud, che tu dispositivi edge, aumentando così il numero di casi d'uso.
 
 \subsubsection{DETR}
 
@@ -218,7 +218,7 @@ Detectron2 è un altro modello sviluppato dal gruppo di ricerca di Facebook. Que
 
 \vspace{10pt}
 
-La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto in base alle proprie esigenze.
+La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto in base alle proprie esigenze. Nel nostro caso abbiamo deciso di utilizzare il modello YOLO11l-seg, la versione \textit{large} di YOLO11 adatto a compiti di segmentazione semantica.
 
 \begin{table}[t]
 	\centering
@@ -255,7 +255,7 @@ Per i dati reali con i quali co-addestrare l'encoder-decoder e YOLO, è stato sc
 
 In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gran numero di ambienti disponibili e la loro varietà. Questi vanno dalle camere da letto, ai soggiorni, agli uffici, alle aule scolastiche, alle palestre e alle biblioteche, offrendo così una rappresentazione completa e realistica di contesti quotidiani. Di contro, nonostante ScanNet v2 offra annotazioni robuste, ScanNet++ si distingue per una qualità superiore, includendo più dettagli semantici e informazioni sulla geometria più precise. In conclusione, Scannet v2 si è rivelato un ottimo compromesso tra la varietà di ambienti disponibili e la qualità delle annotazioni.
 
-\subsection{Encoder-Decoder}
+\subsection{Encoder-decoder}
 \label{chap:encoder_decoder}
 
 Come encoder-decoder si è scelto di utilizzare una UNet. Quest'architettura, introdotta per la prima volta nell'articolo \textit{U-Net: Convolutional Networks for Biomedical Image Segmentation}~\cite{ronneberger2015u}, è stata realizzata come soluzione alla scarsa disponibilità di dati in ambito medico. Si è quindi cercato di creare un'architettura in grado di imparare da una piccola quantità di dati, mantenendo al contempo accuratezza e velocità di inferenza. E questo è esattamente quello che ci serve: vogliamo infatti un modello capace di imparare da una piccola quantità di dati reali, e riuscire a generalizzare e performare in maniera rapida e ottimale. 
@@ -266,34 +266,56 @@ A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet,
 
 \begin{itemize}
 	\item \textbf{Dense UNet}: A differenza della classica UNet, quest'architettura consente una segmentazione più precisa grazie all'utilizzo di DenseNet~\cite{8296389} (Densely Connected Convolutional Networks), introducendo connessioni dense tra i vari layer convoluzionali. Questo migliora la propagazione di caratteristiche e riduce il problema della scomparsa del gradiente.
+	
 	\item \textbf{Attention UNet}: L'Attention UNet~\cite{oktay2018attentionunetlearninglook} permette di focalizzare l'attenzione solo su determinate parti della mappa delle caratteristiche, andando quindi a ridurre la quantità di risorse computazionali necessarie per produrre il risultato finale. Inoltre, le connessioni tra encoder e decoder non sono concatenate direttamente, ma vengono pesate in maniera adattiva.
-	\item \textbf{3D UNet}: Quest'architettura~\cite{çiçek20163dunetlearningdense} può tornare utile nell'analiti di dati volumetrici, molto frequenti ad esempio nel campo della biomedicina. Creare manualmente annotazioni per tutte le sezioni di un singolo dato può risultare un lavoro tedioso e inutile, in quanto sezioni vicine risulteranno simili. Sarebbe quindi difficile realizzare manualmente grandi dataset da utilizzare per l'addestramento di una rete neurale. Le 3D UNet, tuttavia, sono capaci di apprendere avendo a disposizione un esiguo numero di sezioni 2D per ogni dato, riuscendo a fornire segmentazioni precise~\cite{çiçek20163dunetlearningdense}.
+	
+	\item \textbf{3D UNet}: Quest'architettura~\cite{çiçek20163dunetlearningdense} può tornare utile nell'analisi di dati volumetrici, molto frequenti ad esempio nel campo della biomedicina. Creare manualmente annotazioni per tutte le sezioni di un singolo dato può risultare un lavoro tedioso e inutile, in quanto sezioni vicine risulteranno simili. Sarebbe quindi difficile realizzare manualmente grandi dataset da utilizzare per l'addestramento di una rete neurale. Le 3D UNet, tuttavia, sono capaci di apprendere avendo a disposizione un esiguo numero di sezioni 2D per ogni dato, riuscendo a fornire segmentazioni precise~\cite{çiçek20163dunetlearningdense}.
 \end{itemize}
 
 Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
-
-
-
-
 
 % CAPITOLO 4: Metodo
 \chapter{Metodo}
 \label{chap:metodo}
 
-\section{Raccolta dati su iGibson}
-\label{chap:raccolta_dati_igibson}
+Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione della nostra architettura UNet-YOLO. Nel seguente capitolo verrà invece spiegato nel dettaglio il processo che ha portato alla realizzazione dell'architettura completa, partendo dai dataset e dai modelli base.
 
-\section{Trasformazione dataset iGibson in formato YOLO}
-\label{chap:dataset_igibson_yolo}
+\section{Addestramento segmentatore semantico}
+\label{chap:addestramento_segmentatore_semantico}
 
-\section{Addestramento del modello YOLO11}
-\label{chap:addestramento_yolo}
+Per prima cosa è stato necessario convertire i dataset di iGibson in un formato compatibile con il framework YOLO. I dati raccolti da Raffini sono suddivisi in due diverse directory denominate \textit{0} e \textit{1}. Nella directory \textit{0} sono presenti campioni che non presentano rilevazioni di porte, mentre la directory \textit{1} contiene campioni che includono almeno una porta rilevata. Questa distinzione è stata fatta esclusivamente per semplificare il lavoro di addestramento e validazione di Raffini. Nel nostro caso, non trattando una singola categoria di oggetti ma lavorando con dati di segmentazione semantica, possiamo unire senza alcun problema i dati di queste due directory.
 
-\section{Trasformazione dataset ScanNet in formato UNet}
-\label{chap:dataset_scannet_unet}
+All'interno di queste due directory ne sono presenti delle altre, ognuna con una tipoligia diversa di dati al suo interno:
 
-\section{Addestramento del modello UNet}
-\label{chap:addestramento_unet}
+\begin{itemize}
+	\item \textbf{bounding\_boxes}: contiene un file \textit{.txt} per campione, nel quale è salvata una lista di coordinate delle bounding box delle porte, lo stato della porta (aperta/chiusa), l'id della porta e il suo nome all'interno del simulatore iGibson. Un esempio è:
+	
+	\begin{verbatim}
+		[(351, 0, 125, 328, 1, 23, 'door_8'),
+		 (269, 112, 59, 171, 1, 24, 'door_9')]
+	\end{verbatim}
+	
+	\item \textbf{depth\_image}: contiene un file \textit{.npy} per campione, all'interno del quale è salvato un array numpy tridimensionale. Ogni pixel rappresenta un valore di profondità, ovvero la distanza tra il sensore e l'oggetto all'interno della scena. Il valore di ogni pixel è compreso tra 0 ed 1, dove valori vicini allo zero indicano che l'oggetto è vicino al sensore, mentre valori vicini ad uno l'opposto.
+	
+	\item \textbf{goal\_status}: all'interno di questa directory sono presenti file \textit{.txt} che rappresentano i diversi obiettivi del robot all'interno dell'ambiente simulato. Un obbiettivo è un luogo da raggiungere all'interno della mappa, ed è rappresentato da una posizione, l'orientamento finale che il robot di servizio deve assumere, e lo stato di raggiungimento dell'obiettivo. Un esempio è:
+	
+	\begin{verbatim}
+		[{'position': {'x': 0.78, 'y': -0.6, 'z': 0.0},
+		  'orientation': {'x': 0.0, 'y': 0.0, 'z': 0.0, 'w': 1.0}}, '1']
+	\end{verbatim}
+	
+	\item \textbf{rgb\_image}: in questa directory sono contenute le immagini RGB dell'ambiente campionate dal robot. Come per i dati relativi alla profondità, anche queste immagini sono salvate in tensori tridimensionali NumPy. I valori originali dei pixel (0-255) sono stati normalizzati nell'intervallo $[0, 1]$; bisognerà tenere in considerazione anche questo fattore quando si dovranno convertire questi tensori in immagini.
+	
+	\item \textbf{sampling\_pose}:
+	
+	\item \textbf{semantic\_image}:
+	
+	\item \textbf{semantic\_instance\_image}:
+	
+\end{itemize}
+
+\section{Addestramento encoder-decoder}
+\label{chap:addestramento_encoder_decoder}
 
 % CAPITOLO 5: Analisi risultati
 \chapter{Analisi risultati}
