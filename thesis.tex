@@ -10,6 +10,28 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{colortbl}
+\usepackage{listings}
+\usepackage{caption}
+
+\renewcommand{\lstlistingname}{Codice}
+
+\lstdefinestyle{pythonstyle}{
+	backgroundcolor=\color{gray!7},
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\bfseries\color{blue!75},
+	stringstyle=\color{green!50!black},
+	commentstyle=\color{orange!70!black},
+	identifierstyle=\color{black},
+	numberstyle=\color{gray!100},
+	numbers=left,
+	stepnumber=1,
+	numbersep=8pt,
+	frame=lines,
+	rulecolor=\color{gray!50},
+	breaklines=true,
+	captionpos=b,
+	showstringspaces=false,
+}
 
 % Informazioni copertina
 \university{Università degli Studi di Milano}
@@ -281,7 +303,10 @@ Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eve
 Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione della nostra architettura UNet-YOLO. Nel seguente capitolo verrà invece spiegato nel dettaglio il processo che ha portato alla realizzazione dell'architettura completa, partendo dai dataset e dai modelli base.
 
 \section{Conversione dataset iGibson}
-\label{chap:addestramento_segmentatore_semantico}
+\label{chap:conversione_dataset_igibson}
+
+\subsection{Descrizione dataset iGibson}
+\label{chap:descrizione_dataset_igibson}
 
 Per prima cosa è stato necessario convertire i dataset di iGibson in un formato compatibile con il framework YOLO. I dati raccolti da Raffini sono suddivisi in due diverse directory denominate \textit{0} e \textit{1}. Nella directory 0 sono presenti campioni che non presentano rilevazioni di porte, mentre la directory 1 contiene campioni che includono almeno una porta. Questa distinzione è stata fatta esclusivamente per semplificare il lavoro di addestramento e validazione di Raffini. Nel nostro caso, non trattando una singola categoria di oggetti ma lavorando con dati di segmentazione semantica, possiamo unire senza alcun problema i dati di queste due directory. 
 
@@ -320,7 +345,8 @@ Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna co
 
 Tra tutti questi dati, gli unici che ci interessano per questo lavoro sono quelli contenuti nelle directory \textit{rgb\_image} e \textit{semantic\_image}.
 
-\vspace{10pt}
+\subsection{Formato dataset YOLO11}
+\label{chap:formato_dataset_yolo_per_segmentazione}
 
 Modelli YOLO11 per diversi task necessitano di dataset strutturati in maniera differente. Per il compito di segmentazione semantica è necessario creare un dataset col seguente formato; per ogni immagine bisogna creare un file di testo con lo stesso nome dell'immagine, e con estensione \textit{.txt}. Ogni riga al suo interno corrisponde ad una singola istanza di un oggetto all'interno dell'immagine, ed è strutturata in due parti: la classe dell'oggetto e le sue coordinate che lo delimitano. La classe è rappresentata da un intero (ad esempio 0 per le porte, 1 per i muri, etc.) mentre le coordinate che delimitano il contorno dell'oggetto sono posizioni assolute rispetto all'angolo in alto a sinistra dell'immagine, normalizzate tra 0 e 1. Una generica istanza all'interno del file di testo può essere la seguente:
 
@@ -337,9 +363,10 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 	1 0.504 0.000 0.501 0.004 0.498 0.004 0.493 0.010 0.492 0.0104
 \end{verbatim}
 
-\vspace{10pt}
+\subsection{Script di conversione}
+\label{chap:script_di_conversione}
 
-È quindi necessario convertire i dati di segmentazione semantica di iGibson in un formato valido per YOLO. Poichè non esiste un modo automatico per fare questa operazione, ho dovuto creare una serie di script Python. I principali sono:
+È quindi necessario convertire i dati di segmentazione semantica di iGibson in un formato valido per YOLO. Poichè non esiste un modo automatico per fare questa operazione, è stato necessario realizzare una serie di script Python. I principali sono:
 
 \begin{itemize}
 	\item \textbf{decompress\_data.py}: I dati all'interno dei dataset iGibson sono compressi in formato \textit{.tar.gz}. Data una directory di partenza, questo script decomprime automaticamente tutti i file in tutte le sue subdirectory.
@@ -350,14 +377,35 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 	
 	\item \textbf{remove\_classes.py}: Nei dati possono anche essere presenti classi troppo poco rappresentate o che non ci interessa analizzare. Questo script permette di rimuovere le classi non desiderate dal dataset. Un esempio è la classe \textit{altoparlante} che è stata rimossa in quanto presente in una sola stanza di una scena.
 	
-	\item \textbf{create\_validation\_data.py}:
+	\item \textbf{create\_validation\_data.py}: Una volta salvate le immagini e convertiti i file di segmentazione, con questa funzione è possibile creare un dataset di validazione. Per farlo basta indicare la proporzione di dati da trasferire, valore compreso nell'intervallo $[0, 1]$.
 \end{itemize}
+
+Tutte le funzioni in questi file sono chiamate e gestite in maniera automatica dallo script \textit{convert\_dataset.py}, ed è possibile cambiare i valori predefiniti di percorsi e nomi modificando il file \textit{paths.json}. Al termine della conversione, lo script principale genera automaticamente il file \textit{dataset.yaml} che contiene informazioni riguardo la posizione dei dati di training e validazione, nonchè la lista di tutte le classi con i rispettivi nomi.
 
 \section{Addestramento segmentatore semantico}
 \label{chap:addestramento_segmentatore_semantico}
 
+Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a scaricare il modello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è il seguente:
+
+\lstset{style=pythonstyle}
+\begin{lstlisting}[language=Python, caption={Caricare e addestrare un modello YOLO11}, label={lst:addestramentoyolo}, float]
+	from ultralytics import YOLO
+	
+	# Carica un modello
+	model = YOLO("yolo11l-seg.pt")
+	
+	# Addestra il modello
+	results = model.train(
+		data="../datasets/igibson-dataset/dataset.yaml",
+		epochs=100,
+		imgsz=512,
+		batch=8,
+		save=True
+	)
+\end{lstlisting}
+
 \section{Conversione dataset ScanNet}
-\label{chap:addestramento_segmentatore_semantico}
+\label{chap:conversione_dataset_scannet}
 
 \section{Addestramento encoder-decoder}
 \label{chap:addestramento_encoder_decoder}
