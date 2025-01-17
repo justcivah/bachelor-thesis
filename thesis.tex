@@ -13,7 +13,20 @@
 \usepackage{listings}
 \usepackage{caption}
 
-\renewcommand{\lstlistingname}{Codice}
+\newcommand{\lstlistingnamewithno}{Codice}
+\makeatletter
+\renewcommand{\thefigure}{\arabic{figure}}
+\def\lst@makecaption#1#2{
+	\vskip\abovecaptionskip
+	\sbox\@tempboxa{{\lstlistingnamewithno} {\arabic{lstlisting}}: #2}
+	\ifdim \wd\@tempboxa >\hsize
+	{\lstlistingnamewithno} {\arabic{lstlisting}}: #2\par
+	\else
+	\global \@minipagefalse
+	\hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+	\fi
+	\vskip\belowcaptionskip}
+\makeatother
 
 \lstdefinestyle{pythonstyle}{
 	backgroundcolor=\color{gray!7},
@@ -388,7 +401,7 @@ Tutte le funzioni in questi file sono chiamate e gestite in maniera automatica d
 Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a scaricare il modello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è il seguente:
 
 \lstset{style=pythonstyle}
-\begin{lstlisting}[language=Python, caption={Caricare e addestrare un modello YOLO11}, label={lst:addestramentoyolo}, float]
+\begin{lstlisting}[language=Python, caption={Un esempio di codice Python per addestrare un modello YOLO11}, label={lst:addestramentoyolo}, float]
 	from ultralytics import YOLO
 	
 	# Carica un modello
