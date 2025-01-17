@@ -18,7 +18,7 @@
 \department{Dipartimento di Informatica\\Giovanni Degli Antoni}
 \cdl{Corso di Laurea Triennale in\\Informatica}
 
-\title{Domain shift in simulazione e realtà nella segmentazione semantica applicata a compiti di visione robotica}
+\title{Domain shift in simulazione e realtà nella segmentazione semantica applicata alla visione robotica}
 
 \author{Giovanni Novati}
 \matricola{02108A}
@@ -283,9 +283,9 @@ Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione
 \section{Conversione dataset iGibson}
 \label{chap:addestramento_segmentatore_semantico}
 
-Per prima cosa è stato necessario convertire i dataset di iGibson in un formato compatibile con il framework YOLO. I dati raccolti da Raffini sono suddivisi in due diverse directory denominate \textit{0} e \textit{1}. Nella directory 0 sono presenti campioni che non presentano rilevazioni di porte, mentre la directory 1 contiene campioni che includono almeno una porta. Questa distinzione è stata fatta esclusivamente per semplificare il lavoro di addestramento e validazione di Raffini. Nel nostro caso, non trattando una singola categoria di oggetti ma lavorando con dati di segmentazione semantica, possiamo unire senza alcun problema i dati di queste due directory.
+Per prima cosa è stato necessario convertire i dataset di iGibson in un formato compatibile con il framework YOLO. I dati raccolti da Raffini sono suddivisi in due diverse directory denominate \textit{0} e \textit{1}. Nella directory 0 sono presenti campioni che non presentano rilevazioni di porte, mentre la directory 1 contiene campioni che includono almeno una porta. Questa distinzione è stata fatta esclusivamente per semplificare il lavoro di addestramento e validazione di Raffini. Nel nostro caso, non trattando una singola categoria di oggetti ma lavorando con dati di segmentazione semantica, possiamo unire senza alcun problema i dati di queste due directory. 
 
-Ognuna di queste directory contiene al suo interno altre sottodirectory, ognuna con una tipoligia diversa di dati:
+Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna con una tipoligia diversa di dati.:
 
 \begin{itemize}
 	\item \textbf{bounding\_boxes}: Questa directory include un file di testo per campione, nel quale è salvata una lista di coordinate delle bounding box delle porte $(x1, y1, x2, y2)$, lo stato della porta (aperta/chiusa, tradotto in $0/1$), l'id della porta e il suo nome all'interno del simulatore iGibson. Un esempio è:
@@ -320,6 +320,8 @@ Ognuna di queste directory contiene al suo interno altre sottodirectory, ognuna 
 
 Tra tutti questi dati, gli unici che ci interessano per questo lavoro sono quelli contenuti nelle directory \textit{rgb\_image} e \textit{semantic\_image}.
 
+\vspace{10pt}
+
 Modelli YOLO11 per diversi task necessitano di dataset strutturati in maniera differente. Per il compito di segmentazione semantica è necessario creare un dataset col seguente formato; per ogni immagine bisogna creare un file di testo con lo stesso nome dell'immagine, e con estensione \textit{.txt}. Ogni riga al suo interno corrisponde ad una singola istanza di un oggetto all'interno dell'immagine, ed è strutturata in due parti: la classe dell'oggetto e le sue coordinate che lo delimitano. La classe è rappresentata da un intero (ad esempio 0 per le porte, 1 per i muri, etc.) mentre le coordinate che delimitano il contorno dell'oggetto sono posizioni assolute rispetto all'angolo in alto a sinistra dell'immagine, normalizzate tra 0 e 1. Una generica istanza all'interno del file di testo può essere la seguente:
 
 \begin{verbatim}
@@ -334,6 +336,22 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 	0 0.681 0.485 0.670 0.487 0.676 0.487
 	1 0.504 0.000 0.501 0.004 0.498 0.004 0.493 0.010 0.492 0.0104
 \end{verbatim}
+
+\vspace{10pt}
+
+È quindi necessario convertire i dati di segmentazione semantica di iGibson in un formato valido per YOLO. Poichè non esiste un modo automatico per fare questa operazione, ho dovuto creare una serie di script Python. I principali sono:
+
+\begin{itemize}
+	\item \textbf{decompress\_data.py}: I dati all'interno dei dataset iGibson sono compressi in formato \textit{.tar.gz}. Data una directory di partenza, questo script decomprime automaticamente tutti i file in tutte le sue subdirectory.
+	
+	\item \textbf{extract\_images\_and\_segmentation.py}: Dato il nome di una directory, questo script estrae tutte le immagini RGB e converte i dati di segmentazione semantica nel formato richiesto da YOLO. Il tutto viene salvato in una nuova directory chiamata di default \textit{yolo-dataset/train}.
+	
+	\item \textbf{merge\_classes.py}: Ogni tipologia di oggetto è associata ad una classe diversa. Per come è strutturato il dataset di iGibson, anche oggetti appartenenti alla stessa macrocategoria sono a loro volta suddivisi in ulteriori classi. Un esempio sono le sedie; il simulatore non ha una singola classe per indicare questa categoria, ma ha differenti sottoclassi che indicano le diverse tipologie di sedia (ad esempio pieghevole, da ufficio, girevole, di legno, a dondolo, etc.). Grazie a questo programma è possibile unire più classi in un'unica macroclasse. Tutte le sedie avranno quindi un unico identificativo.
+	
+	\item \textbf{remove\_classes.py}: Nei dati possono anche essere presenti classi troppo poco rappresentate o che non ci interessa analizzare. Questo script permette di rimuovere le classi non desiderate dal dataset. Un esempio è la classe \textit{altoparlante} che è stata rimossa in quanto presente in una sola stanza di una scena.
+	
+	\item \textbf{create\_validation\_data.py}:
+\end{itemize}
 
 \section{Addestramento segmentatore semantico}
 \label{chap:addestramento_segmentatore_semantico}
