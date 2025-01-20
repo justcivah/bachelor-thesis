@@ -378,7 +378,7 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 \end{verbatim}
 
 \subsection{Script di conversione}
-\label{chap:script_di_conversione}
+\label{chap:script_di_conversione_igibson}
 
 È quindi necessario convertire i dati di segmentazione semantica di iGibson in un formato valido per YOLO. Poichè non esiste un modo automatico per fare questa operazione, è stato necessario realizzare una serie di script Python. I principali sono:
 
@@ -440,11 +440,20 @@ dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero tota
 \subsection{Descrizione dataset ScanNet}
 \label{chap:descrizione_dataset_scannet}
 
-Il dataset ScanNet è suddiviso in scene (o scan), ognuna delle quali identificata da un intero differente, chiamato \textit{scan\_id}. All'interno di ogni scena sono presenti varie tipologie di dati, come 
+Per accedere al dataset ScanNet, è innanzinutto necessario compilare un documento disponibile alla pagina GitHub del progetto e accettare i termini e le condizioni d'uso. Una volta approvata la richiesta, verrà fornito via email uno script Python col quale si potrà scaricare il dataset.
+
+ScanNet è organizzato in scan (o scene), ognuna delle quali è identificata da un intero univoco, chiamato \textit{<scan\_id>}. Ogni scena è salvata in una directory dedicata, che contiene tutti i dati e le relative informazioni. Tra tutti i dati disponibili, quelli più rilevanti per questo elaborato sono:
 
 \begin{itemize}
-	\item 
+	\item \textbf{\textit{<scan\_id>}.sens}: È un file binario compresso, contenente un flusso dati RGB-D e informazioni aggiuntive come la posa del robot, dati di calibrazione, e altre informazioni relative al flusso video. Per estrarre dati da questo file è disponibile uno script nella repository ufficiale, denominato \textit{reader.py}. Per eseguirlo basta specificare il percorso al file .sens, la directory di output e la tipologia di dati da estrarre. Analogamente al dataset iGibson, in questo caso ci interessa estrerre solo le immagini RGB.
+	
+	\item \textbf{\textit{<scan\_id>}\_2d-label-filt.zip}: Questo file include un'immagine in formato PNG a 16 bit per frame, contenente informazioni riguardanti la segmentazione semantica. A differenza del file \textit{.sens} descritto prima, non è necessario alcuno script per decodificare ed estrarre le immagini.
 \end{itemize}
+
+\subsection{Script di conversione}
+\label{chap:script_di_conversione_scannet}
+
+Lo script di conversione è simile a quanto già visto per il dataset iGibson. 
 
 \section{Addestramento encoder-decoder}
 \label{chap:addestramento_encoder_decoder}
