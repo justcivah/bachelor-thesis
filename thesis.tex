@@ -12,6 +12,7 @@
 \usepackage{colortbl}
 \usepackage{listings}
 \usepackage{caption}
+\usepackage{booktabs}
 
 \newcommand{\lstlistingnamewithno}{Codice}
 \makeatletter
@@ -266,7 +267,7 @@ La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi 
 			>{\centering\arraybackslash}p{2cm}@{}}
 		\toprule
 		\textbf{Modello} & 
-		\begin{tabular}[c]{@{}c@{}}\textbf{Immagine}\\ \footnotesize{(pixel)}\end{tabular} & 
+		\begin{tabular}[c]{@{}c@{}}\textbf{Immagine} \\ \footnotesize{(pixel)}\end{tabular} & 
 		$\textbf{mAP}^{\text{box}}_{50-95}$ & 
 		$\textbf{mAP}^{\text{mask}}_{50-95}$ & 
 		\begin{tabular}[c]{@{}c@{}}\textbf{Velocità} \\ NVIDIA T4 \\ \footnotesize{(ms)}\end{tabular} & 
@@ -398,7 +399,7 @@ Tutte le funzioni in questi file sono chiamate e gestite in maniera automatica d
 \section{Addestramento segmentatore semantico}
 \label{chap:addestramento_segmentatore_semantico}
 
-Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a scaricare il modello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice 1}.
+Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a caricare un modello preesistente o scaricherà quello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice 1}. Oltre ai parametri indicati ne sono presenti molti altri consultabili dal sito web di Ultralytics.
 
 \lstset{style=pythonstyle}
 \begin{lstlisting}[language=Python, caption={Un esempio di codice Python per addestrare un modello YOLO11}, label={lst:addestramentoyolo}, float]
@@ -416,6 +417,22 @@ Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche
 		save=True
 	)
 \end{lstlisting}
+
+Durante il processo di addestramento e al termine di ogni epoca, vengono calcolate le metriche relative alle performance del modello. Quelle principali sono la \textit{precisione} (precision), la \textit{sensibilità} (recall) e la \textit{precisione media} (mAP, mean Average Precision).
+
+La precisione quantifica quanto bene il modello riesce a non fare errori, e quindi ad evitare falsi positivi. Più la precisione è alta, più tutte le rilevazioni sono corrette e meno si hanno falsi positivi. Si sta quindi cercando di minimizzare la possibilità che un'area venga erroneamente classificata come un oggetto.
+
+\[ \text{\textit{Precisione}} = \frac{VP}{VP + FP} \]
+
+La sensibilità misura quanto un modello è capace a riconoscere tutti gli oggetti all'interno di un'immagine, o il altre parole quanti degli oggetti presenti sono stati identificati. Un'alta sensibilità corrisponde a un numero basso di falsi negativi.
+
+\[ \text{\textit{Sensibilità}} = \frac{VP}{VP + FN} \]
+
+La mAP indica invece la media delle precisioni calcolate tra tutte le classi di oggetti e con diverse soglie di sensibilità. In breve, la mAP serve a calcolare le performance di un modello considerando sia la sua abilità a identificare correttamente oggetti (precisione), che quella nel saperli rilevare tutti (sensibilità). È calcolata come
+
+\[ \text{\textit{mAP}} = \frac{1}{N} \sum_{i=1}^{N} AP_i \]
+
+dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero totali di classi nel dataset utilizzato.
 
 \section{Conversione dataset ScanNet}
 \label{chap:conversione_dataset_scannet}
