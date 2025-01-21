@@ -15,19 +15,6 @@
 \usepackage{booktabs}
 
 \newcommand{\lstlistingnamewithno}{Codice}
-\makeatletter
-\renewcommand{\thefigure}{\arabic{figure}}
-\def\lst@makecaption#1#2{
-	\vskip\abovecaptionskip
-	\sbox\@tempboxa{{\lstlistingnamewithno} {\arabic{lstlisting}}: #2}
-	\ifdim \wd\@tempboxa >\hsize
-	{\lstlistingnamewithno} {\arabic{lstlisting}}: #2\par
-	\else
-	\global \@minipagefalse
-	\hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
-	\fi
-	\vskip\belowcaptionskip}
-\makeatother
 
 \lstdefinestyle{pythonstyle}{
 	backgroundcolor=\color{gray!7},
@@ -311,8 +298,8 @@ A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet,
 Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
 
 % CAPITOLO 4: Metodo
-\chapter{Metodo}
-\label{chap:metodo}
+\chapter{Sviluppo UNet-YOLO}
+\label{chap:sviluppo_unet_yolo}
 
 Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione della nostra architettura UNet-YOLO. Nel seguente capitolo verrà invece spiegato nel dettaglio il processo che ha portato alla realizzazione dell'architettura completa, partendo dai dataset e dai modelli base.
 
@@ -432,7 +419,7 @@ La mAP indica invece la media delle precisioni calcolate tra tutte le classi di 
 
 \[ \text{\textit{mAP}} = \frac{1}{N} \sum_{i=1}^{N} AP_i \]
 
-dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero totali di classi nel dataset utilizzato.
+dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero totale di classi nel dataset.
 
 \section{Conversione dataset ScanNet}
 \label{chap:conversione_dataset_scannet}
@@ -453,17 +440,45 @@ ScanNet è organizzato in scan (o scene), ognuna delle quali è identificata da 
 \subsection{Script di conversione}
 \label{chap:script_di_conversione_scannet}
 
-Lo script di conversione è simile a quanto già visto per il dataset iGibson. 
+Il programma di conversione è simile a quanto già visto per il dataset iGibson. L'unica aggiunta rilevante consiste in uno script che permette di scaricare automaticamente una o più scene, indicando i vari identificativi in un file di testo chiamato \textit{scenes.txt}. Gli identificati devono essere indicati uno per riga. Un esempio di formattazione corretta è:
+
+\begin{verbatim}
+	scene0673_00
+	scene0610_00
+	scene0022_00
+	scene0456_00
+	scene0002_00
+\end{verbatim}
+
+Sono anche state effettuate modifiche minori allo script di conversione ScanNet. Ad esempio è stato aggiunto il supporto a immagini PNG con profondità 16 bit e sono stati integrati gli script di estrazione dati disponibili nella repository GitHub.
+
+Come per la conversione del dataset iGibson, anche in questo caso tutte le funzioni e i moduli sono gestiti in maniera automatica dallo script \textit{convert\_dataset.py}
 
 \section{Addestramento encoder-decoder}
 \label{chap:addestramento_encoder_decoder}
 
 % CAPITOLO 5: Analisi risultati
-\chapter{Analisi risultati}
+\chapter{Analisi sperimentale}
 \label{chap:analisi}
 
-\section{Setup sperimentale}
+In questo capitolo sono descritti gli esperimenti condotti per approfondire il problema del domain shift, analizzandolo in ambienti simulati, reali e nel passaggio tra simulato e reale. Sarà poi discussa l'efficacia dell'architettura UNet-YOLO in vari contesti e verranno illustrati i risultati finali con le relative considerazioni.
+
+\section{Setup}
 \label{chap:setup}
+
+Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda ha invece un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
+
+Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale utilizzando Anaconda~\cite{anaconda}, sul quale sono stati installati i seguenti pacchetti:
+
+\begin{verbatim}
+	ultralytics==8.3.40
+	pytorch==2.5.1
+	torchvision==0.20.1
+	pytorch-cuda==11.8
+	opencv==4.10.0
+	imageio==2.33.1
+	pypng==0.20220715.0
+\end{verbatim}
 
 \section{Procedure}
 \label{procedure}
