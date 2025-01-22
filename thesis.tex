@@ -14,8 +14,6 @@
 \usepackage{caption}
 \usepackage{booktabs}
 
-\newcommand{\lstlistingnamewithno}{Codice}
-
 \lstdefinestyle{pythonstyle}{
 	backgroundcolor=\color{gray!7},
 	basicstyle=\ttfamily\footnotesize,
@@ -297,7 +295,7 @@ A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet,
 
 Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
 
-% CAPITOLO 4: Metodo
+% CAPITOLO 4: Sviluppo UNet-YOLO
 \chapter{Sviluppo UNet-YOLO}
 \label{chap:sviluppo_unet_yolo}
 
@@ -386,7 +384,7 @@ Tutte le funzioni in questi file sono chiamate e gestite in maniera automatica d
 \section{Addestramento segmentatore semantico}
 \label{chap:addestramento_segmentatore_semantico}
 
-Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a caricare un modello preesistente o scaricherà quello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice 1}. Oltre ai parametri indicati ne sono presenti molti altri consultabili dal sito web di Ultralytics.
+Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a caricare un modello preesistente o scaricherà quello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice \ref{lst:addestramentoyolo}}. Oltre ai parametri indicati ne sono presenti molti altri consultabili dal sito web di Ultralytics.
 
 \lstset{style=pythonstyle}
 \begin{lstlisting}[language=Python, caption={Un esempio di codice Python per addestrare un modello YOLO11}, label={lst:addestramentoyolo}, float]
@@ -457,20 +455,21 @@ Come per la conversione del dataset iGibson, anche in questo caso tutte le funzi
 \section{Addestramento encoder-decoder}
 \label{chap:addestramento_encoder_decoder}
 
-% CAPITOLO 5: Analisi risultati
+% CAPITOLO 5: Analisi sperimentale
 \chapter{Analisi sperimentale}
 \label{chap:analisi}
 
-In questo capitolo sono descritti gli esperimenti condotti per approfondire il problema del domain shift, analizzandolo in ambienti simulati, reali e nel passaggio tra simulato e reale. Sarà poi discussa l'efficacia dell'architettura UNet-YOLO in vari contesti e verranno illustrati i risultati finali con le relative considerazioni.
+In questo capitolo sono descritti gli esperimenti condotti per approfondire il problema del domain shift, analizzandolo in ambienti simulati, reali e nel passaggio tra simulato e reale. Sarà poi testata l'architettura UNet-YOLO in vari contesti e verranno illustrati i risultati finali con le relative considerazioni.
 
 \section{Setup}
 \label{chap:setup}
 
 Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda ha invece un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
 
-Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale utilizzando Anaconda~\cite{anaconda}, sul quale sono stati installati i seguenti pacchetti:
+Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale utilizzando Anaconda~\cite{anaconda}, nel quale sono stati installati i seguenti pacchetti:
 
 \begin{verbatim}
+	python==3.12
 	ultralytics==8.3.40
 	pytorch==2.5.1
 	torchvision==0.20.1
@@ -478,6 +477,14 @@ Per eseguire gli script di conversione e addestramento è stato creato un ambien
 	opencv==4.10.0
 	imageio==2.33.1
 	pypng==0.20220715.0
+\end{verbatim}
+
+Si consiglia di installare tutte le dipendenze contemporaneamente, così da permettere ad Anaconda di risolvere eventuali conflitti in maniera automatica. Una volta creato un nuovo ambiente con Python 3.12, basta eseguire il seguente comando per installare tutti i pacchetti necessari:
+
+\begin{verbatim}
+	conda install -c pytorch -c nvidia -c conda-forge pytorch=2.5.1 \
+	torchvision=0.20.1 pytorch-cuda=11.8 ultralytics=8.3.40 opencv=4.10.0 \
+	imageio=2.33.1 pypng=0.20220715.0
 \end{verbatim}
 
 \section{Procedure}

@@ -39,6 +39,7 @@
 \RequirePackage{url}  % Visualizza e rende interattivi gli URL
 \RequirePackage{epsfig}  % Permette immagini in EPS
 \RequirePackage{xcolor}  % Gestione avanzata dei colori
+\RequirePackage{listings}
 \fi
 
 \RequirePackage{pdfx}  % File conforme allo standard PDF-A (obbligatorio per la consegna)
@@ -126,6 +127,20 @@
 \def\thefigure{\@arabic\c@figure}
 \def\thetable{\@arabic\c@table}
 \def\theequation{\arabic{equation}}
+
+\AtBeginDocument{
+	\makeatletter
+	% Remove chapter-based resetting for listings
+	\@removefromreset{lstlisting}{chapter}
+	
+	% Define the numbering format for listings
+	\renewcommand{\thelstlisting}{\arabic{lstlisting}}
+	
+	% Change the name of the listings
+	\renewcommand{\lstlistingname}{Codice}
+	\makeatother
+}
+
 
 \newif\iffigurespage
 \newif\iftablespage
