@@ -450,7 +450,7 @@ Il programma di conversione è simile a quanto già visto per il dataset iGibson
 
 Sono anche state effettuate modifiche minori allo script di conversione ScanNet. Ad esempio è stato aggiunto il supporto a immagini PNG con profondità 16 bit e sono stati integrati gli script di estrazione dati disponibili nella repository GitHub.
 
-Come per la conversione del dataset iGibson, anche in questo caso tutte le funzioni e i moduli sono gestiti in maniera automatica dallo script \textit{convert\_dataset.py}
+Come per la conversione del dataset iGibson, anche in questo caso tutte le funzioni e i moduli sono gestiti in maniera automatica dallo script \textit{convert\_dataset.py}.
 
 \section{Addestramento encoder-decoder}
 \label{chap:addestramento_encoder_decoder}
@@ -466,10 +466,9 @@ In questo capitolo sono descritti gli esperimenti condotti per approfondire il p
 
 Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda ha invece un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
 
-Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale utilizzando Anaconda~\cite{anaconda}, nel quale sono stati installati i seguenti pacchetti:
+Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale con Python 3.12 tramite Anaconda~\cite{anaconda}, nel quale sono stati installati i seguenti pacchetti:
 
 \begin{verbatim}
-	python==3.12
 	ultralytics==8.3.40
 	pytorch==2.5.1
 	torchvision==0.20.1
@@ -479,7 +478,7 @@ Per eseguire gli script di conversione e addestramento è stato creato un ambien
 	pypng==0.20220715.0
 \end{verbatim}
 
-Si consiglia di installare tutte le dipendenze contemporaneamente, così da permettere ad Anaconda di risolvere eventuali conflitti in maniera automatica. Una volta creato un nuovo ambiente con Python 3.12, basta eseguire il seguente comando per installare tutti i pacchetti necessari:
+Si consiglia di installare tutte le dipendenze contemporaneamente, così da permettere ad Anaconda di risolvere eventuali conflitti in maniera automatica. Una volta creato un nuovo ambiente, basta eseguire il seguente comando per installare tutti i pacchetti necessari:
 
 \begin{verbatim}
 	conda install -c pytorch -c nvidia -c conda-forge pytorch=2.5.1 \
