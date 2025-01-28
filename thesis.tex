@@ -131,11 +131,6 @@ Nella pratica, reti naurali addestrate con dati sintetici e testate in ambienti 
 
 Il sim-to-real gap non però l'unico tipo di domain shift esistente. Si osservano infatti cali di performance anche quando un modello addestrato in ambienti simulati viene testato in altri ambienti simulati (\textit{sim-to-sim gap}), così come si ha una diminuzione di performance in scenari reali, passando da un ambiente reale ad un altro (\textit{real-to-real gap}).
 
-\section{Scopo dell'elaborato}
-\label{chap:scopo_elaborato}
-
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzando come le performance di un modello peggiorano nei tre casi descritti: sim-to-sim, real-to-real e sim-to-real. In aggiunta, viene proposta un'architettura alternativa che combina due reti neurali, che sarà utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
-
 % CAPITOLO 2: Stato dell'Arte
 \chapter{Stato dell'arte}
 \label{chap:stato_arte}
@@ -145,14 +140,14 @@ Il sim-to-real gap è la tipologia di domain shift più complessa, e uno dei pri
 \section{Domain adaptation}
 \label{sec:adaptation}
 
-Quella del domain adaptation è una delle strategie più utilizzate per cercare di ridurre il sim-to-real gap, in quanto si cercano di ridurre le differenze tra l'ambiente simulato e quello reale. Questa tecnica si basa sul trasformare i dati provenienti dal simulatore, in modo da farli assomigliare il più possibile a quelli raccolti nel mondo reale. Il processo di trasformazione dei dati comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati simulati. Una rete crea nuove immagini, il più simili possibili a quelle reali, mentre l'altra valuta la bontà delle immagini generate, che devono essere il più realistiche possibili. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
+Quella della domain adaptation è una delle strategie più utilizzate per ridurre il sim-to-real gap. Questo approccio mira a minimizzare le differenze tra l'ambiente simulato e quello reale, trasformando i dati provenienti dal simulatore e rendendoli il più possibile simili a quelli raccolti nel mondo reale. Il processo di trasformazione dei dati comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati simulati. Una rete crea nuove immagini, il più simili possibili a quelle reali, mentre l'altra valuta la bontà delle immagini generate, che devono essere il più realistiche possibili. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
 
 Ad esempio, un'immagine presa da un ambiente simulato, con texture uniformi e un'illuminazione predefinita, può essere trasformata in una più fotorealistica variando la luce, aggiungendo riflessioni e creando imperfezioni sulla superficie di oggetti. In pratica si cerca di aggiungere caratteristiche presenti nel mondo reale a dati campionati da simulatori, in modo da ridurre la differenza tra quello che è il dominio della simulazione e quello della realtà.
 
 \section{Data augmentation}
 \label{sec:augmentation}
 
-Un ulteriore approccio per ridurre il sim-to-real gap è quello di augmentare i dati reali disponibili durante il training. La data augmentation è una tecnica molto diffusa nel campo della robotic vision, e consiste nell'applicare trasformazioni a dataset reali con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
+La data augmentation rappresenta un'altra tecnica ampiamente utilizzata per ridurre i diversi tipi di domain shift. Consiste nell'applicare trasformazioni a dataset reali con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
 
 Un'altro esempio nel quale questa tecnica può tornare utile, è nel caso si vengano a creare dipendenze da caretteristiche non rilevanti (bias). Ad esempio, se un modello tende ad associare la presenza di uno specifico sfondo a quella di un particolare oggetto, può essere conveniente effettuare trasformazioni andando a modificare o rimuovere lo sfondo, in modo da rendere indipendente la presenza di un oggetto da quella di un'altro.
 
@@ -167,14 +162,16 @@ Questa tecnica~\cite{8202133} è particolarmente efficace nell'addestrare reti n
 
 La domain randomization permette quindi di generare grandi dataset di addestramento col minimo sforzo da parte di un operatore umano, e di ottenere modelli robusti senza la necessità di effettuare fine tuning con dati reali.
 
-% CAPITOLO 3: Soluzione proposta
-\chapter{Soluzione proposta}
-\label{chap:soluzione}
+% CAPITOLO 3: Metodo
+\chapter{Metodo}
+\label{chap:metodo}
 
-Abbiamo visto che per addestrare un modello di deep learning è necessario un gran numero di dati, e che la campionatura di quest'ultimi nel mondo reale comporta spesso tempi e costi troppo elevati; si è quindi deciso di utilizzare un simulatore per la raccolta dei dati. Il risvolto negativo è però il divario tra simulazione e realtà, in quanto il modello dovrà essere utilizzato in ambienti reali. Bisogna quindi cercare di mitigare il problema del sim-to-real gap.
+Nel seguente capitolo viene illustrato lo scopo della tesi, analizzando gli strumenti utilizzati e motivandone le scelte. Verranno inoltre spiegati i processi di creazione e addestramento dei modelli, presentando frammenti di codice che ne esemplificano l'implementazione.
 
-\section{Idea}
-\label{chap:idea}
+\section{Scopo dell'elaborato}
+\label{chap:scopo_dell_elaborato}
+
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzando come le performance di un modello peggiorano nei tre casi descritti: sim-to-sim, real-to-real e sim-to-real. In aggiunta, viene proposta un'architettura alternativa che combina due reti neurali, che sarà utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
 
 Come discusso nel \hyperref[chap:stato_arte]{Capitolo \ref{chap:stato_arte}}, gli approcci più utilizzati in letteratura per affrontare questo problema consistono nel modificare i dati simulati così da renderli il più possibile simili a quelli reali. Nel presente lavoro, tuttavia, abbiamo scelto di risolvere il problema inverso, ovvero trasformare i dati reali per renderli il più simili possibile a quelli generati dall'ambiente simulato. In questo contesto, non ci concentriamo più sul sim-to-real gap, ma sull'opposto, ovvero sul problema del \textit{real-to-sim gap}~\cite{8620258}~\cite{Prakash_2021_ICCV}.
 
@@ -231,7 +228,14 @@ Per il suo elaborato, Raffini ha sviluppato un pacchetto ROS~\cite{quigley2009ro
 
 Questi dataset sono stati concepiti principalmente per addestrare modelli capaci di rilevare oggetti, in particolare per individuare porte e classificare il loro stato (aperte/chiuse). Tuttavia, le immagini raccolte si prestano anche per scopi più generici, come nel nostro caso. I dati sono stati campionati con una frequenza pari a \SI{1}{\hertz}, e ogni campionatura comprende quattro tipologie di immagini: un'immagine RGB dell'ambiente, una mappa di profondità, un'immagine per la segmentazione semantica e una per la segmentazione d'istanza. Sono inoltre presenti dati relativi alle bounding box delle porte, la posa del robot nell'istante della rilevazione, e la posa finale di goal.
 
-\subsection{Segmentatore Semantico}
+\subsection{Dataset reale}
+\label{chap:dataset_reale}
+
+Per i dati reali con i quali co-addestrare l'encoder-decoder e YOLO, è stato scelto il dataset ScanNet~\cite{dai2017scannet}. ScanNet è un dataset video RGB-D contenente 2,5 milioni di immagini raccolte in più di 1500 ambienti differenti. Ogni scansione contiene informazioni come la posa della fotocamera, ricostruzione della superficie, segmentazione semantica e d'istanza. Per questo progetto è stata utilizzato ScanNet v2, che include le stesse scene della prima versione ma con annotazioni di maggiore qualità. Altre alternative ugualmente valide a questo dataset possono essere il THUD Robotic Dataset~\cite{10611489} e ScanNet++~\cite{yeshwanth2023scannethighfidelitydataset3d}.
+
+In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gran numero di ambienti disponibili e la loro varietà. Questi vanno dalle camere da letto, ai soggiorni, agli uffici, alle aule scolastiche, alle palestre e alle biblioteche, offrendo così una rappresentazione completa e realistica di contesti quotidiani. Di contro, nonostante ScanNet v2 offra annotazioni robuste, ScanNet++ si distingue per una qualità superiore, includendo più dettagli semantici e informazioni sulla geometria più precise. In conclusione, Scannet v2 si è rivelato un ottimo compromesso tra la varietà di ambienti disponibili e la qualità delle annotazioni.
+
+\subsection{Segmentatore semantico}
 \label{chap:segmentatore_semantico}
 
 La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
@@ -288,13 +292,6 @@ La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi 
 	\label{tab:yolo-prestazioni-segmentazione}
 \end{table}
 
-\subsection{Dataset reale}
-\label{chap:dataset_reale}
-
-Per i dati reali con i quali co-addestrare l'encoder-decoder e YOLO, è stato scelto il dataset ScanNet~\cite{dai2017scannet}. ScanNet è un dataset video RGB-D contenente 2,5 milioni di immagini raccolte in più di 1500 ambienti differenti. Ogni scansione contiene informazioni come la posa della fotocamera, ricostruzione della superficie, segmentazione semantica e d'istanza. Per questo progetto è stata utilizzato ScanNet v2, che include le stesse scene della prima versione ma con annotazioni di maggiore qualità. Altre alternative ugualmente valide a questo dataset possono essere il THUD Robotic Dataset~\cite{10611489} e ScanNet++~\cite{yeshwanth2023scannethighfidelitydataset3d}.
-
-In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gran numero di ambienti disponibili e la loro varietà. Questi vanno dalle camere da letto, ai soggiorni, agli uffici, alle aule scolastiche, alle palestre e alle biblioteche, offrendo così una rappresentazione completa e realistica di contesti quotidiani. Di contro, nonostante ScanNet v2 offra annotazioni robuste, ScanNet++ si distingue per una qualità superiore, includendo più dettagli semantici e informazioni sulla geometria più precise. In conclusione, Scannet v2 si è rivelato un ottimo compromesso tra la varietà di ambienti disponibili e la qualità delle annotazioni.
-
 \subsection{Encoder-decoder}
 \label{chap:encoder_decoder}
 
@@ -314,17 +311,13 @@ A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet,
 
 Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
 
-% CAPITOLO 4: Sviluppo UNet-YOLO
-\chapter{Sviluppo UNet-YOLO}
-\label{chap:sviluppo_unet_yolo}
+\section{Preparazione dei dataset}
+\label{chap:preparazione_dei_dataset}
 
-Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione della nostra architettura UNet-YOLO. Nel seguente capitolo verrà invece spiegato nel dettaglio il processo che ha portato alla realizzazione dell'architettura completa, partendo dai dataset e dai modelli base.
+Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione degli esperimenti e dell'architettura UNet-YOLO. Nel seguente capitolo verrà invece spiegato nel dettaglio il processo che ha portato alla conversione e creazione dei dataset usati per l'addestramento
 
-\section{Conversione dataset iGibson}
+\subsection{Conversione dataset iGibson}
 \label{chap:conversione_dataset_igibson}
-
-\subsection{Descrizione dataset iGibson}
-\label{chap:descrizione_dataset_igibson}
 
 Per prima cosa è stato necessario convertire i dataset di iGibson in un formato compatibile con il framework YOLO. I dati raccolti da Raffini sono suddivisi in due diverse directory denominate \textit{0} e \textit{1}. Nella directory 0 sono presenti campioni che non presentano rilevazioni di porte, mentre la directory 1 contiene campioni che includono almeno una porta. Questa distinzione è stata fatta esclusivamente per semplificare il lavoro di addestramento e validazione di Raffini. Nel nostro caso, non trattando una singola categoria di oggetti ma lavorando con dati di segmentazione semantica, possiamo unire senza alcun problema i dati di queste due directory. 
 
@@ -363,8 +356,8 @@ Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna co
 
 Tra tutti questi dati, gli unici che ci interessano per questo lavoro sono quelli contenuti nelle directory \textit{rgb\_image} e \textit{semantic\_image}.
 
-\subsection{Formato dataset YOLO11}
-\label{chap:formato_dataset_yolo_per_segmentazione}
+\subsubsection{Formato dataset YOLO11}
+\label{chap:formato_dataset_yolo11}
 
 Modelli YOLO11 per diversi task necessitano di dataset strutturati in maniera differente. Per il compito di segmentazione semantica è necessario creare un dataset col seguente formato; per ogni immagine bisogna creare un file di testo con lo stesso nome dell'immagine, e con estensione \textit{.txt}. Ogni riga al suo interno corrisponde ad una singola istanza di un oggetto all'interno dell'immagine, ed è strutturata in due parti: la classe dell'oggetto e le sue coordinate che lo delimitano. La classe è rappresentata da un intero (ad esempio 0 per le porte, 1 per i muri, etc.) mentre le coordinate che delimitano il contorno dell'oggetto sono posizioni assolute rispetto all'angolo in alto a sinistra dell'immagine, normalizzate tra 0 e 1. Una generica istanza all'interno del file di testo può essere la seguente
 
@@ -381,7 +374,7 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 	1 0.504 0.000 0.501 0.004 0.498 0.004 0.493 0.010 0.492 0.0104
 \end{verbatim}
 
-\subsection{Script di conversione}
+\subsubsection{Script di conversione}
 \label{chap:script_di_conversione_igibson}
 
 È quindi necessario convertire i dati di segmentazione semantica di iGibson in un formato valido per YOLO. Poichè non esiste un modo automatico per fare questa operazione, è stato necessario realizzare una serie di script Python. I principali sono:
@@ -400,7 +393,40 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 
 Tutte le funzioni in questi file sono chiamate e gestite in maniera automatica dallo script \textit{convert\_dataset.py}, ed è possibile cambiare i valori predefiniti di percorsi e nomi modificando il file \textit{paths.json}. Al termine della conversione, lo script principale genera automaticamente il file \textit{dataset.yaml} che contiene informazioni riguardo la posizione dei dati di training e validazione, nonchè la lista di tutte le classi con i rispettivi nomi.
 
-\section{Addestramento segmentatore semantico}
+\subsection{Conversione dataset ScanNet}
+\label{chap:conversione_dataset_scannet}
+
+Per accedere al dataset ScanNet, è innanzinutto necessario compilare un documento disponibile alla pagina GitHub del progetto e accettare i termini e le condizioni d'uso. Una volta approvata la richiesta, verrà fornito via email uno script Python col quale si potrà scaricare il dataset.
+
+ScanNet è organizzato in scan (o scene), ognuna delle quali è identificata da un intero univoco, chiamato \textit{<scan\_id>}. Ogni scena è salvata in una directory dedicata, che contiene tutti i dati e le relative informazioni. Tra tutti i dati disponibili, quelli più rilevanti per questo elaborato sono:
+
+\begin{itemize}
+	\item \textbf{\textit{<scan\_id>}.sens}: È un file binario compresso, contenente un flusso dati RGB-D e informazioni aggiuntive come la posa del robot, dati di calibrazione, e altre informazioni relative al flusso video. Per estrarre dati da questo file è disponibile uno script nella repository ufficiale, denominato \textit{reader.py}. Per eseguirlo basta specificare il percorso al file .sens, la directory di output e la tipologia di dati da estrarre. Analogamente al dataset iGibson, in questo caso ci interessa estrerre solo le immagini RGB.
+	
+	\item \textbf{\textit{<scan\_id>}\_2d-label-filt.zip}: Questo file include un'immagine in formato PNG a 16 bit per frame, contenente informazioni riguardanti la segmentazione semantica. A differenza del file \textit{.sens} descritto prima, non è necessario alcuno script per decodificare ed estrarre le immagini.
+\end{itemize}
+
+\subsubsection{Script di conversione}
+\label{chap:script_di_conversione_scannet}
+
+Il programma di conversione è simile a quanto già visto per il dataset iGibson. L'unica aggiunta rilevante consiste in uno script che permette di scaricare automaticamente una o più scene, indicando i vari identificativi in un file di testo chiamato \textit{scenes.txt}. Gli identificati devono essere indicati uno per riga. Un esempio di formattazione corretta è
+
+\begin{verbatim}
+	scene0673_00
+	scene0610_00
+	scene0022_00
+	scene0456_00
+	scene0002_00
+\end{verbatim}
+
+Sono anche state effettuate modifiche minori allo script di conversione ScanNet. Ad esempio è stato aggiunto il supporto a immagini PNG con profondità 16 bit e sono stati integrati gli script di estrazione dati disponibili nella repository GitHub.
+
+Come per la conversione del dataset iGibson, anche in questo caso tutte le funzioni e i moduli sono gestiti in maniera automatica dallo script \textit{convert\_dataset.py}.
+
+\section{Addestramento dei modelli}
+\label{chap:addestramento_dei modelli}
+
+\subsection{Segmentatore semantico}
 \label{chap:addestramento_segmentatore_semantico}
 
 Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a caricare un modello preesistente o scaricherà quello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice \ref{lst:addestramentoyolo}}. Oltre ai parametri indicati ne sono presenti molti altri consultabili dal sito web di Ultralytics.
@@ -438,40 +464,7 @@ La mAP indica invece la media delle precisioni calcolate tra tutte le classi di 
 
 dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero totale di classi nel dataset.
 
-\section{Conversione dataset ScanNet}
-\label{chap:conversione_dataset_scannet}
-
-\subsection{Descrizione dataset ScanNet}
-\label{chap:descrizione_dataset_scannet}
-
-Per accedere al dataset ScanNet, è innanzinutto necessario compilare un documento disponibile alla pagina GitHub del progetto e accettare i termini e le condizioni d'uso. Una volta approvata la richiesta, verrà fornito via email uno script Python col quale si potrà scaricare il dataset.
-
-ScanNet è organizzato in scan (o scene), ognuna delle quali è identificata da un intero univoco, chiamato \textit{<scan\_id>}. Ogni scena è salvata in una directory dedicata, che contiene tutti i dati e le relative informazioni. Tra tutti i dati disponibili, quelli più rilevanti per questo elaborato sono:
-
-\begin{itemize}
-	\item \textbf{\textit{<scan\_id>}.sens}: È un file binario compresso, contenente un flusso dati RGB-D e informazioni aggiuntive come la posa del robot, dati di calibrazione, e altre informazioni relative al flusso video. Per estrarre dati da questo file è disponibile uno script nella repository ufficiale, denominato \textit{reader.py}. Per eseguirlo basta specificare il percorso al file .sens, la directory di output e la tipologia di dati da estrarre. Analogamente al dataset iGibson, in questo caso ci interessa estrerre solo le immagini RGB.
-	
-	\item \textbf{\textit{<scan\_id>}\_2d-label-filt.zip}: Questo file include un'immagine in formato PNG a 16 bit per frame, contenente informazioni riguardanti la segmentazione semantica. A differenza del file \textit{.sens} descritto prima, non è necessario alcuno script per decodificare ed estrarre le immagini.
-\end{itemize}
-
-\subsection{Script di conversione}
-\label{chap:script_di_conversione_scannet}
-
-Il programma di conversione è simile a quanto già visto per il dataset iGibson. L'unica aggiunta rilevante consiste in uno script che permette di scaricare automaticamente una o più scene, indicando i vari identificativi in un file di testo chiamato \textit{scenes.txt}. Gli identificati devono essere indicati uno per riga. Un esempio di formattazione corretta è
-
-\begin{verbatim}
-	scene0673_00
-	scene0610_00
-	scene0022_00
-	scene0456_00
-	scene0002_00
-\end{verbatim}
-
-Sono anche state effettuate modifiche minori allo script di conversione ScanNet. Ad esempio è stato aggiunto il supporto a immagini PNG con profondità 16 bit e sono stati integrati gli script di estrazione dati disponibili nella repository GitHub.
-
-Come per la conversione del dataset iGibson, anche in questo caso tutte le funzioni e i moduli sono gestiti in maniera automatica dallo script \textit{convert\_dataset.py}.
-
-\section{Addestramento encoder-decoder}
+\subsection{Encoder-decoder}
 \label{chap:addestramento_encoder_decoder}
 
 % CAPITOLO 5: Analisi sperimentale
