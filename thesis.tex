@@ -89,39 +89,58 @@ Nonostante la diffusione di questi robot di servizio sia aumentata, il loro impi
 
 Un robot di servizio deve quindi riuscire a percepire e comprendere l'ambiente che lo circonda, così da poter svolgere compiti essenziali come la localizzazione, la pianificazione e la navigazione. Questo è possibile grazie a telecamere e sensori di profondità, che consentono di acquisire immagini e mappare lo spazio circostante, e a reti neurali che permettono di riconoscere e classificare oggetti. L'insieme di queste tecniche è comunemente chiamata \textit{robotic vision}.
 
-\section{Problema della raccolta dati}
+\section{Raccolta dati}
 \label{sec:raccolta_dati}
 
 L'addestramento di reti neurali è uno dei processi più importanti nella creazione di un sistema di robotic vision, e il suo corretto funzionamento dipende da vari fattori come la scelta del modello e dal processo di raccolta dei dati.
 
 Per quanto riguarda la selezione del modello, a seconda delle attività che il robot deve svolgere si preferiscono determinate tipologie di modelli ad altre. Ad esempio, se si vogliono riconoscere oggetti in tempo reale si preferiscono reti neurali di tipo convoluzionale (CNN, Convolutional Neural Network)~\cite{oshea2015introductionconvolutionalneuralnetworks}, mentre se l'obiettivo è comprendere sequenze di azioni complesse, come nel caso dell'interazione con gli esseri umani, si opta in genere per reti neurali ricorrenti (RNN, Recurrent Neural Network)~\cite{ZHANG20209}. La sfida più grande non è però la scelta del modello, quanto la raccolta dei dati utilizzata per l'addestramento.
 
-Raccogliere dati è da sempre un processo complesso in qualsiasi ambito, ma trova maggiori difficoltà in progetti di robotic vision. In questi casi, infatti, i dati vengono generalmente acquisiti facendo interagire robot con ambienti del mondo reale. Questo approccio ha però diverse limitazioni, dovute a fattori come il tempo e i costi che la raccolta comporta, oltre che per motivi inerenti la sicurezza di persone, animali e oggetti presenti nell'ambiente. A questi elementi si aggiunge anche il fattore riproducibilità, che viene meno quando si hanno variazioni nell'hardware utilizzato o negli ambienti considerati, e che può condurre a risultati differenti.
+Raccogliere dati è da sempre un processo complesso in qualsiasi ambito, ma trova maggiori difficoltà in progetti di robotic vision. In genere esistono due approcci per generare dataset da utilizzare nell'addestramento di una rete neurale: acquisire dati dal mondo reale o generarli partendo da un ambiente simulato.
 
-\section{Addestramento con dati simulati}
-\label{sec:addestramento_dati_simulati}
+\subsection{Dati reali e simulati}
+\label{sec:dati_reali}
 
-Una possibile soluzione a questi problemi è l'utilizzo di ambienti simulati per la raccolta di dati. Questo permette infatti di ottenere dati a basso costo, in quanto non è necessario impegnare veri ambienti e robot, in tempi più brevi, grazie al fatto che le simulazioni possono essere velocizzate o parallelizzate, e senza i possibili rischi che una reale interazione con l'ambiente comporta.
+Il primo approccio consiste nell'acquisire dati facendo interagire robot con ambienti del mondo reale. Questo metodo ha però diverse limitazioni, dovute a fattori come il tempo e i costi che la raccolta comporta, oltre che per motivi inerenti la sicurezza di persone, animali e oggetti presenti nell'ambiente. A questi elementi si aggiunge anche il fattore riproducibilità, che viene meno quando si hanno variazioni nell'hardware utilizzato o negli ambienti considerati, e che può condurre a risultati differenti.
+
+L'alternativa è invece utilizzare ambienti simulati per la raccolta di dati. Questo permette infatti di ottenere dati a basso costo, in quanto non è necessario impegnare veri ambienti e robot e in tempi più brevi, grazie al fatto che le simulazioni possono essere velocizzate o parallelizzate. Inoltre si evitano i possibili rischi che una reale interazione con l'ambiente può comportare.
 
 Un simulatore consente inoltre di conoscere in anticipo e progettare gli scenari in cui un robot andrà ad interagire, andando a regolare vari parametri così da controllarne ogni singolo aspetto. Questo garantisce che l'ambiente non vari ed evolva nel tempo, a meno che non sia stato appositamente programmato per farlo.
 
 Questo approccio permette di risolvere molti problemi, ma ne introduce di nuovi. La simulazione è infatti solo un'approssimazione della realtà, e non è possibile replicare fedelmente tutti i fenomeni e le caratteristiche del mondo reale. I motivi per i quale queste tipologie di ambienti differiscono sono principalmente due: il fotorealismo e l'interazione fisica.
 
-Per fotorealismo si intende la capacità del simulatore di riprodurre in maniera visivamente accurata ambienti reali, in modo dettagliato e credibile. Tuttavia, risulta difficile replicare fenomeni come l'illuminazione, le riflessioni e texture di superfici. Questa mancanza di dettaglii ha un grande impatto sulla qualità dei dati raccolti per l'addestramento, con una conseguente mancanza di generalizzazione nel mondo reale da parte del modello.
+Per fotorealismo si intende la capacità del simulatore di riprodurre in maniera visivamente accurata ambienti reali, in modo dettagliato e credibile. Tuttavia, risulta difficile replicare fenomeni come l'illuminazione, le riflessioni e texture di superfici. Questa mancanza di dettagli ha un grande impatto sulla qualità dei dati raccolti per l'addestramento, con una conseguente mancanza di generalizzazione nel mondo reale da parte del modello.
 
-L'interazione fisica si riferisce invece all'abilità del simulatore di riuscire a replicare le leggi della fisica in maniera realistica; questo comprende ad esempio il movimento e l'interazione tra oggetti.
+L'interazione fisica si riferisce invece all'abilità del simulatore di riuscire a replicare le leggi della fisica in maniera realistica; questo comprende ad esempio il movimento e l'interazione tra oggetti. 
 
 In questi ultimi anni sono stati sviluppati diversi nuovi simulatori~\cite{kolve2022ai2thorinteractive3denvironment}~\cite{NEURIPS2021_021bbc7e}~\cite{urakami2022doorgymscalabledooropening}~\cite{1389727}, ognuno specializzato per specifici casi d'uso, e tutti si concentrano pervalentemente su uno dei due aspetti sopra citati.
 
-Reti neurali addestrate con dati provenienti da simulatori e testati negli stessi ambienti simulati, otterranno risultati eccellenti. Sapranno infatti individuare e riconoscere correttamente gli oggetti presenti, in quanto il dominio dei dati utilizzato per l'addestramento e quello usato per il testing è lo stesso. Invece, l'adozione di reti naurali addestrare con dati sintetici in ambienti reali, avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come \textit{sim-to-real gap}, letteralmente 'divario tra simulazione e realtà', e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
+L'obiettivo finale della comunità scientifica è quindi quello di riuscire a campionare dati esclusivamente da un simulatore, e utilizzarli per addestrare e ottenere risultati eccellenti in un ambiente reale. Questo è però un problema molto complesso da risolvere a causa di quello che viene definito \textit{domain shift}. Il domain shift è un fenomeno che si verifica quando c'è discrepanza tra il dominio dei dati della sorgente e quello di destinazione. Nel nostro caso il dominio sorgente corrisponde al simulatore e quello di destinazione al mondo reale. In altre parole si ha domain shift quando le caratteristiche strutturali o statistiche dei due domini differiscono significativamente. Una comparazione tra ambiente simulato e reale è illustrato nella \hyperref[fig:immagine-simulata-reale]{Figura \ref{fig:immagine-simulata-reale}}.
 
-Una soluzione che permette di mitigare questo problema è l'adozione di una tecnica chiamata domain randomization , che permette di variare caratteristiche ed oggetti presenti nell'ambiente simulato (posizione e tipi di oggetti, illuminazione, texture). Questo permette di rendere il modello più robusto, permettendogli di operare meglio in contesti reali.
+
+\begin{figure}[t]
+	\centering
+	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/simulated-image.png}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/real-image.png}}
+	\caption{Immagini raccolte in un ambiente simulato (a) e reale (b).}
+	\label{fig:immagine-simulata-reale}
+\end{figure}
+
+Nella pratica, reti naurali addestrate con dati sintetici e testate in ambienti reali avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come \textit{sim-to-real gap}, letteralmente 'divario tra simulazione e realtà', e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
+
+Il sim-to-real gap non però l'unico tipo di domain shift esistente. Si osservano infatti cali di performance anche quando un modello addestrato in ambienti simulati viene testato in altri ambienti simulati (\textit{sim-to-sim gap}), così come si ha una diminuzione di performance in scenari reali, passando da un ambiente reale ad un altro (\textit{real-to-real gap}).
+
+\section{Scopo dell'elaborato}
+\label{chap:scopo_elaborato}
+
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzando come le performance di un modello peggiorano nei tre casi descritti: sim-to-sim, real-to-real e sim-to-real. In aggiunta, viene proposta un'architettura alternativa che combina due reti neurali, che sarà utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
 
 % CAPITOLO 2: Stato dell'Arte
 \chapter{Stato dell'arte}
 \label{chap:stato_arte}
 
-Il sim-to-real gap è uno dei principali problemi nel campo della robitic vision, in quanto la complessità degli ambienti reali va oltre quello che è possibile rappresentare attraverso una simulazione. In questi ultimi anni la comunità scientifica si è interessata a questo problema, e ha provato a proporre delle soluzioni.
+Il sim-to-real gap è la tipologia di domain shift più complessa, e uno dei principali problemi nel campo della robitic vision. Questo perchè la complessità degli ambienti reali va oltre quello che è possibile rappresentare attraverso una simulazione. In questi ultimi anni la comunità scientifica ha dedicato sempre più attenzione a questo problema, arrivando a proporre diverse soluzioni.
 
 \section{Domain adaptation}
 \label{sec:adaptation}
@@ -312,7 +331,7 @@ Per prima cosa è stato necessario convertire i dataset di iGibson in un formato
 Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna con una tipoligia diversa di dati.:
 
 \begin{itemize}
-	\item \textbf{bounding\_boxes}: Questa directory include un file di testo per campione, nel quale è salvata una lista di coordinate delle bounding box delle porte $(x1, y1, x2, y2)$, lo stato della porta (aperta/chiusa, tradotto in $0/1$), l'id della porta e il suo nome all'interno del simulatore iGibson. Un esempio è:
+	\item \textbf{bounding\_boxes}: Questa directory include un file di testo per campione, nel quale è salvata una lista di coordinate delle bounding box delle porte $(x1, y1, x2, y2)$, lo stato della porta (aperta/chiusa, tradotto in $0/1$), l'id della porta e il suo nome all'interno del simulatore iGibson. Un esempio è
 	
 	\begin{verbatim}
 		[(351, 0, 125, 328, 1, 23, 'door_10'),
@@ -321,7 +340,7 @@ Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna co
 	
 	\item \textbf{depth\_image}: Contiene un file per campione, all'interno del quale è salvato un array NumPy tridimensionale. Ogni pixel rappresenta un valore di profondità, ovvero la distanza tra il sensore e l'oggetto all'interno della scena. Il valore di ogni pixel è compreso tra 0 ed 1, dove valori vicini allo zero indicano che l'oggetto è vicino al sensore, mentre valori vicini ad uno l'opposto.
 	
-	\item \textbf{goal\_status}: All'interno di questa directory sono presenti file di testo che rappresentano i diversi obiettivi del robot all'interno dell'ambiente simulato. Un obbiettivo è un luogo da raggiungere all'interno della mappa, ed è rappresentato da una posizione, l'orientamento finale che il robot di servizio deve assumere, e lo stato di raggiungimento dell'obiettivo. Un esempio è:
+	\item \textbf{goal\_status}: All'interno di questa directory sono presenti file di testo che rappresentano i diversi obiettivi del robot all'interno dell'ambiente simulato. Un obiettivo è un luogo da raggiungere all'interno della mappa, ed è rappresentato da una posizione, l'orientamento finale che il robot di servizio deve assumere, e lo stato di raggiungimento dell'obiettivo. Un esempio è
 	
 	\begin{verbatim}
 		[{'position': {'x': 0.78, 'y': -0.6, 'z': 0.0},
@@ -330,7 +349,7 @@ Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna co
 	
 	\item \textbf{rgb\_image}: In questa directory ci sono le immagini RGB dell'ambiente campionate dal robot. Come per i dati relativi alla profondità, anche queste immagini sono salvate in tensori tridimensionali NumPy. I valori originali dei pixel [0, 255] sono stati normalizzati nell'intervallo $[0, 1]$; bisognerà quindi tenere in considerazione anche questo fattore quando si dovranno convertire i tensori in immagini.
 	
-	\item \textbf{sampling\_pose}: Sono contenuti file di testo nei quali sono salvate le pose del robot lungo tutto il tragitto percorso, in corrispondenza di ogni campionatura. La posa comprende le coordinate del robot all'interno della mappa e il suo orientamento. Un esempio è:
+	\item \textbf{sampling\_pose}: Sono contenuti file di testo nei quali sono salvate le pose del robot lungo tutto il tragitto percorso, in corrispondenza di ogni campionatura. La posa comprende le coordinate del robot all'interno della mappa e il suo orientamento. Un esempio è
 	
 	\begin{verbatim}
 		{'position': {'x': -2.22, 'y': 3.45, 'z': 0.1},
@@ -347,7 +366,7 @@ Tra tutti questi dati, gli unici che ci interessano per questo lavoro sono quell
 \subsection{Formato dataset YOLO11}
 \label{chap:formato_dataset_yolo_per_segmentazione}
 
-Modelli YOLO11 per diversi task necessitano di dataset strutturati in maniera differente. Per il compito di segmentazione semantica è necessario creare un dataset col seguente formato; per ogni immagine bisogna creare un file di testo con lo stesso nome dell'immagine, e con estensione \textit{.txt}. Ogni riga al suo interno corrisponde ad una singola istanza di un oggetto all'interno dell'immagine, ed è strutturata in due parti: la classe dell'oggetto e le sue coordinate che lo delimitano. La classe è rappresentata da un intero (ad esempio 0 per le porte, 1 per i muri, etc.) mentre le coordinate che delimitano il contorno dell'oggetto sono posizioni assolute rispetto all'angolo in alto a sinistra dell'immagine, normalizzate tra 0 e 1. Una generica istanza all'interno del file di testo può essere la seguente:
+Modelli YOLO11 per diversi task necessitano di dataset strutturati in maniera differente. Per il compito di segmentazione semantica è necessario creare un dataset col seguente formato; per ogni immagine bisogna creare un file di testo con lo stesso nome dell'immagine, e con estensione \textit{.txt}. Ogni riga al suo interno corrisponde ad una singola istanza di un oggetto all'interno dell'immagine, ed è strutturata in due parti: la classe dell'oggetto e le sue coordinate che lo delimitano. La classe è rappresentata da un intero (ad esempio 0 per le porte, 1 per i muri, etc.) mentre le coordinate che delimitano il contorno dell'oggetto sono posizioni assolute rispetto all'angolo in alto a sinistra dell'immagine, normalizzate tra 0 e 1. Una generica istanza all'interno del file di testo può essere la seguente
 
 \begin{verbatim}
 	<class-index> <x1> <y1> <x2> <y2> ... <xn> <yn>
@@ -438,7 +457,7 @@ ScanNet è organizzato in scan (o scene), ognuna delle quali è identificata da 
 \subsection{Script di conversione}
 \label{chap:script_di_conversione_scannet}
 
-Il programma di conversione è simile a quanto già visto per il dataset iGibson. L'unica aggiunta rilevante consiste in uno script che permette di scaricare automaticamente una o più scene, indicando i vari identificativi in un file di testo chiamato \textit{scenes.txt}. Gli identificati devono essere indicati uno per riga. Un esempio di formattazione corretta è:
+Il programma di conversione è simile a quanto già visto per il dataset iGibson. L'unica aggiunta rilevante consiste in uno script che permette di scaricare automaticamente una o più scene, indicando i vari identificativi in un file di testo chiamato \textit{scenes.txt}. Gli identificati devono essere indicati uno per riga. Un esempio di formattazione corretta è
 
 \begin{verbatim}
 	scene0673_00
@@ -466,7 +485,7 @@ In questo capitolo sono descritti gli esperimenti condotti per approfondire il p
 
 Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda ha invece un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
 
-Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale con Python 3.12 tramite Anaconda~\cite{anaconda}, nel quale sono stati installati i seguenti pacchetti:
+Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale con Python 3.12 tramite Anaconda~\cite{anaconda}, nel quale sono stati installati i seguenti pacchetti
 
 \begin{verbatim}
 	ultralytics==8.3.40
@@ -478,7 +497,7 @@ Per eseguire gli script di conversione e addestramento è stato creato un ambien
 	pypng==0.20220715.0
 \end{verbatim}
 
-Si consiglia di installare tutte le dipendenze contemporaneamente, così da permettere ad Anaconda di risolvere eventuali conflitti in maniera automatica. Una volta creato un nuovo ambiente, basta eseguire il seguente comando per installare tutti i pacchetti necessari:
+Si consiglia di installare tutte le dipendenze contemporaneamente, così da permettere ad Anaconda di risolvere eventuali conflitti in maniera automatica. Una volta creato un nuovo ambiente, basta eseguire il seguente comando per installare tutti i pacchetti necessari
 
 \begin{verbatim}
 	conda install -c pytorch -c nvidia -c conda-forge pytorch=2.5.1 \
