@@ -87,23 +87,25 @@ Negli ultimi decenni questi robot sono stati adoperati in una varietà di scenar
 
 Nonostante la diffusione di questi robot di servizio sia aumentata, il loro impiego in ambienti come case, scuole e uffici ha ancora diverse limitazioni. In un contesto industriale si ha un maggior grado di controllo e prevedibilità, caratteristiche non presenti in ambienti domestici che sono tipicamente non strutturati e dinamici. In ogni abitazione, aspetti come la planimetria e l'arredamento possono cambiare totalmente, oltre agli ostacoli presenti, siano essi mobili o fissi. A tutto questo si aggiungono anche i comportamenti imprevedibili di persone e animali, che possono interferire con le attività del robot~\cite{6301139}.
 
-Un robot di servizio deve quindi riuscire a percepire e comprendere l'ambiente che lo circonda, così da poter svolgere compiti essenziali come la localizzazione, la pianificazione e la navigazione. Questo è possibile grazie a telecamere e sensori di profondità, che consentono di acquisire immagini e mappare lo spazio circostante, e a reti neurali che permettono di riconoscere e classificare oggetti. L'insieme di queste tecniche è comunemente chiamata \textit{robotic vision}.
+Un robot di servizio deve quindi riuscire a percepire e comprendere l'ambiente che lo circonda, così da poter svolgere compiti essenziali come la localizzazione, la pianificazione e la navigazione. In base alla tipologia di compito da svolgere, è necessario estrarre diverse informazioni dall'ambiente. Per semplici compiti di navigazione può essere sufficiente l'utilizzo di sensori per la rilevazione di ostacoli come il LiDAR (Light Detection and Ranging), mentre per compiti di riconoscimento o interazione con gli oggetti si ricorre a sensori più avanzati, come le telecamere.
+
+A differenza dei dati provenienti da sensori di profondità come il LiDAR, le informazioni acquisite dalle telecamere non possono essere subito utilizzate, ma devono prima essere processate. Attualmente, lo stato dell'arte nel riconoscimento e nella classificazione degli oggetti in un'immagine è rappresentato dalle reti neurali. L'insieme di sensori e tecniche impiegate per interpretare visivamente il mondo circostante è comunemente chiamato \textit{robotic vision}.
 
 \section{Raccolta dati}
 \label{sec:raccolta_dati}
 
 L'addestramento di reti neurali è uno dei processi più importanti nella creazione di un sistema di robotic vision, e il suo corretto funzionamento dipende da vari fattori come la scelta del modello e dal processo di raccolta dei dati.
 
-Per quanto riguarda la selezione del modello, a seconda delle attività che il robot deve svolgere si preferiscono determinate tipologie di modelli ad altre. Ad esempio, se si vogliono riconoscere oggetti in tempo reale si preferiscono reti neurali di tipo convoluzionale (CNN, Convolutional Neural Network)~\cite{oshea2015introductionconvolutionalneuralnetworks}, mentre se l'obiettivo è comprendere sequenze di azioni complesse, come nel caso dell'interazione con gli esseri umani, si opta in genere per reti neurali ricorrenti (RNN, Recurrent Neural Network)~\cite{ZHANG20209}. La sfida più grande non è però la scelta del modello, quanto la raccolta dei dati utilizzata per l'addestramento.
+Per quanto riguarda la selezione del modello, a seconda delle attività che il robot deve svolgere si preferiscono determinate tipologie di modelli ad altre. Ad esempio, se si vogliono analizzare immagini si preferiscono reti neurali di tipo convoluzionale (CNN, Convolutional Neural Network)~\cite{oshea2015introductionconvolutionalneuralnetworks}, mentre se l'obiettivo è comprendere sequenze di azioni complesse, come nel caso dell'interazione con gli esseri umani, si opta in genere per reti neurali ricorrenti (RNN, Recurrent Neural Network)~\cite{ZHANG20209}. La sfida più grande non è però la scelta del modello, quanto la raccolta dei dati utilizzata per l'addestramento.
 
 Raccogliere dati è da sempre un processo complesso in qualsiasi ambito, ma trova maggiori difficoltà in progetti di robotic vision. In genere esistono due approcci per generare dataset da utilizzare nell'addestramento di una rete neurale: acquisire dati dal mondo reale o generarli partendo da un ambiente simulato.
 
 \subsection{Dati reali e simulati}
-\label{sec:dati_reali}
+\label{sec:dati_reali_e_simulati}
 
 Il primo approccio consiste nell'acquisire dati facendo interagire robot con ambienti del mondo reale. Questo metodo ha però diverse limitazioni, dovute a fattori come il tempo e i costi che la raccolta comporta, oltre che per motivi inerenti la sicurezza di persone, animali e oggetti presenti nell'ambiente. A questi elementi si aggiunge anche il fattore riproducibilità, che viene meno quando si hanno variazioni nell'hardware utilizzato o negli ambienti considerati, e che può condurre a risultati differenti.
 
-L'alternativa è invece utilizzare ambienti simulati per la raccolta di dati. Questo permette infatti di ottenere dati a basso costo, in quanto non è necessario impegnare veri ambienti e robot e in tempi più brevi, grazie al fatto che le simulazioni possono essere velocizzate o parallelizzate. Inoltre si evitano i possibili rischi che una reale interazione con l'ambiente può comportare.
+L'alternativa è utilizzare ambienti simulati per la raccolta di dati. Questo permette infatti di ottenere dati a basso costo, in quanto non è necessario impegnare veri ambienti e robot, e in tempi più brevi, grazie al fatto che le simulazioni possono essere velocizzate e parallelizzate. Inoltre si evitano i possibili rischi che una reale interazione con l'ambiente comporta.
 
 Un simulatore consente inoltre di conoscere in anticipo e progettare gli scenari in cui un robot andrà ad interagire, andando a regolare vari parametri così da controllarne ogni singolo aspetto. Questo garantisce che l'ambiente non vari ed evolva nel tempo, a meno che non sia stato appositamente programmato per farlo.
 
@@ -127,9 +129,60 @@ L'obiettivo finale della comunità scientifica è quindi quello di riuscire a ca
 	\label{fig:immagine-simulata-reale}
 \end{figure}
 
-Nella pratica, reti naurali addestrate con dati sintetici e testate in ambienti reali avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come \textit{sim-to-real gap}, letteralmente 'divario tra simulazione e realtà', e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
+\section{Domain shift}
+\label{sec:domain_shift}
+
+Nella pratica, reti naurali addestrate con dati sintetici e testate in ambienti reali avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come \textit{sim-to-real gap}, letteralmente \textit{divario tra simulazione e realtà}, e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
 
 Il sim-to-real gap non però l'unico tipo di domain shift esistente. Si osservano infatti cali di performance anche quando un modello addestrato in ambienti simulati viene testato in altri ambienti simulati (\textit{sim-to-sim gap}), così come si ha una diminuzione di performance in scenari reali, passando da un ambiente reale ad un altro (\textit{real-to-real gap}).
+
+Per il domain shift tra ambienti simulati va innanzitutto fatta una distinzione. Si ha un dominio differente sia tra ambienti diversi all'interno di uno stesso simulatore, sia tra ambienti appartenenti a simulatori differenti. Nel caso di uno stesso simulatore, il domain shift è principalmente causato da variazioni di caratteristiche ambientali e dalle diverse configurazioni degli scenari. Differenze nell'illuminazione, nella disposizione degli oggetti o nella scelta delle texture possono portare a dataset significativamente differenti. Nel caso invece di simulatori diversi, il domain shift diventa ancora più pronunciato. Ogni simulatore utilizza motori grafici differenti, e lo stesso vale per le librerie di oggetti 3D e gli ambienti. Ad esempio simulatori più fotorealistici come AI2-THOR~\cite{kolve2022ai2thorinteractive3denvironment} produrranno immagini con caratteristiche visive differenti rispetto ad uno focalizzato sulla simulazione fisica come DoorGym~\cite{urakami2022doorgymscalabledooropening}. Queste differenze possono complicare il trasferimento di un modello addestrato su un simulatore ad un altro, senza un'opportuna riconfigurazione o fine tuning.
+
+Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti reali sono più marcate rispetto a quelle tra due simulatori. Illuminazione variabile, ostacoli mobili, diversa qualità dei sensori o variazioni nell'arredamento possono degradare notevolmente le performance di un modello addestrato in un particolare ambiente. Ad esempio, un robot addestrato in un ufficio con illuminazione a LED tende a fallire nel riconoscere oggetti in un ambiente domestico con luce naturale, nonostante siano entrambi ambienti reali.
+
+
+\section{Scopo dell'elaborato}
+\label{sec:scopo_dell_elaborato}
+
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti all'interno di uno stesso simulatore), real-to-real e sim-to-real. Viene inoltre proposta un'architettura alternativa basata su una seconda rete neurale di tipo encoder-decoder, che sarà utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
+
+\subsection{Task del modello}
+\label{sec:task_del_modello}
+
+Prima di iniziare dobbiamo capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
+
+La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. La prima consiste nell'assegnare a ciascun pixel di un'immagine un valore che indica a quale classe appartiene l'oggetto rappresentato da quel pixel. La seconda invece, non solo associa un valore di classe a ciascun pixel, ma identifica in maniera univoca ogni oggetto, consentendo di distinguere tra oggetti appartenenti alla stessa classe. Un esempio di segmentazione semantica e segmentazione d'istanza è illustrato nella \hyperref[fig:segmentazione]{Figura \ref{fig:segmentazione}}.
+
+\begin{figure}[t]
+	\centering
+	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/original-segmentation.png}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/semantic-segmentation.png}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/instance-segmentation.png}}
+	\caption{Data un'immagine (a), esempio di segmentazione semantica (b) e segmentazione d'istanza (c).}
+	\label{fig:segmentazione}
+\end{figure}
+
+In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto ci consente di semplificare il lavoro del modello, e di conseguenza ridurne la complessità.
+
+\subsection{Architettura modello encoder-decoder}
+\label{sec:architettura_modello_encoder_decoder}
+
+L'architettura proposta in questo elaborato si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) addestrato con dati simulati, che opera in modo ottimale solo con dati provenienti dal simulatore stesso, e un sistema di trasformazione dei dati reali.
+
+Bisogna quindi trasformare i dati reali in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. Questa trasformazione viene effettuata tramite una seconda rete neurale profonda con architettura encoder-decoder. Il compito di questo secondo modello è quello di rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli corrispondere alle caratteristiche attese dal segmentatore. L'output dell'encoder-decoder viene quindi utilizzato come input del segmentatore, che a questo punto riuscirà a fare correttamente inferenza sul dato ricevuto.
+
+Il modo più semplice e intuitivo per addestrare l'encoder-decoder consiste nel prendere il segmentatore pre-addestrato sui dati simulati e congelare i suoi pesi. A questo punto l'encoder-decoder viene co-addestrato utilizzando la funzione di loss calcolata dal segmentatore. Durante il processo di addestramento i dati attraversano prima l'encoder-decoder, il suo output diventa l'input del segmentatore che a sua volta calcola la loss. A questo punto si effettua la backpropagation, che aggiorna solo i pesi dell'encoder-decoder e che lascia invariati quelli del segmentatore.
+
+Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati reali segmentati per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto a realizzare grandi dataset annotati richiesti da altre tecniche. Uno schema riassuntivo dell'architettura proposta è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width = \textwidth, clip]{images/unet-yolo-architecture}
+	\caption{Schema dell'architettura real-to-sim}
+	\label{fig:architettura-unet-yolo}
+\end{figure}
 
 % CAPITOLO 2: Stato dell'Arte
 \chapter{Stato dell'arte}
@@ -166,54 +219,15 @@ La domain randomization permette quindi di generare grandi dataset di addestrame
 \chapter{Metodo}
 \label{chap:metodo}
 
-Nel seguente capitolo viene illustrato lo scopo della tesi, analizzando gli strumenti utilizzati e motivandone le scelte. Verranno inoltre spiegati i processi di creazione e addestramento dei modelli, presentando frammenti di codice che ne esemplificano l'implementazione.
-
-\section{Scopo dell'elaborato}
-\label{chap:scopo_dell_elaborato}
-
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzando come le performance di un modello peggiorano nei tre casi descritti: sim-to-sim, real-to-real e sim-to-real. In aggiunta, viene proposta un'architettura alternativa che combina due reti neurali, che sarà utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
-
-Come discusso nel \hyperref[chap:stato_arte]{Capitolo \ref{chap:stato_arte}}, gli approcci più utilizzati in letteratura per affrontare questo problema consistono nel modificare i dati simulati così da renderli il più possibile simili a quelli reali. Nel presente lavoro, tuttavia, abbiamo scelto di risolvere il problema inverso, ovvero trasformare i dati reali per renderli il più simili possibile a quelli generati dall'ambiente simulato. In questo contesto, non ci concentriamo più sul sim-to-real gap, ma sull'opposto, ovvero sul problema del \textit{real-to-sim gap}~\cite{8620258}~\cite{Prakash_2021_ICCV}.
-
-Per fare ciò dobbiamo innanzitutto stabilire il nostro obiettivo finale, ovvero capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
-
-La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. La prima consiste nell'assegnare a ciascun pixel di un'immagine un valore che indica a quale classe appartiene l'oggetto rappresentato da quel pixel. La seconda invece, non solo associa un valore di classe a ciascun pixel, ma identifica in maniera univoca ogni oggetto, consentendo di distinguere tra oggetti appartenenti alla stessa classe. Un esempio di segmentazione semantica e segmentazione d'istanza è illustrato nella \hyperref[fig:segmentazione]{Figura \ref{fig:segmentazione}}.
-
-In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto ci consente di semplificare il lavoro del modello, e di conseguenza ridurne la complessità. Questo è l'ideale nel campo della robotica mobile, in quanto porta a un minor carico computazionale e di conseguenza ad una maggiore autonomia.
-
-\begin{figure}[t]
-	\centering
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/original-segmentation.png}}
-	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/semantic-segmentation.png}}
-	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/instance-segmentation.png}}
-	\caption{Data un'immagine (a), esempio di segmentazione semantica (b) e segmentazione d'istanza (c).}
-	\label{fig:segmentazione}
-\end{figure}
-
-Il nostro approccio si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) addestrato con dati simulati, che opera in modo ottimale solo con dati provenienti dal simulatore stesso, e un sistema di trasformazione dei dati reali.
-
-Bisogna quindi trasformare i dati reali in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. Questa trasformazione viene effettuata tramite una seconda rete neurale profonda con architettura encoder-decoder. Il compito di questo secondo modello è quello di rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli corrispondere alle caratteristiche attese dal segmentatore. L'output dell'encoder-decoder viene quindi utilizzato come input del segmentatore, che a questo punto riuscirà a fare correttamente inferenza sul dato ricevuto.
-
-Il modo più semplice e intuitivo per addestrare l'encoder-decoder consiste nel prendere il segmentatore pre-addestrato sui dati simulati e congelare i suoi pesi. A questo punto l'encoder-decoder viene co-addestrato utilizzando la funzione di loss calcolata dal segmentatore. Durante il processo di addestramento i dati attraversano prima l'encoder-decoder, il suo output diventa l'input del segmentatore che a sua volta calcola la loss. A questo punto si effettua la backpropagation, che aggiorna solo i pesi dell'encoder-decoder e che lascia invariati quelli del segmentatore.
-
-Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati reali segmentati per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto a realizzare grandi dataset annotati richiesti da altre tecniche. Uno schema riassuntivo dell'architettura proposta è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[width = \textwidth, clip]{images/unet-yolo-architecture}
-	\caption{Schema dell'architettura real-to-sim}
-	\label{fig:architettura-unet-yolo}
-\end{figure}
+Nel seguente capitolo vengono analizzati gli strumenti utilizzati, motivandone le scelte. Inoltre, vengono descritti i processi di creazione e addestramento dei modelli, presentando frammenti di codice esemplificativi per illustrarne l'implementazione.
 
 \section{Strumenti}
-\label{chap:strumenti}
+\label{sec:strumenti}
 
 In questa sezione verranno descritti i diversi strumenti utilizzati in questo elaborato per implementare l'architettura proposta. La scelta di ciascuno strumento è stata guidata da considerazioni relative alle esigenze del progetto e alle caratteristiche tecniche necessarie.
 
 \subsection{Simulatore}
-\label{chap:simulatore}
+\label{sec:simulatore}
 
 Questo elaborato si basa in parte sul lavoro pregresso realizzato da Riccardo Raffini, che nell'A.A. 2022/2023 ha posto le fondamenta per questa tesi. Raffini ha realizzato un'architettura capace di campionare automaticamente dati da un ambiente simulato, fornendo risultati che hanno guidato la scelta degli strumenti utilizzati in questo progetto. Si può quindi dire che la seguente tesi è un continuo della sua ricerca.
 
@@ -222,25 +236,26 @@ Il simulatore scelto da Raffini è stato iGibson 2.0~\cite{li2021igibson}. A dif
 Di base iGibson include 15 diverse scene. Ogni scena è semanticamente annotata e contiene diverse categorie di oggetti interattivi, così da garantire un'ottima diversificazione per la campionatura dei dati. Inoltre, il simulatore consente di rendere casuale texture e mesh di ogni singolo oggetto, e in aggiunta permette di caricare scansioni di ambienti reali.
 
 \subsection{Dataset simulato}
-\label{chap:dataset_simulato}
+\label{sec:dataset_simulato}
 
 Per il suo elaborato, Raffini ha sviluppato un pacchetto ROS~\cite{quigley2009ros} (Robot Operating System) che, integrato al simulatore, permette di controllare un robot di servizio all'interno di un ambiente simulato. Grazie all'architettura progettata, questo robot è in grado di muoversi autonomamente nell'ambiente e raccogliere dati, successivamente elaborati e salvati in un dataset tramite un apposito modulo. Complessivamente sono stati raccolti 60 dataset, campionati da 15 diverse scene.
 
 Questi dataset sono stati concepiti principalmente per addestrare modelli capaci di rilevare oggetti, in particolare per individuare porte e classificare il loro stato (aperte/chiuse). Tuttavia, le immagini raccolte si prestano anche per scopi più generici, come nel nostro caso. I dati sono stati campionati con una frequenza pari a \SI{1}{\hertz}, e ogni campionatura comprende quattro tipologie di immagini: un'immagine RGB dell'ambiente, una mappa di profondità, un'immagine per la segmentazione semantica e una per la segmentazione d'istanza. Sono inoltre presenti dati relativi alle bounding box delle porte, la posa del robot nell'istante della rilevazione, e la posa finale di goal.
 
 \subsection{Dataset reale}
-\label{chap:dataset_reale}
+\label{sec:dataset_reale}
 
 Per i dati reali con i quali co-addestrare l'encoder-decoder e YOLO, è stato scelto il dataset ScanNet~\cite{dai2017scannet}. ScanNet è un dataset video RGB-D contenente 2,5 milioni di immagini raccolte in più di 1500 ambienti differenti. Ogni scansione contiene informazioni come la posa della fotocamera, ricostruzione della superficie, segmentazione semantica e d'istanza. Per questo progetto è stata utilizzato ScanNet v2, che include le stesse scene della prima versione ma con annotazioni di maggiore qualità. Altre alternative ugualmente valide a questo dataset possono essere il THUD Robotic Dataset~\cite{10611489} e ScanNet++~\cite{yeshwanth2023scannethighfidelitydataset3d}.
 
 In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gran numero di ambienti disponibili e la loro varietà. Questi vanno dalle camere da letto, ai soggiorni, agli uffici, alle aule scolastiche, alle palestre e alle biblioteche, offrendo così una rappresentazione completa e realistica di contesti quotidiani. Di contro, nonostante ScanNet v2 offra annotazioni robuste, ScanNet++ si distingue per una qualità superiore, includendo più dettagli semantici e informazioni sulla geometria più precise. In conclusione, Scannet v2 si è rivelato un ottimo compromesso tra la varietà di ambienti disponibili e la qualità delle annotazioni.
 
 \subsection{Segmentatore semantico}
-\label{chap:segmentatore_semantico}
+\label{sec:segmentatore_semantico}
 
 La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
 
 \subsubsection{YOLO11}
+\label{sec:yolo11}
 
 YOLO~\cite{JIANG20221066}, acronimo di \textit{You Only Look Once}, è un algotritmo ampiamente utilizzato~\cite{sultana2020review} per la rilevazione e classificazione di oggetti. I suoi principali punti di forza risiedono nelle piccole dimensioni del modello e nel breve tempo necessario per l'inferenza. La sua struttura è semplice e diretta; è infatti in grado di predire posizioni e categorie di oggetti tramite reti neurali, e il tutto in una singola scansione dell'immagine. Questo lo rende molto veloce e adatto ad analizzare flussi video in tempo reale. YOLO possiede inoltre una forte capacità di generalizzazione, consentendogli di apprendere caratteristiche da trasferire ad altri ambienti.
 
@@ -249,6 +264,7 @@ L'architettura YOLO si basa su tre componenti fondamentali. La \textit{backbone}
 Sulla base di quest'architettura, YOLO11~\cite{yolo11_ultralytics} estende e migliora quanto realizzato dai suoi predecessori, introducendo nuove migliorie architetturali e ottimizzando al contempo i parametri. Rispetto a YOLOv8, YOLO11 ha una mAP (\textit{mean Average Precision}) più elevata sul dataset COCO, riducendo allo stesso tempo il numero di parametri del 22\%~\cite{khanam2024yolov11overviewkeyarchitectural}. Sono state inoltre raggiunte velocità di elaborazione più elevate, ed è stato migliorato il processo di estrazione delle caratteristiche della backbone e del neck. YOLO11 è stato progettato per essere utilizzato efficacemente sia su piattaforme cloud, che tu dispositivi edge, aumentando così il numero di casi d'uso.
 
 \subsubsection{DETR}
+\label{sec:detr}
 
 Il modello \textit{DEtection TRansformers}, abbreviato DETR~\cite{carion2020end}, è stato un notevole passo in avanti nell'ambito della rilevazione di oggetti. Questo approccio, ideato dai ricercatori di Facebook, unisce infatti i benefici delle reti neurali profonde a quelli dei transformer~\cite{10.1145/3505244}, portando ad un'architettura più semplice e con predizioni più accurate anche in caso di sovrapposizione di oggetti. Inoltre, l'utilizzo dei transformer consente di catturare in modo ottimale le relazioni tra gli oggetti e il contesto globale dell'immagine.
 
@@ -257,6 +273,7 @@ L'architettura si compone di una rete neurale convoluzionale e di un transformer
 Questo modello risulta innovativo sotto molti punti di vista, presenta anche diverse sfide e limitazioni. Addestrare DETR può risultare infatti costoso in termini di risorse hardware e tempo richiesto, in particolare a causa della presenza dei transformer. In aggiunta, l'addestramento richiede dataset di grandi dimensioni, il che ne limita l'uso in contesti in cui i dati disponibili sono limitati.
 
 \subsubsection{Detectron2}
+\label{sec:detectron}
 
 Detectron2 è un altro modello sviluppato dal gruppo di ricerca di Facebook. Questo modello offre performance eccellenti per compiti di segmentazione semantica su immagini singole, ma richiede hardware costoso sia per l'addestramento che per l'inferenza. Queste limitazioni rendono difficile poter lavorare su flussi di dati in tempo reale, e le sue numerose dipendenze risultano un problema per rilasciarlo in produzione.
 
@@ -293,7 +310,7 @@ La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi 
 \end{table}
 
 \subsection{Encoder-decoder}
-\label{chap:encoder_decoder}
+\label{sec:encoder_decoder}
 
 Come encoder-decoder si è scelto di utilizzare una UNet. Quest'architettura, introdotta per la prima volta nell'articolo \textit{U-Net: Convolutional Networks for Biomedical Image Segmentation}~\cite{ronneberger2015u}, è stata realizzata come soluzione alla scarsa disponibilità di dati in ambito medico. Si è quindi cercato di creare un'architettura in grado di imparare da una piccola quantità di dati, mantenendo al contempo accuratezza e velocità di inferenza. E questo è esattamente quello che ci serve: vogliamo infatti un modello capace di imparare da una piccola quantità di dati reali, e riuscire a generalizzare e performare in maniera rapida e ottimale. 
 
@@ -312,12 +329,12 @@ A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet,
 Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
 
 \section{Preparazione dei dataset}
-\label{chap:preparazione_dei_dataset}
+\label{sec:preparazione_dei_dataset}
 
 Fino ad ora si è discusso di tutti gli strumenti necessari per la realizzazione degli esperimenti e dell'architettura UNet-YOLO. Nel seguente capitolo verrà invece spiegato nel dettaglio il processo che ha portato alla conversione e creazione dei dataset usati per l'addestramento
 
 \subsection{Conversione dataset iGibson}
-\label{chap:conversione_dataset_igibson}
+\label{sec:conversione_dataset_igibson}
 
 Per prima cosa è stato necessario convertire i dataset di iGibson in un formato compatibile con il framework YOLO. I dati raccolti da Raffini sono suddivisi in due diverse directory denominate \textit{0} e \textit{1}. Nella directory 0 sono presenti campioni che non presentano rilevazioni di porte, mentre la directory 1 contiene campioni che includono almeno una porta. Questa distinzione è stata fatta esclusivamente per semplificare il lavoro di addestramento e validazione di Raffini. Nel nostro caso, non trattando una singola categoria di oggetti ma lavorando con dati di segmentazione semantica, possiamo unire senza alcun problema i dati di queste due directory. 
 
@@ -357,7 +374,7 @@ Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna co
 Tra tutti questi dati, gli unici che ci interessano per questo lavoro sono quelli contenuti nelle directory \textit{rgb\_image} e \textit{semantic\_image}.
 
 \subsubsection{Formato dataset YOLO11}
-\label{chap:formato_dataset_yolo11}
+\label{sec:formato_dataset_yolo11}
 
 Modelli YOLO11 per diversi task necessitano di dataset strutturati in maniera differente. Per il compito di segmentazione semantica è necessario creare un dataset col seguente formato; per ogni immagine bisogna creare un file di testo con lo stesso nome dell'immagine, e con estensione \textit{.txt}. Ogni riga al suo interno corrisponde ad una singola istanza di un oggetto all'interno dell'immagine, ed è strutturata in due parti: la classe dell'oggetto e le sue coordinate che lo delimitano. La classe è rappresentata da un intero (ad esempio 0 per le porte, 1 per i muri, etc.) mentre le coordinate che delimitano il contorno dell'oggetto sono posizioni assolute rispetto all'angolo in alto a sinistra dell'immagine, normalizzate tra 0 e 1. Una generica istanza all'interno del file di testo può essere la seguente
 
@@ -375,7 +392,7 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 \end{verbatim}
 
 \subsubsection{Script di conversione}
-\label{chap:script_di_conversione_igibson}
+\label{sec:script_di_conversione_igibson}
 
 È quindi necessario convertire i dati di segmentazione semantica di iGibson in un formato valido per YOLO. Poichè non esiste un modo automatico per fare questa operazione, è stato necessario realizzare una serie di script Python. I principali sono:
 
@@ -394,7 +411,7 @@ Il seguente è invece un esempio di file nel quale sono indicate le istanze di d
 Tutte le funzioni in questi file sono chiamate e gestite in maniera automatica dallo script \textit{convert\_dataset.py}, ed è possibile cambiare i valori predefiniti di percorsi e nomi modificando il file \textit{paths.json}. Al termine della conversione, lo script principale genera automaticamente il file \textit{dataset.yaml} che contiene informazioni riguardo la posizione dei dati di training e validazione, nonchè la lista di tutte le classi con i rispettivi nomi.
 
 \subsection{Conversione dataset ScanNet}
-\label{chap:conversione_dataset_scannet}
+\label{sec:conversione_dataset_scannet}
 
 Per accedere al dataset ScanNet, è innanzinutto necessario compilare un documento disponibile alla pagina GitHub del progetto e accettare i termini e le condizioni d'uso. Una volta approvata la richiesta, verrà fornito via email uno script Python col quale si potrà scaricare il dataset.
 
@@ -407,7 +424,7 @@ ScanNet è organizzato in scan (o scene), ognuna delle quali è identificata da 
 \end{itemize}
 
 \subsubsection{Script di conversione}
-\label{chap:script_di_conversione_scannet}
+\label{sec:script_di_conversione_scannet}
 
 Il programma di conversione è simile a quanto già visto per il dataset iGibson. L'unica aggiunta rilevante consiste in uno script che permette di scaricare automaticamente una o più scene, indicando i vari identificativi in un file di testo chiamato \textit{scenes.txt}. Gli identificati devono essere indicati uno per riga. Un esempio di formattazione corretta è
 
@@ -424,10 +441,10 @@ Sono anche state effettuate modifiche minori allo script di conversione ScanNet.
 Come per la conversione del dataset iGibson, anche in questo caso tutte le funzioni e i moduli sono gestiti in maniera automatica dallo script \textit{convert\_dataset.py}.
 
 \section{Addestramento dei modelli}
-\label{chap:addestramento_dei modelli}
+\label{sec:addestramento_dei modelli}
 
 \subsection{Segmentatore semantico}
-\label{chap:addestramento_segmentatore_semantico}
+\label{sec:addestramento_segmentatore_semantico}
 
 Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a caricare un modello preesistente o scaricherà quello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice \ref{lst:addestramentoyolo}}. Oltre ai parametri indicati ne sono presenti molti altri consultabili dal sito web di Ultralytics.
 
@@ -465,7 +482,7 @@ La mAP indica invece la media delle precisioni calcolate tra tutte le classi di 
 dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero totale di classi nel dataset.
 
 \subsection{Encoder-decoder}
-\label{chap:addestramento_encoder_decoder}
+\label{sec:addestramento_encoder_decoder}
 
 % CAPITOLO 5: Analisi sperimentale
 \chapter{Analisi sperimentale}
@@ -474,7 +491,7 @@ dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero tota
 In questo capitolo sono descritti gli esperimenti condotti per approfondire il problema del domain shift, analizzandolo in ambienti simulati, reali e nel passaggio tra simulato e reale. Sarà poi testata l'architettura UNet-YOLO in vari contesti e verranno illustrati i risultati finali con le relative considerazioni.
 
 \section{Setup}
-\label{chap:setup}
+\label{sec:setup}
 
 Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda ha invece un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
 
@@ -499,23 +516,23 @@ Si consiglia di installare tutte le dipendenze contemporaneamente, così da perm
 \end{verbatim}
 
 \section{Procedure}
-\label{procedure}
+\label{sec:procedure}
 
 \section{Risultati}
-\label{risultati}
+\label{sec:risultati}
 
 % CAPITOLO 6: Conclusioni
 \chapter{Conclusioni}
 \label{chap:conclusioni}
 
 \section{Discussione dei risultati}
-\label{chap:discussione_risultati}
+\label{sec:discussione_risultati}
 
 \section{Limiti della soluzione proposta}
-\label{chap:limiti}
+\label{sec:limiti}
 
 \section{Prospettive e sviluppi futuri}
-\label{chap:prospettive}
+\label{sec:prospettive}
 
 % Bibliografia
 \beforebibliography
