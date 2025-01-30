@@ -144,7 +144,7 @@ Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti real
 \section{Scopo dell'elaborato}
 \label{sec:scopo_dell_elaborato}
 
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Viene inoltre proposta un'architettura applicabile nel contesto della \textit{fog robotics}, utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Inoltre viene approfondito il problema del domain shift in un contesto reale e sempre più diffuso, quello della \textit{fog robotics}, attraverso lo sviluppo di un modello dedicato.
 
 \subsection{Task del modello}
 \label{sec:task_del_modello}
@@ -169,7 +169,7 @@ In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto 
 \subsection{Architettura per fog robotics}
 \label{sec:architettura_modello_encoder_decoder}
 
-Oltre ad analizzare le performance di un modello nei tre casi precedentemente descritti, in questo elaborato viene proposta e testata un'architettura alternativa per cercare di ridurre il domain shift in un contesto di fog robotics. La fog robitics~\cite{10.1145/2757384.2757397} è un'estensione del concetto di cloud robotics~\cite{qian2009cloud}, e punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i nodi fog più vicini ai robot. Uno schema che illustra il concetto di fog robotics è mostrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}.
+Oltre ad analizzare le performance nei tre casi precedentemente descritti, in questo elaborato viene proposta e testata un'architettura alternativa per studiare il problema del domain shift in un sistema distribuito di fog robotics. La fog robitics~\cite{10.1145/2757384.2757397} è un'estensione del concetto di cloud robotics~\cite{qian2009cloud}, e punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i nodi fog più vicini ai robot. Uno schema generico che illustra il concetto di fog robotics è mostrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}.
 
 \begin{figure}[t]
 	\centering
@@ -177,6 +177,14 @@ Oltre ad analizzare le performance di un modello nei tre casi precedentemente de
 	\caption{Schema di un sistema fog robotics.}
 	\label{fig:fog_robotics}
 \end{figure}
+
+Nel nostro caso, gli elementi essenziali del sistema di fog robotics sono tre:
+
+\begin{itemize}
+	\item \textbf{Robot di servizio}: 
+	\item \textbf{Server locale}:
+	\item \textbf{Server cloud}:
+\end{itemize}
 
 Quest'architettura si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) e un modello per la trasformazione dei dati (\textit{encoder-decoder}).
 
