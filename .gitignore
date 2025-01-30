@@ -10,4 +10,5 @@
 *.xmpdata
 *.swp
 *.pyg
+*.bkp
 !images/**/*.pdf

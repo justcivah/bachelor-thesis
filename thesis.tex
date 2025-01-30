@@ -144,12 +144,12 @@ Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti real
 \section{Scopo dell'elaborato}
 \label{sec:scopo_dell_elaborato}
 
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Viene inoltre proposta un'architettura alternativa basata su una seconda rete neurale di tipo encoder-decoder, che sarà utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, in particolare analizzare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Viene inoltre proposta un'architettura applicabile nel contesto della \textit{fog robotics}, utilizzata per condurre ulteriori esperimenti e considerazioni sul domain shift.
 
 \subsection{Task del modello}
 \label{sec:task_del_modello}
 
-Prima di iniziare dobbiamo capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
+Prima di iniziare è essenziale capire quali caratteristiche (\textit{feature}) il nostro modello deve riuscire a rilevare all'interno dell'ambiente. Nel nostro caso vogliamo riuscire a riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
 
 La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. La prima consiste nell'assegnare a ciascun pixel di un'immagine un valore che indica a quale classe appartiene l'oggetto rappresentato da quel pixel. La seconda invece, non solo associa un valore di classe a ciascun pixel, ma identifica in maniera univoca ogni oggetto, consentendo di distinguere tra oggetti appartenenti alla stessa classe. Un esempio di segmentazione semantica e segmentazione d'istanza è illustrato nella \hyperref[fig:segmentazione]{Figura \ref{fig:segmentazione}}.
 
@@ -166,11 +166,21 @@ La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. 
 
 In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto ci consente di semplificare il lavoro del modello, e di conseguenza ridurne la complessità.
 
-\subsection{Architettura modello encoder-decoder}
+\subsection{Architettura per fog robotics}
 \label{sec:architettura_modello_encoder_decoder}
 
-L'architettura proposta in questo elaborato si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) addestrato con dati simulati, che opera in modo ottimale solo con dati provenienti dal simulatore stesso, e un sistema di trasformazione dei dati reali.
+Oltre ad analizzare le performance di un modello nei tre casi precedentemente descritti, in questo elaborato viene proposta e testata un'architettura alternativa per cercare di ridurre il domain shift in un contesto di fog robotics. La fog robitics~\cite{10.1145/2757384.2757397} è un'estensione del concetto di cloud robotics~\cite{qian2009cloud}, e punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i nodi fog più vicini ai robot. Uno schema che illustra il concetto di fog robotics è mostrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}.
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.8\textwidth, clip]{images/fog-robotics}
+	\caption{Schema di un sistema fog robotics.}
+	\label{fig:fog_robotics}
+\end{figure}
+
+Quest'architettura si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) e un modello per la trasformazione dei dati (\textit{encoder-decoder}).
+
+Il nostro obiettivo è trasformare le immagini ricevute in input dall'architettura in altre immagini proiettate sul dominio di a
 Bisogna quindi trasformare i dati reali in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. Questa trasformazione viene effettuata tramite una seconda rete neurale profonda con architettura encoder-decoder. Il compito di questo secondo modello è quello di rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli corrispondere alle caratteristiche attese dal segmentatore. L'output dell'encoder-decoder viene quindi utilizzato come input del segmentatore, che a questo punto riuscirà a fare correttamente inferenza sul dato ricevuto.
 
 Il modo più semplice e intuitivo per addestrare l'encoder-decoder consiste nel prendere il segmentatore pre-addestrato sui dati simulati e congelare i suoi pesi. A questo punto l'encoder-decoder viene co-addestrato utilizzando la funzione di loss calcolata dal segmentatore. Durante il processo di addestramento i dati attraversano prima l'encoder-decoder, il suo output diventa l'input del segmentatore che a sua volta calcola la loss. A questo punto si effettua la backpropagation, che aggiorna solo i pesi dell'encoder-decoder e che lascia invariati quelli del segmentatore.
@@ -179,8 +189,8 @@ Una criticità di questo approccio è la necessità di disporre di una piccola q
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width = \textwidth, clip]{images/unet-yolo-architecture}
-	\caption{Schema dell'architettura real-to-sim}
+	\includegraphics[width=\textwidth, clip]{images/unet-yolo-architecture}
+	\caption{Schema dell'architettura real-to-sim.}
 	\label{fig:architettura-unet-yolo}
 \end{figure}
 
