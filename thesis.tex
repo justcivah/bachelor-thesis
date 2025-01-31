@@ -181,12 +181,12 @@ La domain randomization permette quindi di generare grandi dataset di addestrame
 \chapter{Metodo}
 \label{chap:metodo}
 
-Nel seguente capitolo vengono analizzate le tecnologie e gli strumenti utilizzati, motivandone le scelte e descrivendo il loro impiego all'interno di questo lavoro. Inoltre, vengono descritti i processi di creazione e addestramento dei modelli, presentando frammenti di codice esemplificativi per illustrarne l'implementazione.
+Come discusso nel \hyperref[cap:introduzione]{Capitolo \ref{cap:introduzione}}, lo scopo di questo elaborato è analizzare il fenomeno del domain shift in tre scenari differenti: sim-to-sim, real-to-real e sim-to-real. L’obiettivo finale è quantificare il calo prestazionale di un modello di robotic vision in ciascun caso, identificando i motivi di tale comportamento. Viene inoltre effettuata l'analisi del domain shift in un contesto reale distribuito, proponendo un’architettura che combina un segmentatore semantico e un encoder-decoder. Questo design consente di sfruttare i vantaggi dei sistemi distribuiti, come l’elaborazione parallela e la riduzione del carico computazionale sui dispositivi edge.
 
-%ulteriore introduzione nella quale si ripete e approfondisce quanto detto nello scopo dell'elaborato. Diciamo che per il compito di analisi del domain shift in sim-sim, real-real e sim-real è necessario un solo modello, mentre che per la stessa analisi in un sistema distribuito risulta necessario realizzare un nuovo modello, che alla fine non è altro che un merging di due modelli già esistenti: un segmentatore semantico e un encoder-decoder.%
+Nel seguente capitolo vengono analizzate le tecnologie e gli strumenti utilizzati, motivandone le scelte e descrivendo il loro impiego all'interno di questo lavoro. Inoltre, vengono descritti i processi di creazione e addestramento dei modelli, presentando frammenti di codice esemplificativi che illustrano l'implementazione.
 
-\section{Segmentazione}
-\label{sec:segmentazione}
+\section{Task di segmentazione}
+\label{sec:task_di_segmentazione}
 
 Prima di iniziare è essenziale capire quali caratteristiche (\textit{feature}) i nostri modelli devono riuscire a rilevare all'interno dell'ambiente. Nel nostro caso si vogliono riconoscere determinate classi di oggetti e individuarne i contorni precisi; ci interessa quindi effettuare un task di segmentazione.
 
@@ -207,6 +207,8 @@ In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto 
 
 \section{Architettura modello distribuito}
 \label{sec:modello_per_fog_robotics}
+
+Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di un singolo modello di riferimento, lo studio del fenomeno in un'architettura distribuita obbliga a riprogettare l'intera pipeline di lavoro.
 
 Come anticipato nella sezione \ref{sec:scopo_dell_elaborato}, parte di questo lavoro si basa su un'architettura distribuita di tipo \textit{fog robotics}~\cite{10.1145/2757384.2757397}. Questa tecnologia è un'estensione del concetto di cloud robotics~\cite{qian2009cloud}, e punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i server fog più vicini ai robot. La \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}} illustra schematicamente l'architettura di una rete fog.
 
