@@ -111,7 +111,7 @@ Un simulatore consente inoltre di conoscere in anticipo e progettare gli scenari
 
 Questo approccio permette di risolvere molti problemi, ma ne introduce di nuovi. La simulazione è infatti solo un'approssimazione della realtà, e non è possibile replicare fedelmente tutti i fenomeni e le caratteristiche del mondo reale. I motivi per i quale queste tipologie di ambienti differiscono sono principalmente due: il fotorealismo e l'interazione fisica.
 
-Per fotorealismo si intende la capacità del simulatore di riprodurre in maniera visivamente accurata ambienti reali, in modo dettagliato e credibile. Tuttavia, risulta difficile replicare fenomeni come l'illuminazione, le riflessioni e texture di superfici. Questa mancanza di dettagli ha un grande impatto sulla qualità dei dati raccolti per l'addestramento, con una conseguente mancanza di generalizzazione nel mondo reale da parte del modello.
+Per fotorealismo si intende la capacità del simulatore di riprodurre in maniera visivamente accurata ambienti reali, in modo dettagliato e credibile. Tuttavia, risulta difficile replicare fenomeni come l'illuminazione, i riflessi e texture di superfici. Questa mancanza di dettagli ha un grande impatto sulla qualità dei dati raccolti per l'addestramento, con una conseguente mancanza di generalizzazione nel mondo reale da parte del modello.
 
 L'interazione fisica si riferisce invece all'abilità del simulatore di riuscire a replicare le leggi della fisica in maniera realistica; questo comprende ad esempio il movimento e l'interazione tra oggetti. 
 
@@ -144,25 +144,25 @@ Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti real
 \section{Scopo dell'elaborato}
 \label{sec:scopo_dell_elaborato}
 
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Oltre ad analizzare le performance nei tre casi appena descritti, in questo elaborato viene proposta e testata un'architettura alternativa per studiare il problema del domain shift in un sistema distribuito.
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Oltre ad analizzare le performance nei tre casi appena descritti, in questo elaborato viene proposta e testata un'architettura alternativa, con l'obiettivo di ridurre il domain shift in un sistema distribuito.
 
 % CAPITOLO 2: Stato dell'Arte
 \chapter{Stato dell'arte}
 \label{chap:stato_arte}
 
-Il sim-to-real gap è la tipologia di domain shift più complessa, e uno dei principali problemi nel campo della robitic vision. Questo perchè la complessità degli ambienti reali va oltre quello che è possibile rappresentare attraverso una simulazione. In questi ultimi anni la comunità scientifica ha dedicato sempre più attenzione a questo problema, arrivando a proporre diverse soluzioni.
+Il domain shift rappresenta una delle principali sfide nell'apprendimento automatico. Questo fenomeno si verifica quando i dati di addestramento e quelli di test provengono da distribuzioni diverse, causando un degrado delle prestazioni del modello. In questi ultimi anni la comunità scientifica ha dedicato sempre più attenzione a questo problema, arrivando a proporre diverse soluzioni.
 
 \section{Domain adaptation}
 \label{sec:adaptation}
 
-Quella della domain adaptation è una delle strategie più utilizzate per ridurre il sim-to-real gap. Questo approccio mira a minimizzare le differenze tra l'ambiente simulato e quello reale, trasformando i dati provenienti dal simulatore e rendendoli il più possibile simili a quelli raccolti nel mondo reale. Il processo di trasformazione dei dati comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati simulati. Una rete crea nuove immagini, il più simili possibili a quelle reali, mentre l'altra valuta la bontà delle immagini generate, che devono essere il più realistiche possibili. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
+La domain adaptation è una delle strategie più utilizzate per ridurre il domain shift. Questo approccio mira a minimizzare le differenze tra il dominio di origine e quello di destinazione, tramite trasformazioni dei dati o l'adattamento dei modelli. Una tecnica comprende l'utilizzo di tecnologie come le reti generative avversarie (GAN, Generative Adversarial Network)~\cite{10.1145/3422622}, che utilizzano in genere due diverse reti neurali per migliorare la qualità dei dati. Una rete crea nuovi dati con caratteristiche simili a quelle del dominio target, e l'altra valuta la loro somiglianza con i dati reali. Questo approccio si è rivelato particolarmente efficace e ha permesso di migliorare le performance di generalizzazione nei modelli di robotic vision~\cite{Shrivastava_2017_CVPR}.
 
-Ad esempio, un'immagine presa da un ambiente simulato, con texture uniformi e un'illuminazione predefinita, può essere trasformata in una più fotorealistica variando la luce, aggiungendo riflessioni e creando imperfezioni sulla superficie di oggetti. In pratica si cerca di aggiungere caratteristiche presenti nel mondo reale a dati campionati da simulatori, in modo da ridurre la differenza tra quello che è il dominio della simulazione e quello della realtà.
+Uno dei casi più analizzati in letteratura è quello del sim-to-real, nel quale si cerca di trasformare i dati provenienti da un simulatore in immagini simili a quelle reali. Ad esempio, un'immagine presa da un ambiente simulato, con texture uniformi e un'illuminazione predefinita, può essere trasformata in una più fotorealistica variando la luce, aggiungendo rifletti e creando imperfezioni sulla superficie di oggetti. In pratica si cerca di aggiungere caratteristiche presenti nel mondo reale a dati campionati da simulatori, in modo da ridurre la differenza tra quello che è il dominio della simulazione e quello della realtà.
 
 \section{Data augmentation}
 \label{sec:augmentation}
 
-La data augmentation rappresenta un'altra tecnica ampiamente utilizzata per ridurre i diversi tipi di domain shift. Consiste nell'applicare trasformazioni a dataset reali con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
+La data augmentation rappresenta un'altra tecnica ampiamente utilizzata per ridurre il domain shift. Consiste nell'applicare trasformazioni ai dataset con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
 
 Un'altro esempio nel quale questa tecnica può tornare utile, è nel caso si vengano a creare dipendenze da caretteristiche non rilevanti (bias). Ad esempio, se un modello tende ad associare la presenza di uno specifico sfondo a quella di un particolare oggetto, può essere conveniente effettuare trasformazioni andando a modificare o rimuovere lo sfondo, in modo da rendere indipendente la presenza di un oggetto da quella di un'altro.
 
@@ -171,9 +171,9 @@ Un esempio di bias è ben descritto nell'articolo~\cite{diagnostics12010040}, re
 \section{Domain randomization}
 \label{sec:randomization}
 
-Invece che addestrare un modello su una singola scena simulata creata manualmente, la domain randomization permette di randomizzare gli elementi come oggetti, luce, texture ed eventuale rumore in maniera automatica all'interno di uno stesso ambiente. Questo consente al modello di imparare molteplici dispozizioni di oggetti e caratteristiche, migliorandone così le capacità di generalizzazione. Con questo approccio si cercano quindi di ricreare le condizioni che caratterizzano un normale ambiente domestico; a distanza di pochi giorni è raro che vengano introdotti o rimossi degli oggetti, mentre è molto più probabile che oggetti già presenti vengano spostati. Questo comporta una diversa disposizione degli oggetti, con una conseguente differenza nell'illuminazione della stanza, nei riflessi, e possibilmente anche nei colori. Se il modello non è abbastanza robusto a questo tipo di cambiamenti, potrebbe non riuscire a generalizzare correttamente.
+La domain randomization~\cite{8202133} risulta particolarmente utile quando si devono campionare dati da un ambiente simulato. Invece che raccogliere dati da una singola scena statica, la domain randomization permette di randomizzare gli elementi come oggetti, luce, texture ed eventuale rumore in maniera automatica all'interno di uno stesso ambiente. Questo consente al modello di imparare molteplici dispozizioni di oggetti e caratteristiche, migliorandone così le capacità di generalizzazione. Con questo approccio si cercano quindi di ricreare le condizioni che caratterizzano un normale ambiente domestico; a distanza di pochi giorni è raro che vengano introdotti o rimossi degli oggetti, mentre è molto più probabile che oggetti già presenti vengano spostati. Questo comporta una diversa disposizione degli oggetti, con una conseguente differenza nell'illuminazione della stanza, nei riflessi, e possibilmente anche nei colori. Se il modello non è abbastanza robusto a questo tipo di cambiamenti, potrebbe non riuscire a generalizzare correttamente.
 
-Questa tecnica~\cite{8202133} è particolarmente efficace nell'addestrare reti neurali profonde (DNN, Deep Neural Netework) per compiti come l'identificazione e la manipolazione di oggetti. Ha infatti permesso di addestrare un modello utilizzando solo immagini simulate, riuscendo poi a localizzare in maniera accurata oggetti in ambienti reali, senza necessitare di ulteriori dati provenienti dal mondo reale.
+Questa tecnica è particolarmente efficace nell'addestrare reti neurali profonde (DNN, Deep Neural Netework) per compiti come l'identificazione e la manipolazione di oggetti. Ha infatti permesso di addestrare un modello utilizzando solo immagini simulate, riuscendo poi a localizzare in maniera accurata oggetti in ambienti reali, senza necessitare di ulteriori dati provenienti dal mondo reale.
 
 La domain randomization permette quindi di generare grandi dataset di addestramento col minimo sforzo da parte di un operatore umano, e di ottenere modelli robusti senza la necessità di effettuare fine tuning con dati reali.
 
@@ -181,9 +181,9 @@ La domain randomization permette quindi di generare grandi dataset di addestrame
 \chapter{Metodo}
 \label{chap:metodo}
 
-Come discusso nel \hyperref[cap:introduzione]{Capitolo \ref{cap:introduzione}}, lo scopo di questo elaborato è analizzare il fenomeno del domain shift in tre scenari differenti: sim-to-sim, real-to-real e sim-to-real. L’obiettivo finale è quantificare il calo prestazionale di un modello di robotic vision in ciascun caso, identificando i motivi di tale comportamento. Viene inoltre effettuata l'analisi del domain shift in un contesto reale distribuito, proponendo un’architettura che combina un segmentatore semantico e un encoder-decoder. Questo design consente di sfruttare i vantaggi dei sistemi distribuiti, come l’elaborazione parallela e la riduzione del carico computazionale sui dispositivi edge.
+Come discusso nel \hyperref[cap:introduzione]{Capitolo \ref{cap:introduzione}}, lo scopo di questo elaborato è analizzare il fenomeno del domain shift in tre scenari differenti, quantificando il calo prestazionale in ciascun caso. Viene inoltre proposta un'architettura per ridurre il domain shift tramite domain adaptation in un contesto distribuito, combinando un segmentatore semantico e un encoder-decoder.
 
-Nel seguente capitolo vengono analizzate le tecnologie e gli strumenti utilizzati, motivandone le scelte e descrivendo il loro impiego all'interno di questo lavoro. Inoltre, vengono descritti i processi di creazione e addestramento dei modelli, presentando frammenti di codice esemplificativi che illustrano l'implementazione.
+Nel seguente capitolo vengono analizzate le tecnologie e gli strumenti utilizzati, motivandone le scelte e descrivendo il loro impiego all'interno di questo lavoro. Inoltre, vengono descritti i processi di creazione e addestramento dei modelli, presentando frammenti di codice che illustrano l'implementazione.
 
 \section{Task di segmentazione}
 \label{sec:task_di_segmentazione}
@@ -208,9 +208,7 @@ In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto 
 \section{Architettura modello distribuito}
 \label{sec:modello_per_fog_robotics}
 
-Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di un singolo modello di riferimento, lo studio del fenomeno in un'architettura distribuita obbliga a riprogettare l'intera pipeline di lavoro.
-
-Come anticipato nella sezione \ref{sec:scopo_dell_elaborato}, parte di questo lavoro si basa su un'architettura distribuita di tipo \textit{fog robotics}~\cite{10.1145/2757384.2757397}. Questa tecnologia è un'estensione del concetto di cloud robotics~\cite{qian2009cloud}, e punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i server fog più vicini ai robot. La \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}} illustra schematicamente l'architettura di una rete fog.
+Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di una singola rete neurale, il compito di domain adaptation in un sistema distribuito obbliga a riprogettare l'intero modello. La tecnologia utilizzata per il sistema distribuito è di tipo \textit{fog robotics}~\cite{10.1145/2757384.2757397}, un'estensione del concetto di cloud robotics~\cite{qian2009cloud} che punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i server fog più vicini ai robot. La \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}} illustra schematicamente l'architettura di una rete fog.
 
 \begin{figure}[t]
 	\centering
@@ -219,29 +217,24 @@ Come anticipato nella sezione \ref{sec:scopo_dell_elaborato}, parte di questo la
 	\label{fig:fog_robotics}
 \end{figure} 
 
-Per funzionare in un sistema distribuito il nostro modello deve essere prima di tutto modulare.
+Affinchè il nostro modello possa funzionare in un sistema distribuito, è essenziale progettarlo in maniera modulare; una parte deve essere eseguita sui server fog, mentre l'altra va gestita in cloud. Questi due moduli sono rappresentati da un modello per la trasformazione dei dati (\textit{encoder-decoder}) e uno per la segmentazione semantica (\textit{segmentatore}).
 
-Nel nostro caso, gli elementi essenziali del sistema di fog robotics sono tre:
+Il nostro obiettivo è trasformare le immagini ricevute in input dall'architettura in altre immagini proiettate sul dominio di addestramento, utilizzando un'architettura di tipo encoder-decoder. Vogliamo quindi rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli corrispondere alle caratteristiche attese dal segmentatore. L'output dell'encoder-decoder viene poi utilizzato come input del segmentatore, che a questo punto fa inferenza sul dato ricevuto.
 
-\begin{itemize}
-	\item \textbf{Robot di servizio}: 
-	\item \textbf{Server locale}:
-	\item \textbf{Server cloud}:
-\end{itemize}
+Il processo di addestramento del modello distribuito è suddiviso in due fasi principali:
 
-Quest'architettura si basa su due componenti principali: un modello di segmentazione semantica (\textit{segmentatore}) e un modello per la trasformazione dei dati (\textit{encoder-decoder}).
+\begin{enumerate}
+	\item \textbf{Addestramento del segmentatore}: Inizialmente il segmentatore viene addestrato con dati provenienti dal dominio sorgente. Questo passaggio è essenziale per garantire che il segmentatore apprenda correttamente caratteristiche del dominio di partenza.
+	
+	\item \textbf{Co-addestramento dell'encoder-decoder e del segmentatore}: Successivamente l'encoder-decoder e il segmentatore vengono addestrati con dati provenienti dal dominio di destinazione. In questa fase, i dati passano prima attraverso l'encoder-decoder che cerca di proiettarli sul dominio sorgente, e successivamente vengono dati come input al segmentatore. A questo punto il modello di segmentazione calcola la loss e aggiorna i pesi di entrambi i modelli tramite la funzione di backpropagation. Questo processo consente all'encoder-decoder di imparare a trasformare i dati in maniera efficace, e al contempo il segmentatore si adatta al nuovo dominio tramite \textit{fine-tuning}.
+\end{enumerate}
 
-Il nostro obiettivo è trasformare le immagini ricevute in input dall'architettura in altre immagini proiettate sul dominio di a
-Bisogna quindi trasformare i dati reali in dati simili a quelli simulati, proiettando le immagini reali sul dominio della simulazione. Questa trasformazione viene effettuata tramite una seconda rete neurale profonda con architettura encoder-decoder. Il compito di questo secondo modello è quello di rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli corrispondere alle caratteristiche attese dal segmentatore. L'output dell'encoder-decoder viene quindi utilizzato come input del segmentatore, che a questo punto riuscirà a fare correttamente inferenza sul dato ricevuto.
-
-Il modo più semplice e intuitivo per addestrare l'encoder-decoder consiste nel prendere il segmentatore pre-addestrato sui dati simulati e congelare i suoi pesi. A questo punto l'encoder-decoder viene co-addestrato utilizzando la funzione di loss calcolata dal segmentatore. Durante il processo di addestramento i dati attraversano prima l'encoder-decoder, il suo output diventa l'input del segmentatore che a sua volta calcola la loss. A questo punto si effettua la backpropagation, che aggiorna solo i pesi dell'encoder-decoder e che lascia invariati quelli del segmentatore.
-
-Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati reali segmentati per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto a realizzare grandi dataset annotati richiesti da altre tecniche. Uno schema riassuntivo dell'architettura proposta è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
+Una criticità di questo approccio è la necessità di disporre di una piccola quantità di dati provenienti dal dominio per l'addestramento dell'encoder-decoder. Questa limitazione, nonostante rappresenta un potenziale sventaggio, è significativamente meno onerosa rispetto alla realizzazione di grandi dataset annotati richiesti da altre tecniche. Uno schema riassuntivo dell'architettura proposta è illustrato nella \hyperref[fig:architettura-unet-yolo]{Figura \ref{fig:architettura-unet-yolo}}.
 
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\textwidth, clip]{images/unet-yolo-architecture}
-	\caption{Schema dell'architettura real-to-sim.}
+	\caption{Architettura del modello distribuito.}
 	\label{fig:architettura-unet-yolo}
 \end{figure}
 
