@@ -24,6 +24,7 @@
 	numberstyle=\color{gray!100},
 	numbers=left,
 	stepnumber=1,
+	tabsize=4,
 	numbersep=8pt,
 	frame=lines,
 	rulecolor=\color{gray!50},
@@ -505,12 +506,41 @@ Di queste classi sono stati modificati il SegmentationTrainer e il BaseTrainer. 
 Come nel caso precedente, anche le classi che compongono il modello sono tre:
 
 \begin{itemize}
-	\item \textbf{CombinedModel}: È la classe da istanziare per effettuare l'addestramento di un modello di segmentazione semantica YOLO11. Eredita dalla classe DetectionTrainer e definisce la funzione di loss per questo particolare task.
+	\item \textbf{CombinedModel}: Inizialmente questa classe era chiamata SegmentationModel ma è stata poi rinominata in quanto combina i modelli UNet e YOLO11. Estende la classe DetectionModel, e l'unico comportamento differente è la definizione della funzione di loss.
 	
-	\item \textbf{DetectionTrainer}: Estende la classe BaseTrainer e fornisce funzionalità aggiuntive per l'addestramento del modello. Le sue funzioni principali includono: costruzione del dataset, creazione del dataloader, impostazione degli attributi del modello, output riguardo il progresso dell'addestramento e altro ancora.
+	\item \textbf{DetectionModel}: Eredita dalla classe BaseModel e implementa la logica specifica per il task generico di object detection. In questa classe vengono definiti i modelli e viene definita la funzione \textit{forward()}.
 	
-	\item \textbf{BaseTrainer}: Permette di creare un trainer utilizzabile per vari compiti. Gestisce l'inizializzazione del trainer, dell'ottimizzatore e la configurazione del dispositivo. Permette inoltre la ripresa dell'addestramento da un certo checkpoint, il tracciamento delle metriche di addestramento e la memorizzazione delle metriche dei risultati.
+	\item \textbf{BaseModel}: È la classe base per tutti i modello YOLO11, e gestisce le operazioni fondamentali come il forward pass, la fusione di layer, il caricamento dei pesi e l'inizializzazione. Vengono inoltre definiti i metodi \textit{predict()} per l'inferenza e \textit{loss()} per il calcolo della loss, lasciando però alle sottoclassi il compito di specificarne il criterio.
 \end{itemize}
+
+Nella classe DetectionModel è stato prima istanziato il modello UNet, e in seguito si è cambiata la logica del metodo forward. Invece di passare direttamente l'input al metodo forward della superclasse, viene prima elaborato dalla UNet e, successivamente, l'output risultante viene fornito come argomento al metodo forward di YOLO11. Il \hyperref[lst:implementazionemetodoforward]{Codice \ref{lst:implementazionemetodoforward}} ne mostra l'implementazione.
+
+\lstset{style=pythonstyle}
+\begin{lstlisting}[language=Python, caption={Implementazione del metodo forward nella classe DetectionModel.}, label={lst:implementazionemetodoforward}, float]
+	def forward(self, x, *a, **kw):
+		if isinstance(x, dict):
+			# Fase di addestramento
+			img = x['img']
+			unet_out = self.unet(img).type_as(img)
+			
+			unet_out = torch.nn.functional.interpolate(
+				unet_out, size=img.shape[2:], 
+				mode='bilinear', align_corners=False
+			)
+			
+			return super().forward({**x, 'img': unet_out}, *a, **kw)
+		
+		else:
+			# Fase di inferenza
+			unet_out = self.unet(x).type_as(x)
+			
+			unet_out = torch.nn.functional.interpolate(
+				unet_out, size=x.shape[2:], 
+				mode='bilinear', align_corners=False
+			)
+			
+			return super().forward(unet_out, *a, **kw)
+\end{lstlisting}
 
 \section{Addestramento dei modelli}
 \label{sec:addestramento_dei modelli}
@@ -521,19 +551,17 @@ Come nel caso precedente, anche le classi che compongono il modello sono tre:
 Una volta che abbiamo a disposizione un dataset formattato secondo le specifiche YOLO11 fornite da Ultralytics, non ci resta che iniziare l'addestramento. Questo può essere effettuato in due diversi modi: tramite linea di comando oppure utilizzando codice Python. In entrambi i casi, il trainer andrà prima a caricare un modello preesistente o scaricherà quello base, e successivamente inizierà il processo di addestrameto utilizzando i parametri specificati. Un esempio di script di addestramento è mostrato nel \hyperref[lst:addestramentoyolo]{Codice \ref{lst:addestramentoyolo}}. Oltre ai parametri indicati ne sono presenti molti altri consultabili dal sito ufficiale di Ultralytics.
 
 \lstset{style=pythonstyle}
-\begin{lstlisting}[language=Python, caption={Un esempio di codice Python per addestrare un modello YOLO11}, label={lst:addestramentoyolo}, float]
-	from ultralytics import YOLO
+\begin{lstlisting}[language=Python, caption={Addestramento del modello YOLO11.}, label={lst:addestramentoyolo}, float]
+	# Caricamento modello
+	model = YOLO('yolo11l-seg.pt')
 	
-	# Carica un modello
-	model = YOLO("yolo11l-seg.pt")
-	
-	# Addestra il modello
+	# Addestramento modello
 	results = model.train(
-		data="../datasets/igibson-dataset/dataset.yaml",
-		epochs=100,
-		imgsz=512,
+		data='../path/to/dataset/dataset.yaml',
+		epochs=40,
 		batch=8,
-		save=True
+		save=True,
+		imgsz=512
 	)
 \end{lstlisting}
 
@@ -541,13 +569,11 @@ Durante il processo di addestramento e al termine di ogni epoca, vengono calcola
 
 La precisione quantifica quanto bene il modello riesce a non fare errori, e quindi ad evitare falsi positivi. Più la precisione è alta, più tutte le rilevazioni sono corrette e meno si hanno falsi positivi. Si sta quindi cercando di minimizzare la possibilità che un'area venga erroneamente classificata come un oggetto.
 
-\[ \text{\textit{Precisione}} = \frac{VP}{VP + FP} \]
-
 La sensibilità misura quanto un modello è capace a riconoscere tutti gli oggetti all'interno di un'immagine, o il altre parole quanti degli oggetti presenti sono stati identificati. Un'alta sensibilità corrisponde a un numero basso di falsi negativi.
 
-\[ \text{\textit{Sensibilità}} = \frac{VP}{VP + FN} \]
+\[ \text{\textit{Sensibilità}} = \frac{VP}{VP + FN} \qquad \text{\textit{Precisione}} = \frac{VP}{VP + FP} \]
 
-La mAP indica invece la media delle precisioni calcolate tra tutte le classi di oggetti e con diverse soglie di sensibilità. In breve, la mAP serve a calcolare le performance di un modello considerando sia la sua abilità a identificare correttamente oggetti (precisione), che quella nel saperli rilevare tutti (sensibilità). È calcolata come
+La mAP indica invece la media delle precisioni calcolate tra tutte le classi di oggetti e con diverse soglie di sensibilità. In breve, serve a calcolare le performance di un modello considerando sia la sua abilità a identificare correttamente oggetti (precisione), che quella nel saperli rilevare tutti (sensibilità). È calcolata come
 
 \[ \text{\textit{mAP}} = \frac{1}{N} \sum_{i=1}^{N} AP_i \]
 
@@ -555,6 +581,30 @@ dove $AP_i$ indica la precisione media della classe $i$, e $N$ è il numero tota
 
 \subsection{Modello distribuito}
 \label{sec:addestramento_encoder_decoder}
+
+Per addestrare questo modello è sufficiente creare un dizionario contenente nome e valore dei parametri da passare, istanziare la classe SegmentationTrainer e chiamare il metodo \textit{train()} per iniziare l'addestramento. Assieme alla mappa di argomenti, è anche possibile specificare se si vogliono salvare i pesi della UNet alla fine di ogni epoca e se si vuole caricare un modello pre-addestrato di UNet. Per salvare i pesi della UNet a fine addestramento, chiamare il metodo \textit{save\_unet()}. Il \hyperref[lst:addestramentomodellodistribuito]{Codice \ref{lst:addestramentomodellodistribuito}} mostra l'intero processo di addestramento.
+
+\lstset{style=pythonstyle}
+\begin{lstlisting}[language=Python, caption={Addestramento del modello distribuito.}, label={lst:addestramentomodellodistribuito}, float]
+	# Definizione argomenti
+	args = dict(
+		model='yolo11-seg.pt',
+		data='../path/to/dataset/dataset.yaml',
+		epochs=40,
+		batch=2
+	)
+	
+	# Istanziazione del trainer
+	trainer = SegmentationTrainer(
+		overrides=args,
+		save_unet_every_epoch=True,
+		unet_path='path/to/unet/unet.pt'
+	)
+	
+	# Addestramento modello
+	trainer.train()
+	trainer.save_unet()
+\end{lstlisting}
 
 % CAPITOLO 5: Analisi sperimentale
 \chapter{Analisi sperimentale}
@@ -587,8 +637,11 @@ Si consiglia di installare tutte le dipendenze contemporaneamente, così da perm
 	imageio=2.33.1 pypng=0.20220715.0
 \end{verbatim}
 
-\section{Procedure}
-\label{sec:procedure}
+\section{Domain shift}
+\label{sec:domain_shift}
+
+\section{Domain adaptation in architetture fog robotics}
+\label{sec:domain_shift_in_contesto_fog_robotics}
 
 \section{Risultati}
 \label{sec:risultati}
