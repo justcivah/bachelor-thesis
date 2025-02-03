@@ -615,7 +615,7 @@ In questo capitolo sono descritti gli esperimenti condotti per approfondire il p
 \section{Setup}
 \label{sec:setup}
 
-Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda ha invece un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
+Gli esperimenti descritti in questo capitolo sono stati svolti su due diverse macchine, utilizzate in base alle disponibilità del laboratorio. La prima, chiamata da qui in avanti \textit{PC1}, monta un processore AMD Ryzen 7 5700G, memoria da 16GB e scheda video NVIDIA RTX 3060Ti. La seconda, che verrà indicata come \textit{PC2}, è dotata di un processore Intel Core i5 8400, 16GB di memoria e scheda video NVIDIA GTX 1050Ti. Entrambe le macchine operano con il sistema operativo Ubuntu 20.04.6 LTS.
 
 Per eseguire gli script di conversione e addestramento è stato creato un ambiente virtuale con Python 3.12 tramite Anaconda~\cite{anaconda}, nel quale sono stati installati i seguenti pacchetti
 
@@ -637,14 +637,68 @@ Si consiglia di installare tutte le dipendenze contemporaneamente, così da perm
 	imageio=2.33.1 pypng=0.20220715.0
 \end{verbatim}
 
-\section{Domain shift}
-\label{sec:domain_shift}
+Negli esperimenti proposti in seguito, tutti modelli sono stati addestrati su 25 classi diverse di oggetti. Queste sono in comune tra i dataset iGibson e ScanNet, e rappresentano tutte oggetti di uso comune. Le classi considerate sono le seguenti:
 
-\section{Domain adaptation in architetture fog robotics}
+\begin{verbatim}
+	 bathtub, bed, cabinet, chair, coffee_machine, cradle, door,
+	 fitness_equipment, floor, guitar, lamp, microwave, monitor, piano,
+	 picture, plant, refrigerator, shower, sink, sofa, table, toilet,
+	 trash_bin, wall, washing_machine, window
+	
+\end{verbatim}
+
+\section{Domain shift}
+\label{sec:studio_domain_shift}
+
+In questa prima sezione viene analizzato il domain shift nei tre scenari precedentemente descritti: sim-to-sim, real-to-real e sim-to-real. Per ciascuno sono fornite le descrizioni degli esperimenti e si conclude analizzando i risultati ottenuti. Tutti questi esperimenti sono stati effettuati utilizzando solo il modello di segmentazione YOLO11.
+
+\subsubsection{Sim-to-sim}
+\label{sec:sim_to_sim}
+
+Come primo caso si è analizzato il domain shift tra ambienti simulati, in particolare è stato testato il modello all'interno degli stessi ambienti utilizzati per l'addestramento. Nella pratica sono state prese immagini e dati di segmentazione semantica da 7 ambienti diversi, nei quali si sono campionati dati attraverso 30 diverse run. Di questi dati raccolti, 35000 immagini sono state utilizzate per l'addestramento, mentre le altre 5000 sono state usate per la validazione. Il modello è stato addestrato sulla macchina PC1 per 60 epoche, con una dimensione di batch pari a 8 e risoluzione delle immagini di 512 pixel. Il processo di training è durato circa 16 ore e 20 minuti e le metriche finali sono riportate nella \hyperref[fig:sim-to-sim-1]{Figura \ref{fig:sim-to-sim-1}}.
+
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/validation-loss}}
+	\hspace{0.01\textwidth}
+	\\	
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/precision}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/recall}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/map50-95}}
+	\caption{Metriche di addestramento nel caso di ambienti simulati, con dati di validazione provenienti dagli stessi ambienti di training.}
+	\label{fig:sim-to-sim-1}
+\end{figure}
+
+
+
+\subsubsection{Real-to-real}
+\label{sec:real_to_real}
+
+Il secondo scenario studiato riguarda
+
+\subsubsection{Sim-to-real}
+\label{sec:sim_to_real}
+
+L'ultimo caso di studio riguarda
+
+\section{Domain adaptation in fog robotics}
 \label{sec:domain_shift_in_contesto_fog_robotics}
 
-\section{Risultati}
-\label{sec:risultati}
+\subsubsection{Sim-to-sim}
+\label{sec:sim_to_sim_fr}
+
+\subsubsection{Real-to-real}
+\label{sec:real_to_real_fr}
+
+\subsubsection{Sim-to-real}
+\label{sec:sim_to_real_fr}
 
 % CAPITOLO 6: Conclusioni
 \chapter{Conclusioni}
