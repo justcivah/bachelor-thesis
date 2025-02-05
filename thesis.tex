@@ -116,7 +116,7 @@ Per fotorealismo si intende la capacità del simulatore di riprodurre in maniera
 
 L'interazione fisica si riferisce invece all'abilità del simulatore di riuscire a replicare le leggi della fisica in maniera realistica; questo comprende ad esempio il movimento e l'interazione tra oggetti. 
 
-In questi ultimi anni sono stati sviluppati diversi nuovi simulatori~\cite{kolve2022ai2thorinteractive3denvironment}~\cite{NEURIPS2021_021bbc7e}~\cite{urakami2022doorgymscalabledooropening}~\cite{1389727}, ognuno specializzato per specifici casi d'uso, e tutti si concentrano pervalentemente su uno dei due aspetti sopra citati.
+In questi ultimi anni sono stati sviluppati diversi nuovi simulatori~\cite{kolve2022ai2thorinteractive3denvironment}~\cite{NEURIPS2021_021bbc7e}~\cite{urakami2022doorgymscalabledooropening}~\cite{1389727}, ognuno specializzato per specifici casi d'uso, e tutti si concentrano prevalentemente su uno dei due aspetti sopra citati.
 
 L'obiettivo finale della comunità scientifica è quindi quello di riuscire a campionare dati esclusivamente da un simulatore, e utilizzarli per addestrare e ottenere risultati eccellenti in un ambiente reale. Questo è però un problema molto complesso da risolvere a causa di quello che viene definito \textit{domain shift}. Il domain shift è un fenomeno che si verifica quando c'è discrepanza tra il dominio dei dati della sorgente e quello di destinazione. In questo particolare esempio il dominio sorgente corrisponde al simulatore e quello di destinazione al mondo reale. In altre parole si ha domain shift quando le caratteristiche strutturali o statistiche dei due domini differiscono significativamente. Una comparazione tra ambiente simulato e reale è illustrato nella \hyperref[fig:immagine-simulata-reale]{Figura \ref{fig:immagine-simulata-reale}}.
 
@@ -135,7 +135,7 @@ L'obiettivo finale della comunità scientifica è quindi quello di riuscire a ca
 
 Nella pratica, reti naurali addestrate con dati sintetici e testate in ambienti reali avranno performance scadenti, non riuscendo neanche a riconoscere le categorie di oggetti più comuni presenti nel mondo reale~\cite{8793591}. Questo problema è noto come \textit{sim-to-real gap}, letteralmente \textit{divario tra simulazione e realtà}, e rappresenta la differenza di prestazioni tra un modello addestrato in un ambiente simulato, e le performance nel mondo reale.
 
-Il sim-to-real gap non però l'unico tipo di domain shift esistente. Si osservano infatti cali di performance anche quando un modello addestrato in ambienti simulati viene testato in altri ambienti simulati (\textit{sim-to-sim gap}), così come si ha una diminuzione di performance in scenari reali, passando da un ambiente reale ad un altro (\textit{real-to-real gap}).
+Il sim-to-real gap non è però l'unico tipo di domain shift esistente. Si osservano infatti cali di performance anche quando un modello addestrato in ambienti simulati viene testato in altri ambienti simulati (\textit{sim-to-sim gap}), così come si ha una diminuzione di performance in scenari reali, passando da un ambiente reale ad un altro (\textit{real-to-real gap}).
 
 Per il domain shift tra ambienti simulati va innanzitutto fatta una distinzione. Si ha un dominio differente sia tra ambienti diversi all'interno di uno stesso simulatore, sia tra ambienti appartenenti a simulatori differenti. Nel caso di uno stesso simulatore, il domain shift è principalmente causato da variazioni di caratteristiche ambientali e dalle diverse configurazioni degli scenari. Differenze nell'illuminazione, nella disposizione degli oggetti o nella scelta delle texture possono portare a dataset significativamente differenti. Nel caso invece di simulatori diversi, il domain shift diventa ancora più pronunciato. Ogni simulatore utilizza motori grafici differenti, e lo stesso vale per le librerie di oggetti 3D e gli ambienti. Ad esempio simulatori più fotorealistici come AI2-THOR~\cite{kolve2022ai2thorinteractive3denvironment} produrranno immagini con caratteristiche visive differenti rispetto ad uno focalizzato sulla simulazione fisica come DoorGym~\cite{urakami2022doorgymscalabledooropening}. Quindi, senza un'opportuna riconfigurazione o fine tuning, il trasferimento di un modello da un simulatore ad un altro risulta complicato.
 
@@ -145,7 +145,7 @@ Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti real
 \section{Scopo dell'elaborato}
 \label{sec:scopo_dell_elaborato}
 
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello degradano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Oltre a questa analisi, viene presentata e testata un'architettura alternativa progettata per mitigare il problema del domain shift in un sistema distribuito.
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello calano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Oltre a questa analisi, viene presentata e testata un'architettura alternativa progettata per mitigare il problema del domain shift in un sistema distribuito.
 
 % CAPITOLO 2: Stato dell'Arte
 \chapter{Stato dell'arte}
@@ -163,7 +163,7 @@ Uno dei casi più analizzati in letteratura è quello del sim-to-real, nel quale
 \section{Data augmentation}
 \label{sec:augmentation}
 
-La data augmentation rappresenta un'altra tecnica ampiamente utilizzata per ridurre il domain shift. Consiste nell'applicare trasformazioni ai dataset con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio a variazioni presenti nel mondo reale. Degli esempi di trasformazioni sono visibili nella \hyperref[fig:immagine-augmentata]{Figura \ref{fig:immagine-augmentata}}. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
+La data augmentation rappresenta un'altra tecnica ampiamente utilizzata per ridurre il domain shift. Consiste nell'applicare trasformazioni ai dataset con l'obiettivo di aumentare sia il numero di dati disponibili, che l'eterogeneità dei dati stessi~\cite{Shorten2019}. Queste trasformazioni possono comprendere rotazioni, ridimensionamenti, traslazioni, e l'applicazione di filtri che possano simulare condizioni ambientali come nebbia, riflessi e occlusione ambientale. La data augmentation permette sia di aumentare la dimensione di dataset senza la necessità di campionare nuovi dati, sia consente ai modelli di generalizzare meglio alle variazioni presenti nel mondo reale. Degli esempi di trasformazioni sono visibili nella \hyperref[fig:immagine-augmentata]{Figura \ref{fig:immagine-augmentata}}. Consideriamo ad esempio un robot che deve riuscire a riconoscere e classificare oggetti in ambienti con un'illuminazione dinamica; applicare filtri per simulare differenti condizioni di luce può migliorare significativamente le sue abilità di generalizzazione~\cite{NEURIPS2021_fb4c4860}. Inoltre, la data augmentation può essere usata in presenza di dataset sbilanciati, nei quali alcune classi sono sottorappresentate rispetto ad altre. Attraverso una serie di trasformazioni è infatti possibile aumentare il numero di dati appartenenti alle classi meno presenti, migliorando di conseguenta le capacità del modello nel riconoscerle.
 
 \begin{figure}[t]
 	\centering
@@ -281,23 +281,23 @@ Questi dataset sono stati concepiti principalmente per addestrare modelli capaci
 \subsection{Dataset reale}
 \label{sec:dataset_reale}
 
-Per i dati reali è stato scelto il dataset ScanNet~\cite{dai2017scannet}. ScanNet è un dataset video RGB-D contenente 2,5 milioni di immagini raccolte in più di 1500 ambienti differenti. Ogni scansione contiene informazioni come la posa della fotocamera, ricostruzione della superficie, segmentazione semantica e d'istanza. Per questo progetto è stata utilizzato ScanNet v2, che include le stesse scene della prima versione ma con annotazioni di maggiore qualità. Altre alternative ugualmente valide a questo dataset possono essere il THUD Robotic Dataset~\cite{10611489} e ScanNet++~\cite{yeshwanth2023scannethighfidelitydataset3d}.
+Per i dati reali è stato scelto il dataset ScanNet~\cite{dai2017scannet}. ScanNet è un dataset video RGB-D contenente 2,5 milioni di immagini raccolte in più di 1500 ambienti differenti. Ogni scansione contiene informazioni come la posa della fotocamera, ricostruzione della superficie, segmentazione semantica e d'istanza. Per questo progetto è stato utilizzato ScanNet v2, che include le stesse scene della prima versione ma con annotazioni di maggiore qualità. Altre alternative ugualmente valide a questo dataset possono essere il THUD Robotic Dataset~\cite{10611489} e ScanNet++~\cite{yeshwanth2023scannethighfidelitydataset3d}.
 
 In questo caso è stato preferito ScanNet v2 agli altri dataset citati per il gran numero di ambienti disponibili e la loro varietà. Questi spaziano dalle camere da letto, soggiorni, uffici e aule scolastiche, fino a palestre e biblioteche, offrendo così una rappresentazione completa e realistica di vari contesti quotidiani. Di contro, nonostante ScanNet v2 offra annotazioni robuste, ScanNet++ si distingue per una qualità superiore, includendo più dettagli semantici e informazioni sulla geometria più precise. In conclusione, Scannet v2 si è rivelato un ottimo compromesso tra la varietà di ambienti disponibili e la qualità delle annotazioni.
 
 \subsection{Segmentatore semantico}
 \label{sec:segmentatore_semantico}
 
-La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire rincominciare tutto da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
+La scelta del segmentatore semantico è stata una delle decisioni più importanti dell'intero progetto, in quanto tutto il lavoro successivo si sarebbe basato interamente su questo modello. Cambiarlo in corsa avrebbe voluto dire ricominciare tutto da capo. Quelli inizialmente considerati per questo lavoro sono stati YOLO11, DETR e Detectron2.
 
 \subsubsection{YOLO11}
 \label{sec:yolo11}
 
 YOLO~\cite{JIANG20221066}, acronimo di \textit{You Only Look Once}, è un algoritmo ampiamente utilizzato~\cite{sultana2020review} per la rilevazione e classificazione di oggetti. I suoi principali punti di forza risiedono nelle piccole dimensioni del modello e nel breve tempo necessario per l'inferenza. La sua struttura è semplice e diretta; è infatti in grado di predire posizioni e categorie di oggetti tramite reti neurali, e il tutto in una singola scansione dell'immagine. Questo lo rende molto veloce e adatto ad analizzare flussi video in tempo reale. YOLO possiede inoltre una forte capacità di generalizzazione, consentendogli di apprendere caratteristiche da trasferire ad altri ambienti.
 
-L'architettura YOLO si basa su tre componenti fondamentali. La \textit{backbone}, estrae caratteristiche utilizzando reti neurali convoluzionali, trasformando i dati grezzi delle immagini in mappe di caratteristiche multi-scala. Il \textit{neck} agisce come uno stadio intermedio di elaborazione, e permette di aggregare e migliorare le rappresentazioni delle caratteristiche attraverso diverse scale. Infine, la \textit{head}, genera gli output finali localizzando e classificando gli oggetti secondo le mappe precedentemente elaborate.
+L'architettura YOLO si basa su tre componenti fondamentali. La \textit{backbone} estrae caratteristiche utilizzando reti neurali convoluzionali, trasformando i dati grezzi delle immagini in mappe di caratteristiche multi-scala. Il \textit{neck} agisce come uno stadio intermedio di elaborazione, e permette di aggregare e migliorare le rappresentazioni delle caratteristiche attraverso diverse scale. Infine, la \textit{head}, genera gli output finali localizzando e classificando gli oggetti secondo le mappe precedentemente elaborate.
 
-Sulla base di quest'architettura, YOLO11~\cite{yolo11_ultralytics} estende e migliora quanto realizzato dai suoi predecessori, introducendo nuove migliorie architetturali e ottimizzando al contempo i parametri. Rispetto a YOLOv8, YOLO11 ha una mAP (\textit{mean Average Precision}) più elevata sul dataset COCO, riducendo allo stesso tempo il numero di parametri del 22\%~\cite{khanam2024yolov11overviewkeyarchitectural}. Sono state inoltre raggiunte velocità di elaborazione più elevate, ed è stato migliorato il processo di estrazione delle caratteristiche della backbone e del neck. YOLO11 è stato progettato per essere utilizzato efficacemente sia su piattaforme cloud, che tu dispositivi edge, aumentando così il numero di casi d'uso.
+Sulla base di quest'architettura, YOLO11~\cite{yolo11_ultralytics} estende e migliora quanto realizzato dai suoi predecessori, introducendo nuove migliorie architetturali e ottimizzando al contempo i parametri. Rispetto a YOLOv8, YOLO11 ha una mAP (\textit{mean Average Precision}) più elevata sul dataset COCO, riducendo allo stesso tempo il numero di parametri del 22\%~\cite{khanam2024yolov11overviewkeyarchitectural}. Sono state inoltre raggiunte velocità di elaborazione più elevate, ed è stato migliorato il processo di estrazione delle caratteristiche della backbone e del neck. YOLO11 è stato progettato per essere utilizzato efficacemente sia su piattaforme cloud, che su dispositivi edge, aumentando così il numero di casi d'uso.
 
 \subsubsection{DETR}
 \label{sec:detr}
@@ -306,7 +306,7 @@ Il modello \textit{DEtection TRansformers}, abbreviato DETR~\cite{carion2020end}
 
 L'architettura si compone di una rete neurale convoluzionale e di un transformer, seguito da una serie di reti neurali dirette~\cite{article_890416} (FNN, Forward Neural Network). I transformer sono stati inizialmente ideati nell'ambito dell'elaborazione del linguaggio naturale (NLP, Natural Language Processing), e DETR è innovativo in quanto primo modello di computer vision ad integrare questo componente.
 
-Questo modello risulta innovativo sotto molti punti di vista, presenta anche diverse sfide e limitazioni. Addestrare DETR può risultare infatti costoso in termini di risorse hardware e tempo richiesto, in particolare a causa della presenza dei transformer. In aggiunta, l'addestramento richiede dataset di grandi dimensioni, il che ne limita l'uso in contesti in cui i dati disponibili sono limitati.
+Questo modello risulta innovativo sotto molti punti di vista, ma presenta anche diverse sfide e limitazioni. Addestrare DETR può risultare infatti costoso in termini di risorse hardware e tempo richiesto, in particolare a causa della presenza dei transformer. In aggiunta, l'addestramento richiede dataset di grandi dimensioni, il che ne limita l'uso in contesti in cui i dati disponibili sono limitati.
 
 \subsubsection{Detectron2}
 \label{sec:detectron}
@@ -315,7 +315,7 @@ Detectron2 è un altro modello sviluppato dal gruppo di ricerca di Facebook. Que
 
 \vspace{10pt}
 
-La scelta finale è ricaduta infine su YOLO11, in quando perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto in base alle proprie esigenze. Nel nostro caso abbiamo deciso di utilizzare il modello YOLO11l-seg, la versione \textit{large} di YOLO11 adatto a compiti di segmentazione semantica.
+La scelta finale è ricaduta infine su YOLO11, in quanto perfetto per l'analisi di flussi video in tempo reale, e richiedendo al contempo un numero esiguo di risorse. Questo modello è inoltre presente in cinque formati, ognuno caratterizzato da un numero crescente di parametri e con un conseguente aumento di complessità e di prestazioni. Nella \hyperref[tab:yolo-prestazioni-segmentazione]{Tabella \ref{tab:yolo-prestazioni-segmentazione}} sono riportati i diversi modelli disponibili per YOLO11. È quindi possible scegliere quello più adatto in base alle proprie esigenze. Nel nostro caso abbiamo deciso di utilizzare il modello YOLO11l-seg, la versione \textit{large} di YOLO11 adatto a compiti di segmentazione semantica.
 
 \begin{table}[t]
 	\centering
@@ -359,7 +359,7 @@ A partire dal 2015, anno di pubblicazione del primo articolo relativo alla UNet,
 	
 	\item \textbf{Attention UNet}: L'Attention UNet~\cite{oktay2018attentionunetlearninglook} permette di focalizzare l'attenzione solo su determinate parti della mappa delle caratteristiche, andando quindi a ridurre la quantità di risorse computazionali necessarie per produrre il risultato finale. Inoltre, le connessioni tra encoder e decoder non sono concatenate direttamente, ma vengono pesate in maniera adattiva.
 	
-	\item \textbf{3D UNet}: Quest'architettura~\cite{çiçek20163dunetlearningdense} può tornare utile nell'analisi di dati volumetrici, molto frequenti ad esempio nel campo della biomedicina. Creare manualmente annotazioni per tutte le sezioni di un singolo dato può risultare un lavoro tedioso e inutile, in quanto sezioni vicine risulteranno simili. Sarebbe quindi difficile realizzare manualmente grandi dataset da utilizzare per l'addestramento di una rete neurale. Le 3D UNet, tuttavia, sono capaci di apprendere avendo a disposizione un esiguo numero di sezioni 2D per ogni dato, riuscendo a fornire come output segmentazioni precise~\cite{çiçek20163dunetlearningdense}.
+	\item \textbf{3D UNet}: Questa architettura~\cite{çiçek20163dunetlearningdense} può tornare utile nell'analisi di dati volumetrici, molto frequenti ad esempio nel campo della biomedicina. Creare manualmente annotazioni per tutte le sezioni di un singolo dato può risultare un lavoro tedioso e inutile, in quanto sezioni vicine risulteranno simili. Sarebbe quindi difficile realizzare manualmente grandi dataset da utilizzare per l'addestramento di una rete neurale. Le 3D UNet, tuttavia, sono capaci di apprendere avendo a disposizione un esiguo numero di sezioni 2D per ogni dato, riuscendo a fornire come output segmentazioni precise~\cite{çiçek20163dunetlearningdense}.
 \end{itemize}
 
 Per questo progetto abbiamo optato per la UNet classica, ma è possibile che eventuali lavori futuri possano adottare evoluzioni o addirittura modelli del tutto differenti.
@@ -404,7 +404,7 @@ Ognuna di queste directory contiene al suo interno altre subdirectory, ognuna co
 	
 	\item \textbf{semantic\_image}: Contiene tensori tridimensionali NumPy rappresentanti la mappa semantica della scena, nella quale ogni pixel ha un colore in base alla classe dell'oggetto di appartenenza. Essendo il numero di classi inferiore al valore massimo di un singolo canale (255), solo il primo canale è utilizzato, mentre i valori degli altri due sono sempre pari a zero. Se quindi si converte il tensore, si ottiene un'immagine con una sola scala cromatica.
 	
-	\item \textbf{semantic\_instance\_image}: A differenza alla directory semantic\_image, qui sono presenti tensori a quattro dimensioni che combinano informazioni sulla semanticha e sulle istanze degli oggetti. In questa rappresentazione, il primo canale indica il numero della classe di appartenenza dell'oggetto, il secondo e il terzo canale sono sempre a zero, mentre l'ultimo contiene il numero dell'istanza di un determinato oggetto all'interno della scena.
+	\item \textbf{semantic\_instance\_image}: A differenza alla directory semantic\_image, qui sono presenti tensori a quattro dimensioni che combinano informazioni sulla semantica e sulle istanze degli oggetti. In questa rappresentazione, il primo canale indica il numero della classe di appartenenza dell'oggetto, il secondo e il terzo canale sono sempre a zero, mentre l'ultimo contiene il numero dell'istanza di un determinato oggetto all'interno della scena.
 \end{itemize}
 
 Tra tutti questi dati, gli unici che ci interessano per questo lavoro sono quelli contenuti nelle directory \textit{rgb\_image} e \textit{semantic\_image}.
@@ -477,7 +477,7 @@ Sono anche state effettuate modifiche minori allo script di conversione ScanNet.
 \section{Implementazione modello distribuito}
 \label{sec:implementazione_modello_per_distribuito}
 
-I moduli che compongono il modello distribuito sono due: l'encoder-decoder, implementato tramite modello UNet, e il segmentatore semantico basato su YOLO11. Per realizzare e addestrare il modello non basta selezionare i componenti appropriati, ma è necessario integrarli all'interno di una pipeline di addestramento ben definita. Si presentano quindi due possibili approcci. Il primo è creare uno script per il training da zero, mentre il secondo consiste nell'integrare la UNet all'interno della pipeline già fornita da YOLO11.
+I moduli che compongono il modello distribuito sono due: l'encoder-decoder, implementato tramite modello UNet, e il segmentatore semantico basato su YOLO11. Per realizzare e addestrare il modello non basta selezionare i componenti appropriati, ma è necessario integrarli all'interno di una pipeline di addestramento ben definita. Si presentano quindi due possibili approcci: il primo è creare uno script per il training da zero, mentre il secondo consiste nell'integrare la UNet all'interno della pipeline già fornita da YOLO11.
 
 Il primo caso offre un controllo completo per quanto riguarda l'ottimizzazione dei parametri, il calcolo della loss, la backpropagation e altri dettagli implementativi. Di contro dovremmo anche implementare manualmente una classe per la gestione dei dati. Questo include operazioni come la lettura, il preprocessing e il partizionamento dei dataset di training e di validazione. Inoltre andrebbero implementate funzionalità aggiuntive come il salvataggio e la visualizzazione delle statistiche di addestramento e delle loss, già integrate nel trainer di YOLO11. Utilizzare il codice già pronto di YOLO11 ci consente invece di sfruttare tutte le funzionalità già esistenti del framework Ultralytics. Integrare la UNet all'interno di queste classi ci permette di risparmiare tempo e di accedere a funzionalità avanzate e soprattutto già testate.
 
@@ -569,7 +569,7 @@ Durante il processo di addestramento e al termine di ogni epoca, vengono calcola
 
 La precisione quantifica quanto bene il modello riesce a non fare errori, e quindi ad evitare falsi positivi. Più la precisione è alta, più tutte le rilevazioni sono corrette e meno si hanno falsi positivi. Si sta quindi cercando di minimizzare la possibilità che un'area venga erroneamente classificata come un oggetto.
 
-La sensibilità misura quanto un modello è capace a riconoscere tutti gli oggetti all'interno di un'immagine, o il altre parole quanti degli oggetti presenti sono stati identificati. Un'alta sensibilità corrisponde a un numero basso di falsi negativi.
+La sensibilità misura la capacità di un modello a riconoscere tutti gli oggetti all'interno di un'immagine, o in altre parole quanti degli oggetti presenti sono stati identificati. Un'alta sensibilità corrisponde a un numero basso di falsi negativi.
 
 \[ \text{\textit{Sensibilità}} = \frac{VP}{VP + FN} \qquad \text{\textit{Precisione}} = \frac{VP}{VP + FP} \]
 
@@ -652,10 +652,15 @@ Negli esperimenti proposti in seguito, tutti modelli sono stati addestrati su 25
 
 In questa prima sezione viene analizzato il domain shift nei tre scenari precedentemente descritti: sim-to-sim, real-to-real e sim-to-real. Per ciascuno sono fornite le descrizioni degli esperimenti e si conclude analizzando i risultati ottenuti. Tutti questi esperimenti sono stati effettuati utilizzando solo il modello di segmentazione YOLO11.
 
-\subsubsection{Sim-to-sim}
+\subsection{Sim-to-sim}
 \label{sec:sim_to_sim}
 
-Come primo caso si è analizzato il domain shift tra ambienti simulati, in particolare è stato testato il modello all'interno degli stessi ambienti utilizzati per l'addestramento. Nella pratica sono state prese immagini e dati di segmentazione semantica da 7 ambienti diversi, nei quali si sono campionati dati attraverso 30 diverse run. Di questi dati raccolti, 35000 immagini sono state utilizzate per l'addestramento, mentre le altre 5000 sono state usate per la validazione. Il modello è stato addestrato sulla macchina PC1 per 60 epoche, con una dimensione di batch pari a 8 e risoluzione delle immagini di 512 pixel. Il processo di training è durato circa 16 ore e 20 minuti e le metriche finali sono riportate nella \hyperref[fig:sim-to-sim-1]{Figura \ref{fig:sim-to-sim-1}}.
+In questa sezione viene analizzato il domain shift all'interno di ambienti simulati, studiando come le variazioni di scenari influenzano le prestazioni del modello. I primi due esperimenti sono stati condotti utilizzano gli stessi dati di addestramento provenienti da 12 scene, mentre per l'ultimo si sono utilizzate tutte e 15 le ambientazioni fornite da iGibson.
+
+\subsubsection{Esperimento 1}
+\label{sec:esperimento_ds_1_1}
+
+Come primo caso è stato testato il modello all'interno degli stessi ambienti utilizzati per l'addestramento. Nella pratica sono state prese immagini e dati di segmentazione semantica da 12 ambienti diversi, nei quali si sono campionati dati attraverso 12 diverse run. Di questi dati raccolti, 35000 immagini sono state utilizzate per l'addestramento, mentre le altre 4401 sono state usate per la validazione. Il modello è stato addestrato sulla macchina PC1 per 60 epoche, con una dimensione di batch pari a 16 e risoluzione delle immagini di 512 pixel. Il processo di training è durato circa 15 ore, e le metriche sull'addestramento sono riportate nella \hyperref[fig:sim-to-sim-training-1]{Figura \ref{fig:sim-to-sim-training-1}}.
 
 \begin{figure}[h!]
 	\centering
@@ -673,26 +678,89 @@ Come primo caso si è analizzato il domain shift tra ambienti simulati, in parti
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/map50-95}}
 	\caption{Metriche di addestramento nel caso di ambienti simulati, con dati di validazione provenienti dagli stessi ambienti di training.}
-	\label{fig:sim-to-sim-1}
+	\label{fig:sim-to-sim-graph-1}
 \end{figure}
 
+Si osserva come il modello performa quasi alla perfezione negli stessi ambienti di training. La mAP50 è infatti pari a 0.973, mentre la mAP50-95 raggiunge valori di 0.803. In genere un modello si può considerare utilizzabile se la sua mAP50 supera lo 0.4. L'analisi dei grafici delle loss mostra un decremento costante sia per i dati di training e di validazione, e questo permette di escludere fenomeni di overfitting o underfitting. L'andamento indica quindi un processo di ottimizzazione stabile ed efficace. Un esempio di dato originale e segmentato dal modello è mostrato nella \hyperref[fig:sim-to-sim-prediction-1]{Figura \ref{fig:sim-to-sim-prediction-1}}.
 
+\begin{figure}[h!]
+	\centering
+	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/sim-to-sim/1/original-1.jpg}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/sim-to-sim/1/prediction-1.jpg}}
+	\hspace{0.01\textwidth}
+	\caption{Output del modello (b) considerando dati provenienti dal simulatore (a).}
+	\label{fig:sim-to-sim-prediction-1}
+\end{figure}
 
-\subsubsection{Real-to-real}
+\subsubsection{Esperimento 2}
+\label{sec:esperimento_ds_1_2}
+
+Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale il modello viene prima addestrato su un insieme di ambienti, e poi testato in altri ambienti mai visti prima. In questo caso sono stati mantenuti inalterati i dati di addestramento dell'esperimento precedente, mentre sono state utilizzate altre 4401 immagini provenienti da 3 diversi ambienti per il testing. Per questo esperimento, l'addestramento è stato svolto sul PC2, mantenendo tutti i restanti parametri inalterati. Le metriche di addestramento ottenute dopo 24 ore di training sono illutrate nella \hyperref[fig:sim-to-sim-graph-2]{Figura \ref{fig:sim-to-sim-graph-2}}.
+
+%\caption{Metriche di addestramento nel caso di ambienti simulati, con dati di testing diversi da quelli utilizzati per il training.}
+% \label{fig:sim-to-sim-graph-2}
+
+%COMMENTO AL RISULTATO OTTENUTO
+
+\subsubsection{Esperimento 3}
+\label{sec:esperimento_ds_1_3}
+
+Per concludere, è stato anche creato un terzo modello utilizzato in esperimenti successivi. In questo caso si è addestrato YOLO11 con 35000 immagini provenienti da tutti e 15 gli ambienti, e ottenute nel corso di 30 diverse run. Per la validazione sono state invece utilizzate 5000 immagini provenienti dagli stessi 15 ambienti. Il modello è stato addestrato sul PC1 per 15 ore e per un totale di 60 epoche, e le metriche ottenute risultano molto simili al quelle del primo esperimento. L'unica differenza riguarda la mAP50 e mAP50-95 in qunato leggermente più basse, rispettivamente a 0.966 e 0.784. Questo può essere dovuto alla maggior variabilità introdotta dalle immagini provenienti da più ambienti, rendendo necessario un numero maggiore di epoche per ottenere gli stessi valori.
+
+\subsection{Real-to-real}
 \label{sec:real_to_real}
 
-Il secondo scenario studiato riguarda
+Il secondo caso di studio riguarda l'analisi del domain shift in ambienti reali. Vengono addestrati modelli utilizzando 10, 50 e 395 diverse scene provenienti dal dataset ScanNet. Nel primo caso vengono mostrate le metriche di addestramento con informazioni relative alla validazione, mentre negli ultimi due casi vengono mostrate solo le più interessanti metriche di training con le loss di testing. Per tutti questi esperimenti è stato utilizzato il PC1.
 
-\subsubsection{Sim-to-real}
+\subsubsection{Esperimento 1}
+\label{sec:esperimento_ds_2_1}
+
+Per il primo esperimento sono state utilizzate 8956 immagini di training provenienti da 10 scene, e 1580 immagini per la validazione provenienti dagli stessi 10 ambienti. Il modello è stato addestrato per 60 epoche, con batch di dimensione 12, risoluzione delle immagini a 640 pixel, e parametro \textit{rect} impostato a \textit{True}. Essendo le immagini di scannet rettangolari, con quest'ultima impostazione si evita di tagliare le immagini in un formato quadrato, e si indica che il lato più lungo deve essere di 640 pixel. Dopo 4 ore e 30 minuti di addestramento, sono state generate le metriche riportate nella \hyperref[fig:real-to-real-training-1]{Figura \ref{fig:real-to-real-training-1}}.
+
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/validation-loss}}
+	\hspace{0.01\textwidth}
+	\\	
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/precision}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/recall}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50-95}}
+	\caption{Metriche di addestramento nel caso di ambienti reali, con dati di validazione provenienti dagli stessi ambienti di training.}
+	\label{fig:real-to-real-training-1}
+\end{figure}
+
+Come quanto visto nella sezione sim-to-sim, anche qui il modello apprende quasi alla perfezione negli stessi ambienti di training. In particolare la mAP50 e la mAP50-95 sono rispettivamente 0.908 e 0.753, valori leggermente più bassi del caso sim-to-sim, ma comunque ottimi. Questa differenza è principalmente dovuta alla maggior complessità delle scene reali, che presentano un dettaglio e variabilità maggiore rispetto a quelle simulate. Anche in questo esperimento l'andamento delle loss indica che il modello non presenta overfitting o underfitting. La \hyperref[fig:real-to-real-prediction-1]{Figura \ref{fig:real-to-real-prediction-1}} mostra un esempio di dato originale e la relativa segmentazione ottenuta da questo modello.
+
+\begin{figure}[h!]
+	\centering
+	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/real-to-real/1/original-1.jpg}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/real-to-real/1/prediction-1.jpg}}
+	\hspace{0.01\textwidth}
+	\caption{Output del modello (b) considerando dati provenienti dalle 10 scene ScanNet (a).}
+	\label{fig:real-to-real-prediction-1}
+\end{figure}
+
+A causa del basso numero di scene utilizzate per addestrare questo modello, ha poco senso analizzare le performance in testing. Di contro, nei prossimi esperimenti non verrà più mostrato l'andamento di training e validazione, in quanto praticamente identico a tutti i casi già visti fino ad ora. Saranno invece mostrate le metriche di training con dati di testing.
+
+\subsubsection{Esperimento 2}
+\label{sec:esperimento_ds_2_2}
+
+\subsection{Sim-to-real}
 \label{sec:sim_to_real}
 
 L'ultimo caso di studio riguarda
 
 \section{Domain adaptation in fog robotics}
 \label{sec:domain_shift_in_contesto_fog_robotics}
-
-\subsubsection{Sim-to-sim}
-\label{sec:sim_to_sim_fr}
 
 \subsubsection{Real-to-real}
 \label{sec:real_to_real_fr}
