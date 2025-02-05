@@ -696,12 +696,30 @@ Si osserva come il modello performa quasi alla perfezione negli stessi ambienti 
 \subsubsection{Esperimento 2}
 \label{sec:esperimento_ds_1_2}
 
-Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale il modello viene prima addestrato su un insieme di ambienti, e poi testato in altri ambienti mai visti prima. In questo caso sono stati mantenuti inalterati i dati di addestramento dell'esperimento precedente, mentre sono state utilizzate altre 4401 immagini provenienti da 3 diversi ambienti per il testing. Per questo esperimento, l'addestramento è stato svolto sul PC2, mantenendo tutti i restanti parametri inalterati. Le metriche di addestramento ottenute dopo 24 ore di training sono illutrate nella \hyperref[fig:sim-to-sim-graph-2]{Figura \ref{fig:sim-to-sim-graph-2}}.
+Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale il modello viene prima addestrato su un insieme di ambienti, e poi testato in altri ambienti mai visti prima. In questo caso sono stati mantenuti inalterati i dati di addestramento dell'esperimento precedente, mentre sono state utilizzate altre 4401 immagini provenienti da 3 diversi ambienti per il testing. Per questo esperimento, l'addestramento è stato svolto sul PC1, mantenendo tutti i restanti parametri inalterati. Le metriche di addestramento ottenute dopo ??? ore di training sono illutrate nella \hyperref[fig:sim-to-sim-graph-2]{Figura \ref{fig:sim-to-sim-graph-2}}.
 
-%\caption{Metriche di addestramento nel caso di ambienti simulati, con dati di testing diversi da quelli utilizzati per il training.}
-% \label{fig:sim-to-sim-graph-2}
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/testing-loss}}
+	\hspace{0.01\textwidth}
+	\\	
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/precision}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/recall}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/map50-95}}
+	\caption{Metriche di addestramento nel caso di ambienti simulati, con dati di testing diversi da quelli utilizzati per il training.}
+	\label{fig:sim-to-sim-graph-2}
+\end{figure}
 
-%COMMENTO AL RISULTATO OTTENUTO
+I risultati mostrano un impatto significativo dovuto al domain shift sulle prestazioni del modello. Le immagini di testing contengono infatti oggetti, texture e planimetrie differenti dispetto a quelle utilizzate per il training, il che rende la generalizzazione più complessa. In aggiunta, nelle scene di testing, oggetti appartenenti ad una stessa classe possono presentare forme e colori diversi rispetto a quelli visti in addestramento.
+
+Di conseguenza, la mAP50 è pari a 0.539, mentre la mAP50-95 risulta essere 0.385. Si ha quindi un calo di prestazioni rispettivamente di 0.434 e 0.418 rispetto all'\hyperref[sec:esperimento_ds_1_1]{Esperimento 1}. Questo calo è significativo e conferma l'impatto del domain shift, ma potrebbe essere mitigato aumentando la varietà degli ambienti di addestramento.
 
 \subsubsection{Esperimento 3}
 \label{sec:esperimento_ds_1_3}
@@ -711,12 +729,12 @@ Per concludere, è stato anche creato un terzo modello utilizzato in esperimenti
 \subsection{Real-to-real}
 \label{sec:real_to_real}
 
-Il secondo caso di studio riguarda l'analisi del domain shift in ambienti reali. Vengono addestrati modelli utilizzando 10, 50 e 395 diverse scene provenienti dal dataset ScanNet. Nel primo caso vengono mostrate le metriche di addestramento con informazioni relative alla validazione, mentre negli ultimi due casi vengono mostrate solo le più interessanti metriche di training con le loss di testing. Per tutti questi esperimenti è stato utilizzato il PC1.
+Il secondo caso di studio riguarda l'analisi del domain shift in ambienti reali. Vengono addestrati modelli utilizzando 10, 50 e 395 diverse scene provenienti dal dataset ScanNet. Nel primo caso vengono mostrate le metriche di addestramento con informazioni relative alla validazione, mentre negli ultimi due casi vengono mostrate solo le più interessanti metriche di training con le loss di testing.
 
 \subsubsection{Esperimento 1}
 \label{sec:esperimento_ds_2_1}
 
-Per il primo esperimento sono state utilizzate 8956 immagini di training provenienti da 10 scene, e 1580 immagini per la validazione provenienti dagli stessi 10 ambienti. Il modello è stato addestrato per 60 epoche, con batch di dimensione 12, risoluzione delle immagini a 640 pixel, e parametro \textit{rect} impostato a \textit{True}. Essendo le immagini di scannet rettangolari, con quest'ultima impostazione si evita di tagliare le immagini in un formato quadrato, e si indica che il lato più lungo deve essere di 640 pixel. Dopo 4 ore e 30 minuti di addestramento, sono state generate le metriche riportate nella \hyperref[fig:real-to-real-training-1]{Figura \ref{fig:real-to-real-training-1}}.
+Per il primo esperimento sono state utilizzate 8956 immagini di training provenienti da 10 scene, e 1580 immagini per la validazione provenienti dagli stessi 10 ambienti. Il modello è stato addestrato per 60 epoche sul PC1, con batch di dimensione 12, risoluzione delle immagini a 640 pixel, e parametro \textit{rect} impostato a \textit{True}. Essendo le immagini di scannet rettangolari, con quest'ultima impostazione si evita di tagliare le immagini in un formato quadrato, e si indica la dimensione in pixel del lato più lungo, ovvero 640. Dopo 4 ore e 30 minuti di addestramento, sono state generate le metriche riportate nella \hyperref[fig:real-to-real-training-1]{Figura \ref{fig:real-to-real-training-1}}.
 
 \begin{figure}[h!]
 	\centering
