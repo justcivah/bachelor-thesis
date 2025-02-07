@@ -703,9 +703,9 @@ Si osserva come il modello performa quasi alla perfezione negli stessi ambienti 
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/sim-to-sim/1/original-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/domain-shift/sim-to-sim/1/original-1.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/sim-to-sim/1/prediction-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/domain-shift/sim-to-sim/1/prediction-1.jpg}}
 	\hspace{0.01\textwidth}
 	\caption{Output del modello (b) considerando dati provenienti dal simulatore (a).}
 	\label{fig:sim-to-sim-prediction-1}
@@ -779,9 +779,9 @@ Come quanto visto nella sezione sim-to-sim, anche qui il modello apprende quasi 
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/real-to-real/1/original-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/domain-shift/real-to-real/1/original-1.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/real-to-real/1/prediction-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/domain-shift/real-to-real/1/prediction-1.jpg}}
 	\hspace{0.01\textwidth}
 	\caption{Output del modello (b) considerando un'immagine presa dalle 10 scene ScanNet usate per l'addestramento (a).}
 	\label{fig:real-to-real-prediction-1}
@@ -794,11 +794,26 @@ A causa del basso numero di scene utilizzate per addestrare questo modello, ha p
 
 Nel seguente espetimento è stato addestrato il modello YOLO11 con 8000 immagini provenienti da 50 scene. Successivamente è stato validato con 1000 immagini provenienti dagli stessi 50 ambienti, e testato con altre 1000 immagini provenienti da 20 ambienti non utilizzati per il training. Il modello è stato poi addestrato per 60 epoche con batch size di 10 sul PC1, per una durata totale di 4 ore. Le metriche di training e testing sono riportate in \hyperref[fig:real-to-real-training-2]{Figura \ref{fig:real-to-real-training-2}}.
 
-%\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
-%\label{fig:real-to-real-training-2}
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/testing-loss}}
+	\hspace{0.01\textwidth}
+	\\	
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/precision}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/recall}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/map50-95}}
+	\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
+	\label{fig:real-to-real-training-2}
+\end{figure}
 
-%ANALISI RISULTATI
-%dati validazione
+Dai grafici si può notare come ... continua ...
 
 \subsubsection{Esperimento 3}
 \label{sec:esperimento_ds_2_3}
@@ -836,6 +851,11 @@ Come ultimo esperimento di questa categoria, si è addestrato il modello con lo 
 Infine, analizziamo il caso di studio sim-to-real, ovvero la capacità di un modello addestrato con dati simulati di generalizzare su dati reali. Per questo esperimento utilizziamo il modello addestrato nell'\hyperref[sec:esperimento_ds_1_3]{Esperimento 3} della sezione sim-to-sim, poichè è stato addestrato con tutti e 15 gli ambienti disponibili. Questo lo distingue dagli esperimenti 1 e 2, nei quali tre ambienti sono stati utilizzati per il testing. Per valutare le performance si utilizza il modello YOLO11 preaddestrato e il dataset contenente immagini reali con le relative annotazioni di segmantazione. In particolare sono state utilizzate le stesse 1000 immagini provenienti dalle 20 scene utilizzate nella \hyperref[sec:real_to_real]{Sezione Real-to-real}. Il risultato finale indica una  mAP50 pari a 0.015 e una mAP50-95 di 0.007.
 
 Questi dati confermano che, nonstante la quantità di immagini impiegate, il domain shift tra ambienti simulati e reali è troppo marcato perchè il modello possa generalizzare in maniera corretta. Questo risultato era prevedibile alla luce dei dati ottenuti nell'\hyperref[sec:esperimento_ds_1_2]{Esperimento 2} della sezione sim-to-sim, dove, pur restando nel dominio della simulazione e cambiando solo gli ambienti, si aveva una riduzione di entrambe le mAP di circa 0.4. Di conseguenza, passando dalla simulazione al mondo reale performance non potevano che deteriorare, e questi risultati lo dimostrano.
+
+\subsection{Risultati}
+\label{sec:risultati_ds}
+
+
 
 \section{Domain adaptation in fog robotics}
 \label{sec:domain_shift_in_contesto_fog_robotics}
