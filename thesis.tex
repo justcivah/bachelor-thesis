@@ -123,9 +123,9 @@ L'obiettivo finale della comunità scientifica è quindi quello di riuscire a ca
 
 \begin{figure}[t]
 	\centering
-	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/simulated-image.png}}
+	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/simulated-image.png}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/real-image.png}}
+	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/real-image.png}}
 	\caption{Immagini raccolte in un ambiente simulato (a) e reale (b).}
 	\label{fig:immagine-simulata-reale}
 \end{figure}
@@ -142,10 +142,35 @@ Per il domain shift tra ambienti simulati va innanzitutto fatta una distinzione.
 Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti reali sono più marcate rispetto a quelle tra due simulatori. Illuminazione variabile, ostacoli mobili, diversa qualità dei sensori o variazioni nell'arredamento possono degradare notevolmente le performance di un modello addestrato in un particolare ambiente. Ad esempio, un robot addestrato in un ufficio con illuminazione a LED tende a fallire nel riconoscere oggetti in un ambiente domestico con luce naturale, nonostante siano entrambi ambienti reali.
 
 
+\section{Fog robotics}
+\label{sec:fog_robotics}
+
+La fog robotics è un'estensione del concetto di \textit{fog computing}~\cite{10.1145/2757384.2757397} applicato alla robotica mobile, ed è nata per superare il limite delle più tradizionali tecnologie basate sul \textit{cloud computing}~\cite{qian2009cloud}. Questo modello ibrido permette di bilanciare il carico computazionale, la latenza e l'affidabilità, distribuendo il carico di lavoro tra le varie risorse di rete. Questo garantisce risposte in tempo reale per le attività più critiche come la navigazione e le interazioni con l'ambiente.
+
+Come illustrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}, l'architettura si basa su tre elementi principali:
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.8\textwidth, clip]{images/fog-robotics}
+	\caption{Schema generale di un'architettura fog robotics.}
+	\label{fig:fog_robotics}
+\end{figure}
+
+\begin{itemize}
+	\item \textbf{Dispositivi edge}: Includono i robot di servizio stessi, dotati di hardware limitato per l'elaborazione dei dati che richiedono una latenza minima. Degli esempi sono il controllo dei motori o le operazioni di sicurezza più critiche, come l'analisi dei dati provenienti dai sensori di profondità. Tutte le altre attività vengono affidate ai livelli più alti.
+	
+	\item \textbf{Server fog}: Sono nodi di calcolo posizionati geograficamente vicino ai robot, tipicamente server locali che si occupano di eseguire operazioni complesse e con latenze ridotte. La distanza ravvicinata permette infatti di mantenere la latenza nell'ordine dei millisecondi.
+	
+	\item \textbf{Cloud}: È un'infrastruttira con una maggior potenza di calcolo, utilizzata generalmente per l'elaborazione di dati non time-sensitive e per l'archiviazione di informazioni a lungo termine.
+\end{itemize}
+
+Nonostante i suoi vantaggi, l'utilizzo di un'architettura distribuita come questa introduce ulteriori sfide legate al domain shift. Questo avviene a causa dell'eterogeneità dell'hardware presente nei robot e dalla necessità di sviluppare sistemi di visione robotica in grado di funzionare su più server differenti, il tutto senza perdita di prestazioni.
+
 \section{Scopo dell'elaborato}
 \label{sec:scopo_dell_elaborato}
 
-L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello calano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Oltre a questa analisi, viene presentata e testata un'architettura alternativa progettata per mitigare il problema del domain shift in un sistema distribuito.
+L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analizzando in particolare come le performance di un modello calano nei tre casi precedentemente descritti: sim-to-sim (nel caso di ambienti in uno stesso simulatore), real-to-real e sim-to-real. Oltre a questa analisi, viene presentata e testata un'architettura alternativa progettata per mitigare il problema del domain shift in un sistema distribuito di tipo fog robotics.
 
 % CAPITOLO 2: Stato dell'Arte
 \chapter{Stato dell'arte}
@@ -227,14 +252,7 @@ In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto 
 \section{Architettura modello distribuito}
 \label{sec:modello_per_fog_robotics}
 
-Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di una singola rete neurale, il compito di domain adaptation in un sistema distribuito obbliga a riprogettare l'intero modello. La tecnologia utilizzata per il sistema distribuito è di tipo \textit{fog robotics}~\cite{10.1145/2757384.2757397}, un'estensione del concetto di \textit{cloud robotics}~\cite{qian2009cloud} che punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i server fog più vicini ai robot. La \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}} illustra schematicamente l'architettura di una rete fog.
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=0.8\textwidth, clip]{images/fog-robotics}
-	\caption{Schema generale di un'architettura fog robotics.}
-	\label{fig:fog_robotics}
-\end{figure} 
+Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di una singola rete neurale, il compito di domain adaptation in un sistema distribuito obbliga a riprogettare l'intero modello. La tecnologia utilizzata per il sistema distribuito è di tipo fog robotics,  che punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i server fog più vicini ai robot.
 
 Affinchè il nostro modello possa funzionare in un sistema distribuito, è essenziale progettarlo in maniera modulare; una parte deve essere eseguita sui server fog, mentre l'altra va gestita in cloud. Questi due moduli sono rappresentati da un modello per la trasformazione dei dati (\textit{encoder-decoder}) e uno per la segmentazione semantica (\textit{segmentatore}).
 
@@ -696,7 +714,7 @@ Si osserva come il modello performa quasi alla perfezione negli stessi ambienti 
 \subsubsection{Esperimento 2}
 \label{sec:esperimento_ds_1_2}
 
-Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale il modello viene prima addestrato su un insieme di ambienti, e poi testato in altri ambienti mai visti prima. In questo caso sono stati mantenuti inalterati i dati di addestramento dell'esperimento precedente, mentre sono state utilizzate altre 4401 immagini provenienti da 3 diversi ambienti per il testing. Per questo esperimento, l'addestramento è stato svolto sul PC1, mantenendo tutti i restanti parametri inalterati. Le metriche di addestramento ottenute dopo ??? ore di training sono illutrate nella \hyperref[fig:sim-to-sim-graph-2]{Figura \ref{fig:sim-to-sim-graph-2}}.
+Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale il modello viene prima addestrato su un insieme di ambienti, e poi testato in altri ambienti mai visti prima. In questo caso sono stati mantenuti inalterati i dati di addestramento dell'esperimento precedente, mentre sono state utilizzate altre 4401 immagini provenienti da 3 diversi ambienti per il testing. Per questo esperimento, l'addestramento è stato svolto sul PC1, mantenendo tutti i restanti parametri inalterati. Le metriche di addestramento ottenute dopo 15 ore di training sono illustrate nella \hyperref[fig:sim-to-sim-graph-2]{Figura \ref{fig:sim-to-sim-graph-2}}.
 
 \begin{figure}[h!]
 	\centering
@@ -719,7 +737,9 @@ Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale 
 
 I risultati mostrano un impatto significativo dovuto al domain shift sulle prestazioni del modello. Le immagini di testing contengono infatti oggetti, texture e planimetrie differenti dispetto a quelle utilizzate per il training, il che rende la generalizzazione più complessa. In aggiunta, nelle scene di testing, oggetti appartenenti ad una stessa classe possono presentare forme e colori diversi rispetto a quelli visti in addestramento.
 
-Di conseguenza, la mAP50 è pari a 0.539, mentre la mAP50-95 risulta essere 0.385. Si ha quindi un calo di prestazioni rispettivamente di 0.434 e 0.418 rispetto all'\hyperref[sec:esperimento_ds_1_1]{Esperimento 1}. Questo calo è significativo e conferma l'impatto del domain shift, ma potrebbe essere mitigato aumentando la varietà degli ambienti di addestramento.
+Di conseguenza, la mAP50 finale è pari a 0.580 mentre la mAP50-95 risulta essere 0.432. Si ha quindi un calo di prestazioni rispettivamente di 0.393 e 0.371 rispetto all'\hyperref[sec:esperimento_ds_1_1]{Esperimento 1}. Questo calo è significativo e conferma l'impatto del domain shift, ma potrebbe essere mitigato aumentando la varietà degli ambienti di addestramento.
+
+Inoltre è interessante notare come le metriche di mAP raggiungano il loro picco massimo all'epoca 47, per poi deteriorarsi in maniera progressiva. Questo indica che proseguire l'addestramento oltre questa soglia non migliorerebbe le prestazioni, ma anzi le peggiorerebbe.  In questo caso, aumentare il numero di epoche di addestramento non farebbe altro che diminuire la mAP. Per ottimizzare tempo, risorse e ottenere il miglior modello possibile, l'addestramento dovrebbe essere interrotto all'epoca 47.
 
 \subsubsection{Esperimento 3}
 \label{sec:esperimento_ds_1_3}
@@ -751,7 +771,7 @@ Per il primo esperimento sono state utilizzate 8956 immagini di training proveni
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50}}
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50-95}}
-	\caption{Metriche di addestramento nel caso di ambienti reali, con dati di validazione provenienti dagli stessi ambienti di training.}
+	\caption{Metriche di addestramento nel caso di 10 ambienti reali, con dati di validazione provenienti dagli stessi ambienti di training.}
 	\label{fig:real-to-real-training-1}
 \end{figure}
 
@@ -763,7 +783,7 @@ Come quanto visto nella sezione sim-to-sim, anche qui il modello apprende quasi 
 	\hspace{0.01\textwidth}
 	\subfloat[]{\includegraphics[width=0.35\textwidth]{images/domain-shift/real-to-real/1/prediction-1.jpg}}
 	\hspace{0.01\textwidth}
-	\caption{Output del modello (b) considerando dati provenienti dalle 10 scene ScanNet (a).}
+	\caption{Output del modello (b) considerando un'immagine presa dalle 10 scene ScanNet usate per l'addestramento (a).}
 	\label{fig:real-to-real-prediction-1}
 \end{figure}
 
@@ -772,10 +792,50 @@ A causa del basso numero di scene utilizzate per addestrare questo modello, ha p
 \subsubsection{Esperimento 2}
 \label{sec:esperimento_ds_2_2}
 
+Nel seguente espetimento è stato addestrato il modello YOLO11 con 8000 immagini provenienti da 50 scene. Successivamente è stato validato con 1000 immagini provenienti dagli stessi 50 ambienti, e testato con altre 1000 immagini provenienti da 20 ambienti non utilizzati per il training. Il modello è stato poi addestrato per 60 epoche con batch size di 10 sul PC1, per una durata totale di 4 ore. Le metriche di training e testing sono riportate in \hyperref[fig:real-to-real-training-2]{Figura \ref{fig:real-to-real-training-2}}.
+
+%\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
+%\label{fig:real-to-real-training-2}
+
+%ANALISI RISULTATI
+%dati validazione
+
+\subsubsection{Esperimento 3}
+\label{sec:esperimento_ds_2_3}
+
+Come ultimo esperimento di questa categoria, si è addestrato il modello con lo stesso numero di immagini del test precedente, ma questa volta campionate da 395 diverse scene. Sono sempre state utilizzate 1000 immagini di validazione e 1000 di testing dagli stessi 20 ambienti dell'esperimento scorso. Sono rimasti invariati anche i parametri dell'addestramento. I risultati del training sono mostrati nella \hyperref[fig:real-to-real-training-2]{Figura \ref{fig:real-to-real-training-2}}.
+
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/testing-loss}}
+	\hspace{0.01\textwidth}
+	\\	
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/precision}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/recall}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50-95}}
+	\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
+	\label{fig:real-to-real-training-3}
+\end{figure}
+
+%ANALISI RISULTATI
+%dati validazione
+
 \subsection{Sim-to-real}
 \label{sec:sim_to_real}
 
-L'ultimo caso di studio riguarda
+\subsubsection{Esperimento 1}
+\label{sec:esperimento_ds_3_1}
+
+Infine, analizziamo il caso di studio sim-to-real, ovvero la capacità di un modello addestrato con dati simulati di generalizzare su dati reali. Per questo esperimento utilizziamo il modello addestrato nell'\hyperref[sec:esperimento_ds_1_3]{Esperimento 3} della sezione sim-to-sim, poichè è stato addestrato con tutti e 15 gli ambienti disponibili. Questo lo distingue dagli esperimenti 1 e 2, nei quali tre ambienti sono stati utilizzati per il testing. Per valutare le performance si utilizza il modello YOLO11 preaddestrato e il dataset contenente immagini reali con le relative annotazioni di segmantazione. In particolare sono state utilizzate le stesse 1000 immagini provenienti dalle 20 scene utilizzate nella \hyperref[sec:real_to_real]{Sezione Real-to-real}. Il risultato finale indica una  mAP50 pari a 0.015 e una mAP50-95 di 0.007.
+
+Questi dati confermano che, nonstante la quantità di immagini impiegate, il domain shift tra ambienti simulati e reali è troppo marcato perchè il modello possa generalizzare in maniera corretta. Questo risultato era prevedibile alla luce dei dati ottenuti nell'\hyperref[sec:esperimento_ds_1_2]{Esperimento 2} della sezione sim-to-sim, dove, pur restando nel dominio della simulazione e cambiando solo gli ambienti, si aveva una riduzione di entrambe le mAP di circa 0.4. Di conseguenza, passando dalla simulazione al mondo reale performance non potevano che deteriorare, e questi risultati lo dimostrano.
 
 \section{Domain adaptation in fog robotics}
 \label{sec:domain_shift_in_contesto_fog_robotics}
