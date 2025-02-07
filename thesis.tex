@@ -145,10 +145,9 @@ Per quanto riguarda il real-to-real gap, le differenze tra diversi ambienti real
 \section{Fog robotics}
 \label{sec:fog_robotics}
 
-La fog robotics è un'estensione del concetto di \textit{fog computing}~\cite{10.1145/2757384.2757397} applicato alla robotica mobile, ed è nata per superare il limite delle più tradizionali tecnologie basate sul \textit{cloud computing}~\cite{qian2009cloud}. Questo modello ibrido permette di bilanciare il carico computazionale, la latenza e l'affidabilità, distribuendo il carico di lavoro tra le varie risorse di rete. Questo garantisce risposte in tempo reale per le attività più critiche come la navigazione e le interazioni con l'ambiente.
+La fog robotics è un'estensione del concetto di \textit{fog computing}~\cite{10.1145/2757384.2757397} applicato alla robotica mobile, ed è nata per superare il limite delle più tradizionali tecnologie basate sul \textit{cloud computing}~\cite{qian2009cloud}. Questo modello distribuito permette di bilanciare il carico computazionale, la latenza e l'affidabilità, distribuendo il carico di lavoro tra i vari nodi di rete. Questo garantisce risposte in tempo reale per le attività più critiche, come la navigazione e le interazioni con l'ambiente.
 
 Come illustrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}, l'architettura si basa su tre elementi principali:
-
 
 \begin{figure}[t]
 	\centering
@@ -165,7 +164,7 @@ Come illustrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}
 	\item \textbf{Cloud}: È un'infrastruttira con una maggior potenza di calcolo, utilizzata generalmente per l'elaborazione di dati non time-sensitive e per l'archiviazione di informazioni a lungo termine.
 \end{itemize}
 
-Nonostante i suoi vantaggi, l'utilizzo di un'architettura distribuita come questa introduce ulteriori sfide legate al domain shift. Questo avviene a causa dell'eterogeneità dell'hardware presente nei robot e dalla necessità di sviluppare sistemi di visione robotica in grado di funzionare su più server differenti, il tutto senza perdita di prestazioni.
+Nonostante i suoi vantaggi, l'utilizzo di un'architettura distribuita come questa introduce ulteriori sfide legate al domain shift. Questo avviene a causa dell'eterogeneità dell'hardware presente nei robot e dalla necessità di sviluppare sistemi di visione robotica modulari, in grado di funzionare su più server differenti e senza perdita di prestazioni.
 
 \section{Scopo dell'elaborato}
 \label{sec:scopo_dell_elaborato}
@@ -176,7 +175,7 @@ L'obiettivo di questo elaborato è studiare il fenomeno del domain shift, analiz
 \chapter{Stato dell'arte}
 \label{chap:stato_arte}
 
-Il domain shift rappresenta una delle principali sfide nell'apprendimento automatico. Questo fenomeno si verifica quando i dati di addestramento e quelli di test provengono da distribuzioni diverse, causando un calo delle prestazioni del modello. In questi ultimi anni, la comunità scientifica ha dedicato sempre più attenzione a questo problema, arrivando a proporre diverse soluzioni.
+In questo capitolo vengono analizzate le principali tecniche attualmente più utilizzate per affrontare il problema del domain shift. In particolare verranno approfonditi gli approcci di \textit{domain adaptation}, \textit{data augmentation} e \textit{domain randomization}. Infine, il capitolo si sofferma sulle principali innovazioni avvenute nel campo della fog e cloud robotics.
 
 \section{Domain adaptation}
 \label{sec:adaptation}
@@ -221,6 +220,15 @@ Questa tecnica è particolarmente efficace nell'addestrare reti neurali profonde
 
 La domain randomization permette quindi di generare grandi dataset di addestramento col minimo sforzo da parte di un operatore umano, e di ottenere modelli robusti senza la necessità di effettuare fine tuning con dati reali.
 
+\section{Fog e cloud robotics}
+\label{sec:fog_e_cloud_robotics}
+
+Le architetture fog robotics sono un'evoluzione delle più tradizionali soluzioni cloud-based, e permettono di bilanciare il carico computazionale e la latenza, andando a migliorare al contempo l'affidabilità. Recenti studi come RoboEC2~\cite{10347007} hanno introdotto nuovi approcci per effettuare \textit{offloading computazionale} in maniera dinamica, andando a migliorare latenza e affidabilità in caso di condizioni di rete variabili. Come il nome può suggerire, questo studio di basa sui servizi Amazon EC2, e implementa un modello che suddivide dinamicamente i livelli di una rete neurale tra edge e cloud. Il tutto trovando un compromesso tra accuratezza, consumo energetico e tempi di elaborazione. In questo lavoro viene anche proposta l'integrazione di un algoritmo chiamato \textit{Spotlight Criteria}, che permette di ottimizzare le decisioni di offloading basandosi su parametri come comsumo computazionale locale, il tempo di risposta e la disponibilità di banda. Questo gli permette di operare anche in condizioni di rete instabili o intermittenti.
+
+Un altro contributo fondamentale è costituito dall'articolo \textit{Cloud Robotics: Architecture, Challenges and Applications}~\cite{6201212}, nel quale vengono proposte architetture ibride di tipo M2M (machine-to-machine) e M2C (machine-to-cloud) e che introduce tre modelli di elastic computing: \textit{peer-based}, \textit{proxy-based} e \textit{clone-based}.
+
+Diversi studi~\cite{9360855} hanno mostrato inoltre come la fog robotics migliori l'efficienza nella gestione delle risorse, consentendo ai robot di operare in ambienti dinamici senza le latenza caratteristiche di un sistema cloud. Ad esempio, nei sistemi multi-robot, l'adozione di server fog locali facilita la coordinazione e l'elaborazione dei dati in loco, riducendo il traffico di rete e il rischio di congestione dei server remoti. Tuttavia, nonostante i vantaggi, la fog robotics introduce nuove sfide, tra cui la gestione dell'eterogeneità sia hardware che software, e la sicurezza della comunicazione tra i vari livelli dell'architettura.
+
 % CAPITOLO 3: Metodo
 \chapter{Metodo}
 \label{chap:metodo}
@@ -252,9 +260,7 @@ In questo lavoro si è deciso di adottare la segmentazione semantica, in quanto 
 \section{Architettura modello distribuito}
 \label{sec:modello_per_fog_robotics}
 
-Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di una singola rete neurale, il compito di domain adaptation in un sistema distribuito obbliga a riprogettare l'intero modello. La tecnologia utilizzata per il sistema distribuito è di tipo fog robotics,  che punta a ridurre latenza e consumo di banda, distribuendo il carico computazionale tra il cloud e i server fog più vicini ai robot.
-
-Affinchè il nostro modello possa funzionare in un sistema distribuito, è essenziale progettarlo in maniera modulare; una parte deve essere eseguita sui server fog, mentre l'altra va gestita in cloud. Questi due moduli sono rappresentati da un modello per la trasformazione dei dati (\textit{encoder-decoder}) e uno per la segmentazione semantica (\textit{segmentatore}).
+Mentre l'analisi delle performance nei tre scenari principali (sim-to-sim, real-to-real e sim-to-real) richiede l'utilizzo di una singola rete neurale, il compito di domain adaptation in un sistema distribuito obbliga a riprogettare l'intero modello. Una parte deve essere infatti eseguita sui server fog, mentre l'altra va gestita in cloud. Questi due moduli sono rappresentati da un modello per la trasformazione dei dati (\textit{encoder-decoder}) e uno per la segmentazione semantica (\textit{segmentatore}).
 
 Il nostro obiettivo è trasformare le immagini ricevute in input dall'architettura in altre immagini proiettate sul dominio di addestramento, utilizzando un'architettura di tipo encoder-decoder. Vogliamo quindi rielaborare i dati reali ricevuti in ingresso, e modificarli in modo da farli assomigliare il più possibile a quelli attesi dal segmentatore. L'output dell'encoder-decoder viene poi utilizzato come input del segmentatore, che a questo punto fa inferenza sul dato ricevuto.
 
@@ -686,11 +692,6 @@ Come primo caso è stato testato il modello all'interno degli stessi ambienti ut
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/validation-loss}}
 	\hspace{0.01\textwidth}
-	\\	
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/precision}}
-	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/recall}}
-	\hspace{0.01\textwidth}
 	\\
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/1/map50}}
 	\hspace{0.01\textwidth}
@@ -721,11 +722,6 @@ Si è quindi passati ad analizzare un altro scenario di domain shift, nel quale 
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/train-loss}}
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/testing-loss}}
-	\hspace{0.01\textwidth}
-	\\	
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/precision}}
-	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/recall}}
 	\hspace{0.01\textwidth}
 	\\
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/sim-to-sim/2/map50}}
@@ -762,11 +758,6 @@ Per il primo esperimento sono state utilizzate 8956 immagini di training proveni
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/validation-loss}}
 	\hspace{0.01\textwidth}
-	\\	
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/precision}}
-	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/recall}}
-	\hspace{0.01\textwidth}
 	\\
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50}}
 	\hspace{0.01\textwidth}
@@ -800,11 +791,6 @@ Nel seguente espetimento è stato addestrato il modello YOLO11 con 8000 immagini
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/testing-loss}}
 	\hspace{0.01\textwidth}
-	\\	
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/precision}}
-	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/recall}}
-	\hspace{0.01\textwidth}
 	\\
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/map50}}
 	\hspace{0.01\textwidth}
@@ -825,11 +811,6 @@ Come ultimo esperimento di questa categoria, si è addestrato il modello con lo 
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/train-loss}}
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/testing-loss}}
-	\hspace{0.01\textwidth}
-	\\	
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/precision}}
-	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/recall}}
 	\hspace{0.01\textwidth}
 	\\
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50}}
