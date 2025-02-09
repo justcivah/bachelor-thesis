@@ -707,7 +707,6 @@ Si osserva come il modello performa quasi alla perfezione negli stessi ambienti 
 	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/sim-to-sim/1/original-1.jpg}}
 	\hspace{0.01\textwidth}
 	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/sim-to-sim/1/prediction-1.jpg}}
-	\hspace{0.01\textwidth}
 	\caption{Output del modello (b) considerando dati provenienti dal simulatore (a).}
 	\label{fig:prediction-1}
 \end{figure}
@@ -773,7 +772,6 @@ Come quanto visto nella sezione sim-to-sim, anche qui il modello apprende quasi 
 	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/1/original-1.jpg}}
 	\hspace{0.01\textwidth}
 	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/1/prediction-1.jpg}}
-	\hspace{0.01\textwidth}
 	\caption{Output del modello (b) considerando un'immagine presa dalle 10 scene ScanNet usate per l'addestramento (a).}
 	\label{fig:prediction-2}
 \end{figure}
@@ -831,7 +829,6 @@ Durante l'inferenza su immagini provenienti da ambienti reali, il modello dimost
 	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/3/prediction-1.jpg}}
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/3/prediction-2.jpg}}
-	\hspace{0.01\textwidth}
 	\caption{Predizioni del modello addestrato con 395 scene in un ambiente reale.}
 	\label{fig:prediciton-3}
 \end{figure}
@@ -857,36 +854,65 @@ D'altro canto, questi risultati erano prevedibili alla luce dei dati ottenuti ne
 \section{Domain adaptation in fog robotics}
 \label{sec:domain_shift_in_contesto_fog_robotics}
 
-In questa sezione si utilizza l'architettura UNet-YOLO implementata nel \hyperref[chap:metodo]{Capitolo \ref{chap:metodo}} per cercare di ridurre il fenomeno del domain shift in un sistema fog robotics. Gli scenari che vengono analizzati sono quelli real-to-real e sim-to-real.
+In questa sezione si utilizza l'architettura UNet-YOLO implementata nel \hyperref[chap:metodo]{Capitolo \ref{chap:metodo}} per cercare di mitigare il fenomeno del domain shift in un sistema fog robotics. Gli scenari considerati riguardano sia il caso real-to-real che sim-to-real.
 
 \subsection{Real-to-real}
 \label{sec:real_to_real_fr}
 
-Questi esperimenti analizzano le prestazioni dell'architettura UNet-YOLO in un sistema fog robotics, utilizzando come dominio sorgente e target ambienti reali. In particolare si considera una situazione nella quale si ha un segmentatore semantico pre-addestrato con dati reali provenienti da un gran numero di ambienti, utilizzando poi una piccola quantità di dati raccolti nel dominio di destinazione per effettuare un fine-tuning dell'encoder decoder e del segmentatore. Il segmentatore semantico utilizzato per questi esperimenti è il modello ottenuto all'epoca 47 nell'\hyperref[sec:esperimento_5]{Esperimento 5}, mentre i pesi della UNet utilizzata vengono inizializzati all'inizio di ogni training.
+Questa serie di esperimenti valuta le prestazioni dell'architettura UNet-YOLO in un sistema fog robotics, utilizzando come dominio sorgente e target ambienti reali. In particolare si considera una situazione nella quale si ha un segmentatore semantico pre-addestrato con dati reali provenienti da 395 ambienti, utilizzando poi una piccola quantità di dati raccolti nel dominio di destinazione per effettuare un fine-tuning dell'encoder-decoder e del segmentatore.
+
+Per questi esperimenti, il segmentatore semantico utilizzato corrisponde al modello ottenuto all’epoca 47 nell'\hyperref[sec:esperimento_5]{Esperimento 5}, mentre i pesi della UNet vengono inizializzati ex novo all'inizio di ogni sessione di addestramento.
 
 \subsubsection{Esperimento 8}
 \label{sec:esperimento_8}
 
-Per questo primo esperimento sono state utilizzate 1000 immagini per il fine-tuning provenienti da 20 scene, diverse dalle 395 utilizzate per addestrate il segmentatore. Le performance sono poi state misurate su 175 immagini di validazione, provenienti sempre dalle stesse 20 scene. Anche la macchina migliore a disposizione era a malapena sufficiente per effettuare l'addestramento. Questa deve infatti caricare in VRAM sia la UNet che YOLO11, il che ha lasciato poco spazio di manovra per regolare i parametri del training. È stato infatti utilizzato un batch size pari ad 1 e l'addestramento è durato circa 5 ore. Ho anche considerato l'opzione di utilizzare più immagini di training, ma questo avrebbe notevolmente aumentato anche i tempi di addestramento. Inoltre essendo questo un fine-tuning su determinati ambienti, è anche più sensato utilizzare una minor quantità di dati. Le metrich ottenute dopo l'addestramento sono illustrate nella \hyperref[fig:training-6]{Figura \ref{fig:training-6}}.
+In questo primo esperimento sono state utilizzate 1000 immagini per il fine-tuning provenienti da 20 scene, diverse dalle 395 utilizzate per addestrate il segmentatore. Le prestazioni del modello sono state successivamente valutate su 175 immagini di validazione, anch'esse provenienti dalle stesse 20 scene. Nonostante sia stata utilizzata la macchina più potente a disposizione, le risorse hardware erano appena sufficienti per effettuare l'addestramento. Il training ha richiesto il caricamento in VRAM sia del modello UNet che di YOLO, e questo ha limitato il batch size ad 1. L'intero processo di addestramento è durato circa 5 ore.
+
+L'opzione di utilizzare più immagini immagini per il training è stata presa in considerazione, ma avrebbe causato un notevole aumento dei tempi di addestramento. Inoltre, trattandosi di fine-tuning, l'uso di una piccola quantità di dati si è rivelata una scelta più coerente con quello che è lo scopo dell'esperimento. Le metriche ottenute alla fine del training sono illustrate nella \hyperref[fig:training-6]{Figura \ref{fig:training-6}}.
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/testing-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/validation-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50-95}}
-	\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
-	\label{fig:training-5}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/map50-95}}
+	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore preaddestrato con 395 scene. Fine-tuning e validazione effettuati con dati provenienti da altre 20 scene.}
+	\label{fig:training-6}
+\end{figure}
+
+Dai risultati ottenuti si nota che il modello riesce ad adattarsi in al nuovo dominio senza presentare segni di overfitting. Le mAP sono sufficientemente alte, con la mAP50 che nel picco più alto si attesta a 0.502 e la mAP50-95 a 0.309. È inoltre interessare analizzare come la UNet trasforma l'immagine prima di inviarla al segmentatore semantico. Nella \hyperref[fig:prediciton-4]{Figura \ref{fig:prediciton-4}} è mostrata un'immagine di input ricevuta dall'encoder-decoder, e il corrispettivo output.
+
+\begin{figure}[h!]
+	\centering
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/input.jpg}}
+	\hspace{0.01\textwidth}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/output.jpg}}
+	\caption{Input (a) e output (b) della UNet.}
+	\label{fig:prediciton-4}
 \end{figure}
 
 \subsubsection{Esperimento 9}
 \label{sec:esperimento_9}
 
+Nel seguente esperimento metteremo invece alla prova le performance della stessa architettura riducendo il numero di pesi della UNet. Decrementiamo i 31 milioni di parametri di una UNet fino a lasciarne circa 7.7 milioni. In questo modo, possiamo vedere se può trovare un buon compromesso tra performance e risorse necessarie dai server fog per eseguire questa architettura. Gli altri parametri e dataset restano invariati rispetto all'esperimento precedente. I risultati dell'addestramento sono riportate nella \hyperref[fig:training-7]{Figura \ref{fig:training-7}}
 
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/validation-loss}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/map50-95}}
+	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore preaddestrato con 395 scene. Fine-tuning e validazione effettuati con dati provenienti da altre 20 scene. È stata utilizzata una UNet con solo 7.7 milioni di parametri.}
+	\label{fig:training-7}
+\end{figure}
 
 \subsubsection{Esperimento 10}
 \label{sec:esperimento_10}
