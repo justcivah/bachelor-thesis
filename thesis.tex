@@ -916,12 +916,12 @@ Nel seguente esperimento valuteremo invece le performance della stessa architett
 
 Questi risultati differiscono da quelli ottenuti lo scorso esperimento. Si nota infatti che, utilizzando un numero ridotto di parametri, la loss di validazione diminuisce in modo irregolare e rumoroso. Lo stesso comportamento vale per le mAP, che mostrano un aumento ma con una certa variabilità. In genere questo può avvenire nel caso di batch size troppo piccoli o quando i dati di training presentano un'elevata variabilità. Non è però questo il caso, poichè l'esperimento è stato riprodotto con gli stessi dati del precedente. L'unica soluzione plausibile è che sia causato dal numero piccolo di parametri.
 
-Nonstante ciò, i risultati ottenuti restano comunque soddisfacenti: la mAP50 è pari a 0.435 mentre la mAP50-95 è di 0.259. Considerando una riduzione di circa il 75\% dei parametri della UNet, questa soluzione potrebbe rappresentare un'ottima alternativa per sistemi fog con risorse limitate.
+Nonstante ciò, i risultati ottenuti restano comunque soddisfacenti: la mAP50 è pari a 0.435 mentre la mAP50-95 è di 0.259. Considerando una riduzione di circa il 75\% dei parametri della UNet, questa soluzione potrebbe rappresentare un'ottima alternativa per sistemi fog con risorse limitate. Per tutti i restanti esperimenti si continuerà ad usare la UNet da 31 milioni di parametri.
 
 \subsubsection{Esperimento 10}
 \label{sec:esperimento_10}
 
-Per l'ultimo esperimento della sezione real-to-real si è infine provato ad addestrare la UNet (da 31 milioni di parametri) congelando i pesi del segmentatore semantico. Con questo test si è voluto valutare quanto la UNet fosse flessibile ad adattare il dominio destinazione a quello sorgente, senza andare a modificare i parametri di YOLO11. L'addestramento è stato eseguito sulla macchina PC1, e tutti gli altri parametri sono rimasti invariati rispetto all'\hyperref[sec:esperimento_8]{Esperimento 8}. Nella \hyperref[fig:training-8]{Figura \ref{fig:training-8}} sono illustrati i risultati.
+Per l'ultimo esperimento della sezione real-to-real si è infine provato ad addestrare la UNet congelando i pesi del segmentatore semantico. Con questo test si è voluto valutare quanto la UNet fosse flessibile ad adattare il dominio destinazione a quello sorgente, senza andare a modificare i parametri di YOLO11. L'addestramento è stato eseguito sulla macchina PC1, e tutti gli altri parametri sono rimasti invariati rispetto all'\hyperref[sec:esperimento_8]{Esperimento 8}. Nella \hyperref[fig:training-8]{Figura \ref{fig:training-8}} sono illustrati i risultati.
 
 \begin{figure}[h!]
 	\centering
@@ -944,6 +944,22 @@ Come mostrato dai grafici, la UNet da sola non è in grado di proiettare corrett
 
 \subsubsection{Esperimento 11}
 \label{sec:esperimento_11}
+
+Come ultimo esperimento di questo elaborato, andiamo ad analizzare se l'architettura UNet-YOLO riesce a proiettare i dati provenienti dal mondo reale sul dominio del segmentatore semantico, addestrato con dati simulati. In questo caso vogliamo che la UNet trasforma le feature delle immagini reali nelle corrispondenti feature presenti negli ambienti simulati. Per fare questo viene utilizzato il modello YOLO11 ottenuto nell'\hyperref[sec:esperimento_3]{Esperimento 3} e, senza congelare i suoi pesi, viene effettuato fine-tuning con le stesse 20 scene utilizzate in precedenza. A causa delle limitate risorse hardware, anche per questo esperimento si è costretti ad impostare ad 1 la dimensione del batch, lasciando tutti gli altri parametri inalterati rispetto agli esperimenti precedenti. L'addestramento è stato effettuato sul PC1 e, dopo circa 5 ore di addestramento, sono state prodotte le metriche riportate nella \hyperref[fig:training-9]{Figura \ref{fig:training-9}}
+
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/sim-to-real/11/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/sim-to-real/11/validation-loss}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/sim-to-real/11/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/sim-to-real/11/map50-95}}
+	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore pre-addestrato con 15 scene simulate. Addestramento e validazione effettuati con dati provenienti da 20 scene reali.}
+	\label{fig:training-9}
+\end{figure}
 
 % CAPITOLO 6: Conclusioni
 \chapter{Conclusioni}
