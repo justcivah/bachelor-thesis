@@ -751,7 +751,7 @@ Il secondo caso di studio riguarda l'analisi del domain shift in ambienti reali.
 
 Per il primo esperimento sono state utilizzate 8956 immagini di training provenienti da 10 scene, e 1580 immagini per la validazione provenienti dagli stessi 10 ambienti. Il modello è stato addestrato per 60 epoche sul PC1, con batch di dimensione 12, risoluzione delle immagini a 640 pixel, e parametro \textit{rect} impostato a \textit{True}. Essendo le immagini di scannet rettangolari, con quest'ultima impostazione si evita di tagliare le immagini in un formato quadrato, e si indica la dimensione in pixel del lato più lungo, ovvero 640. Dopo 4 ore e 30 minuti di addestramento, sono state generate le metriche riportate nella \hyperref[fig:training-3]{Figura \ref{fig:training-3}}.
 
-\begin{figure}[h!]
+\begin{figure}[t]
 	\centering
 	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/4/train-loss}}
 	\hspace{0.01\textwidth}
@@ -916,7 +916,7 @@ Nel seguente esperimento valuteremo invece le performance della stessa architett
 
 Questi risultati differiscono da quelli ottenuti lo scorso esperimento. Si nota infatti che, utilizzando un numero ridotto di parametri, la loss di validazione diminuisce in modo irregolare e rumoroso. Lo stesso comportamento vale per le mAP, che mostrano un aumento ma con una certa variabilità. In genere questo può avvenire nel caso di batch size troppo piccoli o quando i dati di training presentano un'elevata variabilità. Non è però questo il caso, poichè l'esperimento è stato riprodotto con gli stessi dati del precedente. L'unica soluzione plausibile è che sia causato dal numero piccolo di parametri.
 
-Nonstante ciò, i risultati ottenuti restano comunque soddisfacenti: la mAP50 è pari a ??? mentre la mAP50-95 è di ???. Considerando una riduzione di circa il 75\% dei parametri della UNet, questa soluzione potrebbe rappresentare un'ottima alternativa per sistemi fog con risorse limitate.
+Nonstante ciò, i risultati ottenuti restano comunque soddisfacenti: la mAP50 è pari a 0.435 mentre la mAP50-95 è di 0.259. Considerando una riduzione di circa il 75\% dei parametri della UNet, questa soluzione potrebbe rappresentare un'ottima alternativa per sistemi fog con risorse limitate.
 
 \subsubsection{Esperimento 10}
 \label{sec:esperimento_10}
