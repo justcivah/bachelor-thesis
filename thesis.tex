@@ -967,24 +967,17 @@ Dall'analisi dei grafici si nota come il modello UNet-YOLO non riesca a trasform
 \chapter{Conclusioni}
 \label{chap:conclusioni}
 
+In questo elaborato si è analizzato il fenomeno del domain shift in diversi scenari, e si è realizzata un'architettura per ridurre il domain shift in un sistema di fog robotics.
 
-\section{Discussione dei risultati}
-\label{sec:discussione_risultati}
+I risultati ottenuti evidenziano che un segmentatore validato sugli stessi ambienti utilizzati durante il training raggiunge prestazioni  eccellenti. Questo effetto è più marcato in ambienti simulati, mentre è meno presetne in quelli reali. La principale causa di questa differenza risiede nel fatto che le scene del simulatore non presentano un livello di eterogeneità paragonabile a quelle del simulatore. Inoltre, le annotazioni semantiche dei dati simulati sono perfette, mentre quelle provenienti dal dataset ScanNet presentano diverse imperfezioni.
 
-Riassunendo quanto visto, in questo elaborato si è analizzato il fenomeno del domain shift in vari scenari, e si è realizzata un'architettura per ridurre il domain shift in un sistema di fog robotics.
+Quando il testing viene eseguito su ambienti diversi da quelli di training, il modello addestrato con dati simulati mostra un maggior degrado delle prestazioni rispetto a quello addestrato con dati reali. Quest'ultimo dimostra una migliore capacità di generalizzazione su dati non visti, grazie al fatto che i dati reali sono stati campionati da un numero di scene maggiore rispetto ai dati simulati. Un ulteriore fattore determinante è l'elevato grado di eterogeneità tra gli ambieni reali.
 
-Si è scoperto che un segmentatore validato negli stessi ambienti utilizzati durante il training performa in maniera eccellente. Questo effetto è più marcato in ambienti simulati, mentre è meno presetne in quelli reali. Questo è principalmente dovuto al fatto che le scene del simulatore non presentano un livello di eterogeneità paragonabili a quelle del simulatore. Inoltre, le annotazioni semantiche dei dati simulati sono perfette, mentre quelle provenienti dal dataset ScanNet presentano diverse imperfezioni.
+Per quanto riguarda il domain shift sim-to-real, la differenza tra i due domini risulta eccessiva per permettere a questo specifico modello di generalizzare correttamente. Una soluzione potrebbe essere utilizzare un simulatore più fotorealistico, con texture di alta qualità, un sistema di illuminazione dimanico e strumenti per effettuare automaticamente domain randomization. È inoltre essenziale riuscire a campionare dati da un ampio numero di ambienti simulati: come visto nell'\hyperref[sec:esperimento_6]{Esperimento 6} un'elevata varietà di ambienti di training migliora la capacità di generalizzazione su scene mai viste prima.
 
-Se invece si effettua testing su ambienti diversi da quelli di addestramento, il modello addestrato con dati simulati ne risente maggiormente, mentre quello addestrato con dati reali generalizza meglio su dati non visti. Questa differenza di comportamento è causata dal fatto che i dati reali sono stati campionati da un numero di scene maggiore rispetto a quelli simulati. Un altro fattore importante e da tenere in considerazione è l'alto livello di eterogeneità tra i diversi ambienti.
+Analizzando invece l'architettura fog robotics si osserva che, nel caso real-to-real, il modello UNet-YOLO permette di colmare parte del gap effettuando fine-tuning con immagini provenienti dal dominio di destinazione. Si passa da una mAP50 di 0.411 utilizzando solo YOLO, ad una mAP50 di 0.502 nel caso del modello distribuito. Si è poi sperimentato un addestramento della UNet mantenendo congelati i pesi del segmentatore, ma l'encoder-decoder da solo non è riuscito ad apprendere efficacemente il trasferimento delle feature da un dominio all'altro.
 
-Per quanto riguarda il domain shift sim-to-real, i due domini sono troppo differenti per permettere a questo specifico modello di generalizzare correttamente. Una soluzione potrebbe essere utilizzare un simulatore più fotorealistico, che permetta di avere texture di alta qualità, un sistema di illuminazione dimanico, e magari strumenti per effettuare automaticamente domain randomization. È inoltre essenziale riuscire a campionare dati da un gran numero di ambienti simulati; come visto nell'\hyperref[sec:esperimento_6]{Esperimento 6} un gran numero di ambienti di training permette di poter generalizzare su scene mai viste prima.
-
-Analizzando invece l'architettura fog robotics, si può notare che nel caso real-to-real il modello UNet-YOLO permette di colmare parte del gap effettuando fine-tuning con immagini provenienti dal dominio di destinazione. Si passa da una mAP50 di 0.411 utilizzando solo YOLO, ad una mAP50 di 0.502 nel caso del modello distribuito. Inoltre si è 
-
-Nel caso invece sim-to-real, quest'architettura coma 
-
-\section{Prospettive e sviluppi futuri}
-\label{sec:prospettive}
+Nel caso invece del sim-to-real, l'architettura proposta non è riuscita a compensare le differenze tra i domini, nemmeno lasciando il segmentatore scongelato. Questo risultato conferma la diversità tra il dominio simulato e quello reale, ed evidenzia la necessità di adottare gli accorgimenti precedentemente menzionati per migliorare le capacità di generalizzazione del modello.
 
 % Bibliografia
 \beforebibliography
