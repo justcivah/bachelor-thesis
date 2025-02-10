@@ -945,7 +945,7 @@ Come mostrato dai grafici, la UNet da sola non è in grado di proiettare corrett
 \subsubsection{Esperimento 11}
 \label{sec:esperimento_11}
 
-Come ultimo esperimento di questo elaborato, andiamo ad analizzare se l'architettura UNet-YOLO riesce a proiettare i dati provenienti dal mondo reale sul dominio del segmentatore semantico, addestrato con dati simulati. In questo caso vogliamo che la UNet trasforma le feature delle immagini reali nelle corrispondenti feature presenti negli ambienti simulati. Per fare questo viene utilizzato il modello YOLO11 ottenuto nell'\hyperref[sec:esperimento_3]{Esperimento 3} e, senza congelare i suoi pesi, viene effettuato fine-tuning con le stesse 20 scene utilizzate in precedenza. A causa delle limitate risorse hardware, anche per questo esperimento si è costretti ad impostare ad 1 la dimensione del batch, lasciando tutti gli altri parametri inalterati rispetto agli esperimenti precedenti. L'addestramento è stato effettuato sul PC1 e, dopo circa 5 ore di addestramento, sono state prodotte le metriche riportate nella \hyperref[fig:training-9]{Figura \ref{fig:training-9}}
+Come ultimo esperimento di questo elaborato, analizziamo la capacità dell'architettura UNet-YOLO di proiettare i dati provenienti dal mondo reale nel dominio del segmentatore semantico, addestrato su dati simulati. In particolare, l'obiettivo è far sì che la UNet trasformi le feature delle immagini reali nelle corrispondenti feature presenti negli ambienti simulati. Per fare questo utilizziamo il modello YOLO11 ottenuto nell'\hyperref[sec:esperimento_3]{Esperimento 3} e, senza congelare i suoi pesi, effettuiamo fine-tuning con le stesse 20 scene utilizzate in precedenza. A causa delle limitate risorse hardware, anche per questo esperimento si è costretti ad impostare ad 1 la dimensione del batch, lasciando tutti gli altri parametri inalterati rispetto agli esperimenti precedenti. L'addestramento è stato eseguito su PC1 e, dopo circa 5 ore, sono state prodotte le metriche riportate nella \hyperref[fig:training-9]{Figura \ref{fig:training-9}}.
 
 \begin{figure}[h!]
 	\centering
@@ -961,15 +961,27 @@ Come ultimo esperimento di questo elaborato, andiamo ad analizzare se l'architet
 	\label{fig:training-9}
 \end{figure}
 
+Dall'analisi dei grafici si nota come il modello UNet-YOLO non riesca a trasformare le feature provenienti dagli ambienti reali in caratteristiche comprensibili dal segmentatore semantico. ntrambe le metriche mAP restano infatti prossime allo zero per l'intero periodo di addestramento. La causa più probabile a questo problema potrebbe essere la troppa differenza tra le immagini dei due domini. Nell'\hyperref[sec:esperimento_8]{Esperimento 8} il domain shift tra gli ambienti è più contenuto, permettendo al modello di compensare e adattarsi. In questo caso, invece, l'architettura utilizzata non è sufficientemente complessa per gestire questo maggiore domain shift. Per migliorare i risultati sono possibili due soluzioni. La prima consiste nell'utilizzare un simulatore più fotorealistico, così da diminuire il gap tra i domini. L'altra opzione è invece utilizzare un encoder-decoder più complesso, in modo da riuscire a colmare un gap più grande tra i due domini.
+
 % CAPITOLO 6: Conclusioni
 \chapter{Conclusioni}
 \label{chap:conclusioni}
 
+
 \section{Discussione dei risultati}
 \label{sec:discussione_risultati}
 
-\section{Limiti della soluzione proposta}
-\label{sec:limiti}
+Riassunendo quanto visto, in questo elaborato si è analizzato il fenomeno del domain shift in vari scenari, e si è realizzata un'architettura per ridurre il domain shift in un sistema di fog robotics.
+
+Si è scoperto che un segmentatore validato negli stessi ambienti utilizzati durante il training performa in maniera eccellente. Questo effetto è più marcato in ambienti simulati, mentre è meno presetne in quelli reali. Questo è principalmente dovuto al fatto che le scene del simulatore non presentano un livello di eterogeneità paragonabili a quelle del simulatore. Inoltre, le annotazioni semantiche dei dati simulati sono perfette, mentre quelle provenienti dal dataset ScanNet presentano diverse imperfezioni.
+
+Se invece si effettua testing su ambienti diversi da quelli di addestramento, il modello addestrato con dati simulati ne risente maggiormente, mentre quello addestrato con dati reali generalizza meglio su dati non visti. Questa differenza di comportamento è causata dal fatto che i dati reali sono stati campionati da un numero di scene maggiore rispetto a quelli simulati. Un altro fattore importante e da tenere in considerazione è l'alto livello di eterogeneità tra i diversi ambienti.
+
+Per quanto riguarda il domain shift sim-to-real, i due domini sono troppo differenti per permettere a questo specifico modello di generalizzare correttamente. Una soluzione potrebbe essere utilizzare un simulatore più fotorealistico, che permetta di avere texture di alta qualità, un sistema di illuminazione dimanico, e magari strumenti per effettuare automaticamente domain randomization. È inoltre essenziale riuscire a campionare dati da un gran numero di ambienti simulati; come visto nell'\hyperref[sec:esperimento_6]{Esperimento 6} un gran numero di ambienti di training permette di poter generalizzare su scene mai viste prima.
+
+Analizzando invece l'architettura fog robotics, si può notare che nel caso real-to-real il modello UNet-YOLO permette di colmare parte del gap effettuando fine-tuning con immagini provenienti dal dominio di destinazione. Si passa da una mAP50 di 0.411 utilizzando solo YOLO, ad una mAP50 di 0.502 nel caso del modello distribuito. Inoltre si è 
+
+Nel caso invece sim-to-real, quest'architettura coma 
 
 \section{Prospettive e sviluppi futuri}
 \label{sec:prospettive}
