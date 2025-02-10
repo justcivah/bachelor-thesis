@@ -753,14 +753,14 @@ Per il primo esperimento sono state utilizzate 8956 immagini di training proveni
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/4/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/validation-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/4/validation-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/4/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/1/map50-95}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/4/map50-95}}
 	\caption{Metriche di addestramento nel caso di 10 ambienti reali, con dati di validazione provenienti dagli stessi ambienti di training.}
 	\label{fig:training-3}
 \end{figure}
@@ -769,9 +769,9 @@ Come quanto visto nella sezione sim-to-sim, anche qui il modello apprende quasi 
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/1/original-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/4/original-1.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/1/prediction-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/4/prediction-1.jpg}}
 	\caption{Output del modello (b) considerando un'immagine presa dalle 10 scene ScanNet usate per l'addestramento (a).}
 	\label{fig:prediction-2}
 \end{figure}
@@ -785,14 +785,14 @@ Nel seguente espetimento è stato addestrato il modello YOLO11 con 8000 immagini
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/5/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/testing-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/5/testing-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/5/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/2/map50-95}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/5/map50-95}}
 	\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
 	\label{fig:training-4}
 \end{figure}
@@ -808,14 +808,14 @@ Per verificare l'ultima ipotesi formulata, in questo esperimento è stato utiliz
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/6/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/testing-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/6/testing-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/6/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/3/map50-95}}
+	{\includegraphics[width=0.48\textwidth]{images/domain-shift/real-to-real/6/map50-95}}
 	\caption{Metriche di addestramento nel caso di 50 ambienti reali, con dati di testing provenienti da 20 diversi ambienti.}
 	\label{fig:training-5}
 \end{figure}
@@ -826,9 +826,9 @@ Durante l'inferenza su immagini provenienti da ambienti reali, il modello dimost
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/3/prediction-1.jpg}}
+	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/6/prediction-1.jpg}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/3/prediction-2.jpg}}
+	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/6/prediction-2.jpg}}
 	\caption{Predizioni del modello addestrato con 395 scene in un ambiente reale.}
 	\label{fig:prediciton-3}
 \end{figure}
@@ -841,7 +841,7 @@ Considerando i dati di validazione, questo modello ottiene una mAP50 di 0.459 e 
 \subsubsection{Esperimento 7}
 \label{sec:esperimento_7}
 
-Infine, analizziamo il caso di studio sim-to-real, ovvero la capacità di un modello addestrato con dati simulati di generalizzare su dati reali. Per questo esperimento utilizziamo il modello dell'\hyperref[sec:esperimento_3]{Esperimento 3}, in quanto è stato addestrato con tutti e 15 gli ambienti disponibili. Questo lo distingue dagli esperimenti 1 e 2, nei quali tre ambienti sono stati utilizzati per il testing. Per valutare le performance si utilizza il modello YOLO11 preaddestrato e il dataset contenente immagini reali con le relative annotazioni di segmantazione. In particolare sono state utilizzate le stesse 1000 immagini provenienti dalle 20 scene utilizzate nella \hyperref[sec:real_to_real]{Sezione Real-to-real}. Il risultato finale indica una  mAP50 pari a 0.015 e una mAP50-95 di 0.007, il che conferma le seguenti ipotesi:
+Infine, analizziamo il caso di studio sim-to-real, ovvero la capacità di un modello addestrato con dati simulati di generalizzare su dati reali. Per questo esperimento utilizziamo il modello dell'\hyperref[sec:esperimento_3]{Esperimento 3}, in quanto è stato addestrato con tutti e 15 gli ambienti disponibili. Questo lo distingue dagli esperimenti 1 e 2, nei quali tre ambienti sono stati utilizzati per il testing. Per valutare le performance si utilizza il modello YOLO11 preaddestrato e il dataset contenente immagini reali con le relative annotazioni di segmantazione. In particolare sono state utilizzate le stesse 1000 immagini provenienti dalle 20 scene utilizzate nella sezione real-to-real. Il risultato finale indica una  mAP50 pari a 0.015 e una mAP50-95 di 0.007, il che conferma le seguenti ipotesi:
 
 \begin{enumerate}
 	\item Non è importante la quantità di immagini impiegate, ma conta il numero di ambienti utilizzati e il loro livello di ererogeneità.
@@ -872,14 +872,14 @@ L'opzione di utilizzare più immagini immagini per il training è stata presa in
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/8/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/validation-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/8/validation-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/8/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/1/map50-95}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/8/map50-95}}
 	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore preaddestrato con 395 scene. Fine-tuning e validazione effettuati con dati provenienti da altre 20 scene.}
 	\label{fig:training-6}
 \end{figure}
@@ -888,9 +888,9 @@ Dai risultati ottenuti si nota che il modello riesce ad adattarsi in al nuovo do
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/input.png}}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/8/input.png}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/output.png}}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/8/output.png}}
 	\caption{Input (a) e output (b) della UNet.}
 	\label{fig:prediciton-4}
 \end{figure}
@@ -902,14 +902,14 @@ Nel seguente esperimento valuteremo invece le performance della stessa architett
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/9/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/validation-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/9/validation-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/9/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/map50-95}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/9/map50-95}}
 	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore pre-addestrato con 395 scene. Fine-tuning e validazione effettuati con dati provenienti da altre 20 scene. È stata utilizzata una UNet con solo 7.7 milioni di parametri.}
 	\label{fig:training-7}
 \end{figure}
@@ -925,14 +925,14 @@ Per l'ultimo esperimento della sezione real-to-real si è infine provato ad adde
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/train-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/10/train-loss}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/validation-loss}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/10/validation-loss}}
 	\hspace{0.01\textwidth}
 	\\
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/map50}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/10/map50}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/map50-95}}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/10/map50-95}}
 	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore pre-addestrato con 395 scene. Addestramento e validazione effettuati con dati provenienti da altre 20 scene. I pesi del segmentatore semantico sono stati congelati.}
 	\label{fig:training-8}
 \end{figure}
