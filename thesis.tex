@@ -866,7 +866,7 @@ Per questi esperimenti, il segmentatore semantico utilizzato corrisponde al mode
 \subsubsection{Esperimento 8}
 \label{sec:esperimento_8}
 
-In questo primo esperimento sono state utilizzate 1000 immagini per il fine-tuning provenienti da 20 scene, diverse dalle 395 utilizzate per addestrate il segmentatore. Le prestazioni del modello sono state successivamente valutate su 175 immagini di validazione, anch'esse provenienti dalle stesse 20 scene. Nonostante sia stata utilizzata la macchina più potente a disposizione, le risorse hardware erano appena sufficienti per effettuare l'addestramento. Il training ha richiesto il caricamento in VRAM sia del modello UNet che di YOLO, e questo ha limitato il batch size ad 1. L'intero processo di addestramento è durato circa 5 ore.
+In questo primo esperimento sono state utilizzate 1000 immagini per il fine-tuning provenienti da 20 scene, diverse dalle 395 utilizzate per addestrate il segmentatore. Le prestazioni del modello sono state successivamente valutate su 175 immagini di validazione, anch'esse provenienti dalle stesse 20 scene. Nonostante sia stata utilizzata la macchina più potente a disposizione, le risorse hardware erano appena sufficienti per effettuare l'addestramento. Il training ha richiesto il caricamento in VRAM sia del modello UNet che di YOLO, e questo ha limitato il batch size ad 1, mantenendo la risoluzione delle immagini a 640 pixel. L'intero processo di addestramento è durato circa 5 ore.
 
 L'opzione di utilizzare più immagini immagini per il training è stata presa in considerazione, ma avrebbe causato un notevole aumento dei tempi di addestramento. Inoltre, trattandosi di fine-tuning, l'uso di una piccola quantità di dati si è rivelata una scelta più coerente con quello che è lo scopo dell'esperimento. Le metriche ottenute alla fine del training sono illustrate nella \hyperref[fig:training-6]{Figura \ref{fig:training-6}}.
 
@@ -888,9 +888,9 @@ Dai risultati ottenuti si nota che il modello riesce ad adattarsi in al nuovo do
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/input.jpg}}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/input.png}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/output.jpg}}
+	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/1/output.png}}
 	\caption{Input (a) e output (b) della UNet.}
 	\label{fig:prediciton-4}
 \end{figure}
@@ -898,7 +898,7 @@ Dai risultati ottenuti si nota che il modello riesce ad adattarsi in al nuovo do
 \subsubsection{Esperimento 9}
 \label{sec:esperimento_9}
 
-Nel seguente esperimento metteremo invece alla prova le performance della stessa architettura riducendo il numero di pesi della UNet. Decrementiamo i 31 milioni di parametri di una UNet fino a lasciarne circa 7.7 milioni. In questo modo, possiamo vedere se può trovare un buon compromesso tra performance e risorse necessarie dai server fog per eseguire questa architettura. Gli altri parametri e dataset restano invariati rispetto all'esperimento precedente. I risultati dell'addestramento sono riportate nella \hyperref[fig:training-7]{Figura \ref{fig:training-7}}
+Nel seguente esperimento valuteremo invece le performance della stessa architettura riducendo il numero di parametri della UNet. Partendo dai 31 milioni di parametri originali, sono state ridodde le dimensioni del modello fino a raggiungere quota 7.7 milioni di parametri. Lo scopo è verificare se la UNet è in grado di mantenere un buon equilibrio tra prestazioni ed efficienza, riducendo al contempo il carico di lavoro sui server fog. Tutti gli altri parametri e i dataset restano invariati rispetto all'esperimento precedente, tranne la macchina sulla quale è stato eseguito che è la PC2. Dopo 26 ore di addestramento, i risultati ottenuti sono riportati nella \hyperref[fig:training-7]{Figura \ref{fig:training-7}}.
 
 \begin{figure}[h!]
 	\centering
@@ -910,14 +910,34 @@ Nel seguente esperimento metteremo invece alla prova le performance della stessa
 	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/map50}}
 	\hspace{0.01\textwidth}
 	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/2/map50-95}}
-	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore preaddestrato con 395 scene. Fine-tuning e validazione effettuati con dati provenienti da altre 20 scene. È stata utilizzata una UNet con solo 7.7 milioni di parametri.}
+	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore pre-addestrato con 395 scene. Fine-tuning e validazione effettuati con dati provenienti da altre 20 scene. È stata utilizzata una UNet con solo 7.7 milioni di parametri.}
 	\label{fig:training-7}
 \end{figure}
+
+Questi risultati differiscono da quelli ottenuti lo scorso esperimento. Si nota infatti che, utilizzando un numero ridotto di parametri, la loss di validazione diminuisce in modo irregolare e rumoroso. Lo stesso comportamento vale per le mAP, che mostrano un aumento ma con una certa variabilità. In genere questo può avvenire nel caso di batch size troppo piccoli o quando i dati di training presentano un'elevata variabilità. Non è però questo il caso, poichè l'esperimento è stato riprodotto con gli stessi dati del precedente. L'unica soluzione plausibile è che sia causato dal numero piccolo di parametri.
+
+Nonstante ciò, i risultati ottenuti restano comunque soddisfacenti: la mAP50 è pari a ??? mentre la mAP50-95 è di ???. Considerando una riduzione di circa il 75\% dei parametri della UNet, questa soluzione potrebbe rappresentare un'ottima alternativa per sistemi fog con risorse limitate.
 
 \subsubsection{Esperimento 10}
 \label{sec:esperimento_10}
 
+Per l'ultimo esperimento della sezione real-to-real si è infine provato ad addestrare la UNet (da 31 milioni di parametri) congelando i pesi del segmentatore semantico. Con questo test si è voluto valutare quanto la UNet fosse flessibile ad adattare il dominio destinazione a quello sorgente, senza andare a modificare i parametri di YOLO11. L'addestramento è stato eseguito sulla macchina PC1, e tutti gli altri parametri sono rimasti invariati rispetto all'\hyperref[sec:esperimento_8]{Esperimento 8}. Nella \hyperref[fig:training-8]{Figura \ref{fig:training-8}} sono illustrati i risultati.
 
+\begin{figure}[h!]
+	\centering
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/train-loss}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/validation-loss}}
+	\hspace{0.01\textwidth}
+	\\
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/map50}}
+	\hspace{0.01\textwidth}
+	{\includegraphics[width=0.48\textwidth]{images/fog-robotics/real-to-real/3/map50-95}}
+	\caption{Metriche di addestramento del modello distribuito, utilizzando un segmentatore pre-addestrato con 395 scene. Addestramento e validazione effettuati con dati provenienti da altre 20 scene. I pesi del segmentatore semantico sono stati congelati.}
+	\label{fig:training-8}
+\end{figure}
+
+Come mostrato dai grafici, la UNet da sola non è in grado di proiettare correttamente le immagini del dominio target su quello di addestramento. Per ottenere questo risultato, è necessario co-addestrare entrambi i modelli. Di conseguenza l'encoder-decoder non impara nulla e i valori delle mAP restano prossimi allo zero durante tutto il processo di training.
 
 \subsection{Sim-to-real}
 \label{sec:sim_to_real_fr}
