@@ -81,7 +81,7 @@
 	% headsep=\dimexpr 1.3cm-10pt\relax,
 	% footskip=1.2cm,
 	heightrounded,
-    % Apparently 3.5/2.5 is standard
+	% Apparently 3.5/2.5 is standard
 	left=3.5cm,
 	right=2.5cm
 }
@@ -156,7 +156,7 @@
 % Relatori
 \newcommand\makesupervisorlines\relax
 \newcommand\supervisor[2][Supervisor]{%
-\appto\makesupervisorlines{{\large{}#1:} & #2\\\relax}%
+	\appto\makesupervisorlines{{\large{}#1:} & #2\\\relax}%
 }
 \newcommand\relatore[1]{\supervisor[\IfLanguageName{italian}{Relatore}{Supervisor}]{#1}}
 \newcommand\correlatore[1]{\supervisor[\IfLanguageName{italian}{Correlatore}{Co-supervisor}]{#1}}
@@ -165,13 +165,13 @@
 \newcommand\makeuniversity\relax
 \newcommand\theuniversity\relax
 \newcommand{\university}[1]{%
-\renewcommand\theuniversity{#1}%
-\renewcommand\makeuniversity{{\LARGE \uppercase{\theuniversity}\\\relax}}%
+	\renewcommand\theuniversity{#1}%
+	\renewcommand\makeuniversity{{\LARGE \uppercase{\theuniversity}\\\relax}}%
 }
 
 \newcommand\makeunilogo\relax
 \newcommand{\unilogo}[2][height=30mm]{%
-\renewcommand\makeunilogo{\centerline{\includegraphics[#1]{#2}}}%
+	\renewcommand\makeunilogo{\centerline{\includegraphics[#1]{#2}}}%
 }
 
 \newcommand\makefaculty\relax
@@ -191,16 +191,16 @@
 \newcommand\maketypeofthesis\relax
 \newcommand\thetypeofthesis\relax
 \newcommand{\typeofthesis}[2][ \IfLanguageName{italian}{di}{by}:]{%
-\renewcommand\thetypeofthesis{#2}%
-\renewcommand\maketypeofthesis{\thetypeofthesis #1\\\relax}%
+	\renewcommand\thetypeofthesis{#2}%
+	\renewcommand\maketypeofthesis{\thetypeofthesis #1\\\relax}%
 }
 
 % Anno
 \newcommand\makeacademicyear\relax
 \newcommand\academicyears[2]{\renewcommand\makeacademicyear{\sc{}#1 #2}}
 \newcommand\academicyear[2][\IfLanguageName{italian}{Anno Accademico}{Academic Year}]{%
-\FPeval{\nextyear}{clip(#2+1)}%
-\academicyears{#1}{#2-\nextyear}%
+	\FPeval{\nextyear}{clip(#2+1)}%
+	\academicyears{#1}{#2-\nextyear}%
 }
 
 % Laboratorio
@@ -223,32 +223,32 @@
 }
 
 \newcommand{\labprefix}{%
-  \IfLanguageName{italian}{%
-	  Progetto sviluppato presso il\ }{%
+	\IfLanguageName{italian}{%
+		Progetto sviluppato presso il\ }{%
 		Project developed at the\ }}
 \newcommand{\llabprefix}{%
 	\IfLanguageName{italian}{%
 		Progetto sviluppato presso l'}{%
 		Project developed at\ }}
 \NewDocumentCommand{\lab}{ O{\labprefix} O{\small} m }{%
-\appto\makelablines{{#2\selectfont{{#1}{#3}}}\\\relax}%
-\appto\thelabs{, #3}%
+	\appto\makelablines{{#2\selectfont{{#1}{#3}}}\\\relax}%
+	\appto\thelabs{, #3}%
 }
 \NewDocumentCommand{\llab}{ O{\small} m }{%
 	\lab[\llabprefix][#1]{#2}%
 }
 
 \newcommand\laburl[1]{%
-\appto\makelaburllines{\url{#1}\\\relax}%
+	\appto\makelaburllines{\url{#1}\\\relax}%
 }
 
 \newcommand\lablogo[1]{%
-\appto\makelablogosline{\lablogoslinefill{}%
-                        \hspace{\lablogospace}%
-                        \includegraphics[height=\lablogosize,width=\lablogosize,keepaspectratio]{#1}%
-												\hspace{\lablogospace}
-												\lablogoslinefill{}%
-												\relax}}
+	\appto\makelablogosline{\lablogoslinefill{}%
+		\hspace{\lablogospace}%
+		\includegraphics[height=\lablogosize,width=\lablogosize,keepaspectratio]{#1}%
+		\hspace{\lablogospace}
+		\lablogoslinefill{}%
+		\relax}}
 
 % Titolo
 \newcommand\makeprintedtitle{\@title}
@@ -281,102 +281,102 @@
 \let\Subject\relax
 
 \newcommand\tesixmpbody{%
-% Replace the following information with your document's actual
-% metadata. If you do not want to set a value for a certain parameter,
-% just omit it.
-%
-% Symbols permitted in metadata
-% =============================
-% 
-% Within the metadata, all printable ASCII characters except
-% '\', '{', '}', and '%' represent themselves. Also, all printable
-% Unicode characters from the basic multilingual plane (i.e., up to
-% code point U+FFFF) can be used directly with the UTF-8 encoding. 
-% Consecutive whitespace characters are combined into a single
-% space. Whitespace after a macro such as \copyright, \backslash, or
-% \sep is ignored. Blank lines are not permitted. Moreover, the
-% following markup can be used:
-%
-%  '\ '         - a literal space  (for example after a macro)                  
-%   \%          - a literal '%'                                                 
-%   \{          - a literal '{'                                                 
-%   \}          - a literal '}'                                                 
-%   \backslash  - a literal '\'                                                 
-%   \copyright  - the (c) copyright symbol                                      
-%
-% The macro \sep is only permitted within \Author, \Keywords, and
-% \Org.  It is used to separate multiple authors, keywords, etc.
-% 
-% List of supported metadata fields
-% =================================
-% 
-% Here is a complete list of user-definable metadata fields currently
-% supported, and their meanings. More may be added in the future.
-% 
-% General information:
-%
-%  \Author           - the document's human author. Separate multiple
-%                      authors with \sep.
-   \Author{\@author}
-%  \Title            - the document's title.
-   \Title{\@title}
-%  \Keywords         - list of keywords, separated with \sep.
-%  \Subject          - the abstract. 
-%  \Org              - publishers.
-   \Org{Università degli Studi di Milano, Dipartimento di Informatica ``Giovanni degli Antoni''\thelabs}
-% 
-% Copyright information:
-%
-%  \Copyright        - a copyright statement.
-%  \CopyrightURL     - location of a web page describing the owner
-%                      and/or rights statement for this document.
-%  \Copyrighted      - 'True' if the document is copyrighted, and
-%                      'False' if it isn't. This is automatically set
-%                      to 'True' if either \Copyright or \CopyrightURL
-%                      is specified, but can be overridden. For
-%                      example, if the copyright statement is "Public
-%                      Domain", this should be set to 'False'.
-%
-% Publication information:
-%
-% \PublicationType   - The type of publication. If defined, must be
-%                      one of book, catalog, feed, journal, magazine,
-%                      manual, newsletter, pamphlet. This is
-%                      automatically set to "journal" if \Journaltitle
-%                      is specified, but can be overridden.
-  \PublicationType{\thetypeofthesis}
-% \Journaltitle      - The title of the journal in which the document
-%                      was published. 
-% \Journalnumber     - The ISSN for the publication in which the
-%                      document was published.
-% \Volume            - Journal volume.
-% \Issue             - Journal issue/number.
-% \Firstpage         - First page number of the published version of
-%                      the document.
-% \Lastpage          - Last page number of the published version of
-%                      the document.
-% \Doi               - Digital Object Identifier (DOI) for the
-%                      document, without the leading "doi:".
-% \CoverDisplayDate  - Date on the cover of the journal issue, as a
-%                      human-readable text string.
-% \CoverDate         - Date on the cover of the journal issue, in a
-%                      format suitable for storing in a database field
-%                      with a 'date' data type.
+	% Replace the following information with your document's actual
+	% metadata. If you do not want to set a value for a certain parameter,
+	% just omit it.
+	%
+	% Symbols permitted in metadata
+	% =============================
+	% 
+	% Within the metadata, all printable ASCII characters except
+	% '\', '{', '}', and '%' represent themselves. Also, all printable
+	% Unicode characters from the basic multilingual plane (i.e., up to
+	% code point U+FFFF) can be used directly with the UTF-8 encoding. 
+	% Consecutive whitespace characters are combined into a single
+	% space. Whitespace after a macro such as \copyright, \backslash, or
+	% \sep is ignored. Blank lines are not permitted. Moreover, the
+	% following markup can be used:
+	%
+	%  '\ '         - a literal space  (for example after a macro)                  
+	%   \%          - a literal '%'                                                 
+	%   \{          - a literal '{'                                                 
+		%   \}          - a literal '}'                                                 
+	%   \backslash  - a literal '\'                                                 
+	%   \copyright  - the (c) copyright symbol                                      
+	%
+	% The macro \sep is only permitted within \Author, \Keywords, and
+	% \Org.  It is used to separate multiple authors, keywords, etc.
+	% 
+	% List of supported metadata fields
+	% =================================
+	% 
+	% Here is a complete list of user-definable metadata fields currently
+	% supported, and their meanings. More may be added in the future.
+	% 
+	% General information:
+	%
+	%  \Author           - the document's human author. Separate multiple
+	%                      authors with \sep.
+	\Author{\@author}
+	%  \Title            - the document's title.
+	\Title{\@title}
+	%  \Keywords         - list of keywords, separated with \sep.
+	%  \Subject          - the abstract. 
+	%  \Org              - publishers.
+	\Org{Università degli Studi di Milano, Dipartimento di Informatica ``Giovanni degli Antoni''\thelabs}
+	% 
+	% Copyright information:
+	%
+	%  \Copyright        - a copyright statement.
+	%  \CopyrightURL     - location of a web page describing the owner
+	%                      and/or rights statement for this document.
+	%  \Copyrighted      - 'True' if the document is copyrighted, and
+	%                      'False' if it isn't. This is automatically set
+	%                      to 'True' if either \Copyright or \CopyrightURL
+	%                      is specified, but can be overridden. For
+	%                      example, if the copyright statement is "Public
+	%                      Domain", this should be set to 'False'.
+	%
+	% Publication information:
+	%
+	% \PublicationType   - The type of publication. If defined, must be
+	%                      one of book, catalog, feed, journal, magazine,
+	%                      manual, newsletter, pamphlet. This is
+	%                      automatically set to "journal" if \Journaltitle
+	%                      is specified, but can be overridden.
+	\PublicationType{\thetypeofthesis}
+	% \Journaltitle      - The title of the journal in which the document
+	%                      was published. 
+	% \Journalnumber     - The ISSN for the publication in which the
+	%                      document was published.
+	% \Volume            - Journal volume.
+	% \Issue             - Journal issue/number.
+	% \Firstpage         - First page number of the published version of
+	%                      the document.
+	% \Lastpage          - Last page number of the published version of
+	%                      the document.
+	% \Doi               - Digital Object Identifier (DOI) for the
+	%                      document, without the leading "doi:".
+	% \CoverDisplayDate  - Date on the cover of the journal issue, as a
+	%                      human-readable text string.
+	% \CoverDate         - Date on the cover of the journal issue, in a
+	%                      format suitable for storing in a database field
+	%                      with a 'date' data type.
 }
 
 \newcommand{\metadatitesi}{%
-\ifcsdef{atstreamopentesixmpstream}{%
-  \closeoutputstream{tesixmpstream}}{%
-  \newoutputstream{tesixmpstream}}
-\openoutputfile{\currfilebase.xmpdata}{tesixmpstream}
-\addtostream{tesixmpstream}{\tesixmpbody}
+	\ifcsdef{atstreamopentesixmpstream}{%
+		\closeoutputstream{tesixmpstream}}{%
+		\newoutputstream{tesixmpstream}}
+	\openoutputfile{\currfilebase.xmpdata}{tesixmpstream}
+	\addtostream{tesixmpstream}{\tesixmpbody}
 }
 % -----------------------------------------------------------------------------
 
 % --- Page generation ---------------------------------------------------------
 % Front page
 \newcommand\makefrontpage{
-  \metadatitesi\relax%
+	\metadatitesi\relax%
 	\pagestyle{headings}%
 	\pagenumbering{gobble}%
 	\begin{center}%
@@ -389,19 +389,19 @@
 		\vskip 0.0135\paperheight
 		\makecdl\relax
 	\end{center}
-
+	
 	\vskip 0.0168\paperheight
 	\vfill
-
+	
 	\begin{center}\Large\MakeUppercase{\makeprintedtitle}\end{center}
-
+	
 	\vfill
 	\vskip 0.0673\paperheight
 	
 	\begin{tabular}{ll}\makesupervisorlines\relax\end{tabular}
-
+	
 	\vskip 0.0168\paperheight
-
+	
 	\begin{flushright}\large
 		\begin{tabular}{l}
 			\maketypeofthesis\relax
@@ -409,9 +409,9 @@
 			\makematricola\relax
 		\end{tabular}
 	\end{flushright}
-
+	
 	\vskip 0.0337\paperheight
-
+	
 	\begin{center}\makeacademicyear\relax\end{center}
 	\newpage
 }
@@ -436,38 +436,38 @@
 \def\prefacesection#1{%
 	\chapter*{#1}
 	\ifprefaceintoc\relax%
-		\addcontentsline{toc}{chapter}{#1}%
+	\addcontentsline{toc}{chapter}{#1}%
 	\fi}
 
 \def\afterpreface{%
 	\clearpage
 	\iftocintoc\relax
-		\phantomsection
-		\addcontentsline{toc}{chapter}{\contentsname}
+	\phantomsection
+	\addcontentsline{toc}{chapter}{\contentsname}
 	\fi\relax
 	\tableofcontents
 	\newpage
 	\iftablespage
-		{\addvspace{10pt}
+	{\addvspace{10pt}
 		\let\saveaddvspace=\addvspace
 		\def\addvspace##1{}
 		\phantomsection
 		\addcontentsline{toc}{chapter}{%
-		  \IfLanguageName{italian}{Elenco delle tabelle}{Table Index}}
+			\IfLanguageName{italian}{Elenco delle tabelle}{Table Index}}
 		\listoftables
 		\let\addvspace=\saveaddvspace}
-		\newpage
+	\newpage
 	\fi
 	\iffigurespage
-		{\addvspace{10pt}
+	{\addvspace{10pt}
 		\let\saveaddvspace=\addvspace
 		\def\addvspace##1{}
 		\phantomsection
 		\addcontentsline{toc}{chapter}{%
-		  \IfLanguageName{italian}{Elenco delle figure}{Figure Index}}
+			\IfLanguageName{italian}{Elenco delle figure}{Figure Index}}
 		\listoffigures
 		\let\addvspace=\saveaddvspace}
-		\newpage
+	\newpage
 	\fi
 	\pagenumbering{arabic}
 	\pagestyle{headings}}

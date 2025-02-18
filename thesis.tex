@@ -123,9 +123,9 @@ L'obiettivo finale della comunità scientifica è quindi quello di riuscire a ca
 
 \begin{figure}[t]
 	\centering
-	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/simulated-image.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/simulated-image.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.38\textwidth]{images/real-image.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/real-image.jpg}}
 	\caption{Immagini raccolte in un ambiente simulato (a) e reale (b).}
 	\label{fig:immagine-simulata-reale}
 \end{figure}
@@ -151,7 +151,7 @@ Come illustrato nella \hyperref[fig:fog_robotics]{Figura \ref{fig:fog_robotics}}
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=0.8\textwidth, clip]{images/fog-robotics}
+	\includegraphics[width=0.7\textwidth, clip]{images/fog-robotics}
 	\caption{Schema generale di un'architettura fog robotics.}
 	\label{fig:fog_robotics}
 \end{figure}
@@ -191,18 +191,18 @@ La data augmentation rappresenta un'altra tecnica ampiamente utilizzata per ridu
 
 \begin{figure}[t]
 	\centering
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/penguin-original.jpg}}
+	\subfloat[]{\includegraphics[width=0.25\textwidth]{images/penguin-original.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/penguin-blur.jpg}}
+	\subfloat[]{\includegraphics[width=0.25\textwidth]{images/penguin-blur.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/penguin-black-and-white.jpg}}
+	\subfloat[]{\includegraphics[width=0.25\textwidth]{images/penguin-black-and-white.jpg}}
 	\hspace{0.01\textwidth}
 	\\	
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/penguin-low-exposure.jpg}}
+	\subfloat[]{\includegraphics[width=0.25\textwidth]{images/penguin-low-exposure.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/penguin-flip.jpg}}
+	\subfloat[]{\includegraphics[width=0.25\textwidth]{images/penguin-flip.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/penguin-rotation.jpg}}
+	\subfloat[]{\includegraphics[width=0.25\textwidth]{images/penguin-rotation.jpg}}
 	\caption{Esempio di trasformazioni applicate ad un'immagine. Rispettivamente l'immagine originale (a), sfocata (b), in bianco e nero (c), a bassa esposizione (d), specchiata (e) e ruotata (f).}
 	\label{fig:immagine-augmentata}
 \end{figure}
@@ -246,11 +246,11 @@ La segmentazione può essere suddivisa in due categorie: semantica e d'istanza. 
 
 \begin{figure}[t]
 	\centering
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/original-segmentation.jpg}}
+	\subfloat[]{\includegraphics[width=0.30\textwidth]{images/original-segmentation.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/semantic-segmentation.jpg}}
+	\subfloat[]{\includegraphics[width=0.30\textwidth]{images/semantic-segmentation.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.23\textwidth]{images/instance-segmentation.jpg}}
+	\subfloat[]{\includegraphics[width=0.30\textwidth]{images/instance-segmentation.jpg}}
 	\caption{Data un'immagine (a), esempio di segmentazione semantica (b) e segmentazione d'istanza (c).}
 	\label{fig:segmentazione}
 \end{figure}
@@ -704,9 +704,9 @@ Si osserva come il modello performa quasi alla perfezione negli stessi ambienti 
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/sim-to-sim/1/original-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/domain-shift/sim-to-sim/1/original-1.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/sim-to-sim/1/prediction-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/domain-shift/sim-to-sim/1/prediction-1.jpg}}
 	\caption{Output del modello (b) considerando dati provenienti dal simulatore (a).}
 	\label{fig:prediction-1}
 \end{figure}
@@ -769,9 +769,9 @@ Come quanto visto nella sezione sim-to-sim, anche qui il modello apprende quasi 
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/4/original-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/domain-shift/real-to-real/4/original-1.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/4/prediction-1.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/domain-shift/real-to-real/4/prediction-1.jpg}}
 	\caption{Output del modello (b) considerando un'immagine presa dalle 10 scene ScanNet usate per l'addestramento (a).}
 	\label{fig:prediction-2}
 \end{figure}
@@ -826,9 +826,9 @@ Durante l'inferenza su immagini provenienti da ambienti reali, il modello dimost
 
 \begin{figure}[h!]
 	\centering
-	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/6/prediction-1.jpg}}
+	{\includegraphics[width=0.45\textwidth]{images/domain-shift/real-to-real/6/prediction-1.jpg}}
 	\hspace{0.01\textwidth}
-	{\includegraphics[width=0.42\textwidth]{images/domain-shift/real-to-real/6/prediction-2.jpg}}
+	{\includegraphics[width=0.45\textwidth]{images/domain-shift/real-to-real/6/prediction-2.jpg}}
 	\caption{Predizioni del modello addestrato con 395 scene in un ambiente reale.}
 	\label{fig:prediciton-3}
 \end{figure}
@@ -888,9 +888,9 @@ Dai risultati ottenuti si nota che il modello riesce ad adattarsi in al nuovo do
 
 \begin{figure}[h!]
 	\centering
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/8/input.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/fog-robotics/real-to-real/8/input.jpg}}
 	\hspace{0.01\textwidth}
-	\subfloat[]{\includegraphics[width=0.42\textwidth]{images/fog-robotics/real-to-real/8/output.jpg}}
+	\subfloat[]{\includegraphics[width=0.45\textwidth]{images/fog-robotics/real-to-real/8/output.jpg}}
 	\caption{Input (a) e output (b) della UNet.}
 	\label{fig:prediciton-4}
 \end{figure}
@@ -961,7 +961,7 @@ Come ultimo esperimento di questo elaborato, analizziamo la capacità dell'archi
 	\label{fig:training-9}
 \end{figure}
 
-Dall'analisi dei grafici si nota come il modello UNet-YOLO non riesca a trasformare le feature provenienti dagli ambienti reali in caratteristiche comprensibili dal segmentatore semantico. Etrambe le metriche di mAP restano infatti prossime allo zero per l'intero periodo di addestramento. La causa più probabile di questo problema potrebbe essere la troppa differenza tra le immagini dei due domini. Nell'\hyperref[sec:esperimento_8]{Esperimento 8} il domain shift tra gli ambienti è più contenuto, permettendo al modello di compensare e adattarsi. In questo caso, invece, l'architettura utilizzata non è sufficientemente complessa per gestire questo maggiore domain shift. Per migliorare i risultati sono possibili due soluzioni. La prima consiste nell'utilizzare un simulatore più fotorealistico, così da diminuire il gap tra i domini. L'altra opzione è invece utilizzare un encoder-decoder più complesso, in modo da riuscire a colmare un gap più grande tra i due domini.
+Dall'analisi dei grafici si nota come il modello UNet-YOLO non riesca a trasformare le feature provenienti dagli ambienti reali in caratteristiche comprensibili dal segmentatore semantico. Entrambe le metriche di mAP restano infatti prossime allo zero per l'intero periodo di addestramento. La causa più probabile di questo problema potrebbe essere la troppa differenza tra le immagini dei due domini. Nell'\hyperref[sec:esperimento_8]{Esperimento 8} il domain shift tra gli ambienti è più contenuto, permettendo al modello di compensare e adattarsi. In questo caso, invece, l'architettura utilizzata non è sufficientemente complessa per gestire questo maggiore domain shift. Per migliorare i risultati sono possibili due soluzioni. La prima consiste nell'utilizzare un simulatore più fotorealistico, così da diminuire il gap tra i domini. L'altra opzione è invece utilizzare un encoder-decoder più complesso, in modo da riuscire a colmare un gap più grande tra i due domini.
 
 % CAPITOLO 6: Conclusioni
 \chapter{Conclusioni}
